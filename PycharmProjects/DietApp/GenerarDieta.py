@@ -1,15 +1,17 @@
 import sqlite3
 import random
+import os
 
 
 def obtain_breakfast(cursor, selected, carbohydrates, sugar, energy, protein, salt, fat, budget):
-    sql = ("SELECT * FROM comidas WHERE tipo = 'desayuno' AND "
+    # Cambia 'plates.db' por 'plates' que es el nombre de la tabla
+    sql = ("SELECT * FROM plates WHERE type == 1 AND "
            "carbohydrates BETWEEN ? AND ? "
            "AND sugar BETWEEN ? AND ? "
-           "AND energy BETWEEN ? AND ? "
-           "AND protein BETWEEN ? AND ? AND "
-           "salt BETWEEN ? AND ? "
-           "AND fat BETWEEN ? AND ? "
+           "AND calories BETWEEN ? AND ? "
+           "AND protein BETWEEN ? AND ? "
+           "AND sodium BETWEEN ? AND ? "
+           "AND fats BETWEEN ? AND ? "
            "AND price <= ?")
     cursor.execute(sql, (carbohydrates[0], carbohydrates[1],
                          sugar[0], sugar[1],
@@ -27,12 +29,13 @@ def obtain_breakfast(cursor, selected, carbohydrates, sugar, energy, protein, sa
                 valid_foods.append(food)
 
         if valid_foods:
-            selected = random.choice(valid)
+            selected = random.choice(valid_foods)  # Asegúrate de elegir de 'valid_foods'
             return selected
         else:
             return None
     else:
         return None
+
 
 # Calcular el costo y las características de una combinación de comidas
 def get_total_cost_and_features(comidas_seleccionadas):
@@ -45,18 +48,20 @@ def get_total_cost_and_features(comidas_seleccionadas):
 
 
 def resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat, budget):
+    db_path = os.path.join('../../FoodDbManagement', 'plates.db')
 
-    conn = sqlite3.connect('comidas.db')
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     selected = []
+    solution = []
 
     breakfast = obtain_breakfast(cursor, selected,
-                                [2 * carbohydrates[0] / 6, 2 * carbohydrates[1] / 6],
-                                [2 * sugar[0] / 6, 2 * sugar[1] / 6],
-                                [2 * energy[0] / 6, 2 * energy[1] / 6],
-                                [2 * protein[0] / 6, 2 * protein[1] / 6],
-                                [2 * salt[0] / 6, 2 * salt[1] / 6],
-                                [2 * fat[0] / 6, 2 * fat[1] / 6],
+                                 [2 * carbohydrates[0] / 6, 2 * carbohydrates[1] / 6],
+                                 [2 * sugar[0] / 6, 2 * sugar[1] / 6],
+                                 [2 * energy[0] / 6, 2 * energy[1] / 6],
+                                 [2 * protein[0] / 6, 2 * protein[1] / 6],
+                                 [2 * salt[0] / 6, 2 * salt[1] / 6],
+                                 [2 * fat[0] / 6, 2 * fat[1] / 6],
                                  budget / 3)
 
     if breakfast is None:
@@ -64,7 +69,6 @@ def resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat, budget):
 
     selected.append(breakfast)
 
-    solution = [breakfast]
-    min_cost = float('inf')  # Empezamos con un costo muy alto
+    solution.append(breakfast[0])
 
     return solution

@@ -41,6 +41,7 @@ def obtain_restrictions():
 
     budget = float(input("Introduce el presupuesto máximo (euros): "))
 
+    """
     print(f'\nPresupuesto máximo (euros): {budget}')
     print(f'Intervalo de carbohidratos: {carbohydrates}')
     print(f'Intervalo de azúcar: {sugar}')
@@ -48,11 +49,8 @@ def obtain_restrictions():
     print(f'Intervalo de proteína: {protein}')
     print(f'Intervalo de sal: {salt}')
     print(f'Intervalo de grasa: {fat}')
-
+    """
     return carbohydrates, sugar, energy, protein, salt, fat, budget
-
-# Conectar a la base de datos
-conn, cursor = conectar_db()
 
 # Obtener las restricciones de dieta
 carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
@@ -62,7 +60,8 @@ best_solution = resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat,
 
 # Mostrar la mejor solución
 if best_solution:
-    print(f"Desayuno: {best_solution['desayuno']}")
+    print(f"\nDesayuno: {best_solution}")
+    """
     print(f"Almuerzo: {', '.join(best_solution['almuerzo'])}")
     print(f"Cena: {best_solution['cena']}")
     print(f"Costo total: {best_solution['cost']}")
@@ -72,8 +71,7 @@ if best_solution:
     print(f"Proteína total: {best_solution['protein']} g")
     print(f"Grasa total: {best_solution['fat']} g")
     print(f"Sal total: {best_solution['salt']} g")
+    """
 else:
     print("No se encontró una solución que cumpla con las restricciones.")
 
-# Cerrar la conexión a la base de datos
-conn.close()
