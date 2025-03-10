@@ -1,28 +1,24 @@
 import sqlite3
 
 
-# Conexión con la base de datos
-def conectar_db():
-    conn = sqlite3.connect('comidas.db')
-    cursor = conn.cursor()
-    return conn, cursor
-
-
 # Leer los datos de las comidas desde la base de datos
-def leer_comidas(cursor):
-    cursor.execute('SELECT nombre, energia, proteina, sal, grasa, costo, comida_tipo FROM comidas')
-    comidas = cursor.fetchall()
-    return comidas
+def breakfast(conn, cursor, carbohydrates, sugar, energy, protein, salt, fat, budget):
+    sql = ("SELECT * FROM comidas WHERE tipo = 'desayuno' AND "
+           "carbohydrates BETWEEN ? AND ? "
+           "AND sugar BETWEEN ? AND ? "
+           "AND energy BETWEEN ? AND ? "
+           "AND protein BETWEEN ? AND ? AND "
+           "salt BETWEEN ? AND ? "
+           "AND fat BETWEEN ? AND ? "
+           "AND price <= ?")
+    cursor.execute(sql, (carbohydrates[0], carbohydrates[1],
+                         sugar[0], sugar[1],
+                         energy[0], energy[1],
+                         protein[0], protein[1],
+                         salt[0], salt[1],
+                         fat[0], fat[1],
+                         budget))
 
-
-# Obtener las restricciones del usuario
-def obtener_restricciones():
-    min_energy = int(input("Introduce la energía mínima (kcal): "))
-    min_protein = int(input("Introduce la proteína mínima (g): "))
-    max_salt = int(input("Introduce la cantidad máxima de sal (g): "))
-    max_fat = int(input("Introduce la cantidad máxima de grasa (g): "))
-    budget = int(input("Introduce el presupuesto máximo (moneda): "))
-    return min_energy, min_protein, max_salt, max_fat, budget
 
 
 # Filtrar las comidas por tipo
@@ -45,8 +41,19 @@ def get_total_cost_and_features(comidas_seleccionadas):
 
 
 # Resolver las combinaciones posibles de desayuno, almuerzo y cena
-def resolver_dieta(comidas, min_energy, min_protein, max_salt, max_fat, budget):
-    desayuno, mains, sides, desserts = filtrar_comidas_por_tipo(comidas)
+def resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat, budget):
+
+    conn = sqlite3.connect('comidas.db')
+    cursor = conn.cursor()
+
+    breakfast(conn, cursor,
+              [2 * carbohydrates[0] / 6, 2 * carbohydrates[1] / 6],
+              [2 * sugar[0] / 6, 2 * sugar[1] / 6],
+              [2 * energy[0] / 6, 2 * energy[1] / 6],
+              [2 * protein[0] / 6, 2 * protein[1] / 6],
+              [2 * salt[0] / 6, 2 * salt[1] / 6],
+              [2 * fat[0] / 6, 2 * fat[1] / 6],
+              budget / 3)
 
     best_solution = None
     min_cost = float('inf')  # Empezamos con un costo muy alto
