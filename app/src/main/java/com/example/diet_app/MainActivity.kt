@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.diet_app.ui.theme.DietappTheme
+import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +29,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        checkDatabaseConnection();
     }
 }
 
@@ -44,4 +47,23 @@ fun GreetingPreview() {
     DietappTheme {
         Greeting("Android")
     }
+}
+
+
+fun checkDatabaseConnection() {
+    val db = FirebaseFirestore.getInstance()
+
+    // Intenta realizar una consulta simple a la base de datos
+    db.collection("testConnection")
+        .get()
+        .addOnSuccessListener { documents ->
+            if (documents.isEmpty) {
+                Log.d("FirestoreConnection", "Conexión exitosa: la colección está vacía o no existe.")
+            } else {
+                Log.d("FirestoreConnection", "Conexión exitosa: datos encontrados en la colección.")
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.e("FirestoreConnection", "Error al conectar con la base de datos: ${exception.message}")
+        }
 }
