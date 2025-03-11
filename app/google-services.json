@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "352091749950",
+    "project_id": "diet-app-e97dc",
+    "storage_bucket": "diet-app-e97dc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352091749950:android:0eff832c38f5242538db6f",
+        "android_client_info": {
+          "package_name": "com.example.diet_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHj5aS17VDhomBQtRvVL6a-mbDLmK6eGA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352091749950:android:3740166c2b4703ec38db6f",
+        "android_client_info": {
+          "package_name": "com.example.pueba"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHj5aS17VDhomBQtRvVL6a-mbDLmK6eGA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
