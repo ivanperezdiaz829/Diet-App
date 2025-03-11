@@ -37,13 +37,16 @@ public class PlateDatabaseWriter implements PlateWriter{
             sugar INTEGER NOT NULL,
             sodium INTEGER NOT NULL,
             price FLOAT NOT NULL,
-            type INT INTEGER
+            type INT INTEGER NOT NULL,
+            vegan INTEGER NOT NULL,
+            vegetarian INTEGER NOT NULL,
+            celiac INTEGER NOT NULL
             )
             """;
 
     private static final String insertPlateStatement = """
-            INSERT or REPLACE INTO plates (name, calories, carbohydrates, protein, fats, sugar, sodium, price, type)
-            VALUES (?,?,?,?,?,?,?,ROUND(?, 2),?)
+            INSERT or REPLACE INTO plates (name, calories, carbohydrates, protein, fats, sugar, sodium, price, type, vegan, vegetarian, celiac)
+            VALUES (?,?,?,?,?,?,?,ROUND(?, 2),?,?,?,?)
             """;
 
     private void createTable() throws SQLException {
@@ -97,7 +100,10 @@ public class PlateDatabaseWriter implements PlateWriter{
                 new Parameter(6, plate.getSugar(), INTEGER),
                 new Parameter(7, plate.getSodium(), INTEGER),
                 new Parameter(8, plate.getPrice(), FLOAT),
-                new Parameter(9, plate.getType(), INTEGER)
+                new Parameter(9, plate.getType(), INTEGER),
+                new Parameter(10, plate.isVegan() ? 1 : 0, INTEGER),
+                new Parameter(11, plate.isVegetarian() ? 1 : 0, INTEGER),
+                new Parameter(12, plate.isCeliac() ? 1 : 0, INTEGER)
         );
     }
 

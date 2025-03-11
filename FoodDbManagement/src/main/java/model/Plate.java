@@ -11,8 +11,12 @@ public class Plate {
     private final float price;
     private final int type;
 
+    private final boolean vegan;
+    private final boolean vegetarian;
+    private final boolean celiac;
+
     public Plate(String name, int calories, int carbohydrates,
-                 int protein, int fats, int sugar, int sodium, float price, int type) {
+                 int protein, int fats, int sugar, int sodium, float price, int type, boolean vegan, boolean vegetarian, boolean celiac) {
         this.name = name;
         this.calories = calories;
         this.carbohydrates = carbohydrates;
@@ -22,6 +26,9 @@ public class Plate {
         this.sodium = sodium;
         this.price = price;
         this.type = type;
+        this.vegan = vegan;
+        this.vegetarian = vegetarian;
+        this.celiac = celiac;
     }
 
     public String getName() {
@@ -58,5 +65,17 @@ public class Plate {
 
     public int getType() {
         return type;
+    }
+
+    public boolean isVegan() {
+        return vegan;
+    }
+
+    public boolean isVegetarian() {
+        return vegetarian;
+    }
+
+    public boolean isCeliac() {
+        return celiac;
     }
 }

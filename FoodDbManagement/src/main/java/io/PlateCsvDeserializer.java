@@ -19,8 +19,15 @@ public class PlateCsvDeserializer implements PlateDeserializer {
                 toInt(fields[5]),
                 toInt(fields[6]),
                 toFloat(fields[7]),
-                toInt(fields[8])
+                toInt(fields[8]),
+                toBoolean(fields[9]),
+                toBoolean(fields[10]),
+                toBoolean(fields[11])
         );
+    }
+
+    private boolean toBoolean(String field) {
+        return Integer.parseInt(field) == 1;
     }
 
     private float toFloat(String field) {

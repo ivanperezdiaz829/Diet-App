@@ -9,6 +9,6 @@ public class Main {
     }
 
     private static ImportDialog importDialog() {
-        return () -> new File("food_data.csv");
+        return () -> new File("food_data_updated.csv");
     }
 }
