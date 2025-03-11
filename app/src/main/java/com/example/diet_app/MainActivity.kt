@@ -29,7 +29,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        checkDatabaseConnection();
+        checkDatabaseConnection()
+        fetchAllUsers()
     }
 }
 
@@ -66,4 +67,34 @@ fun checkDatabaseConnection() {
         .addOnFailureListener { exception ->
             Log.e("FirestoreConnection", "Error al conectar con la base de datos: ${exception.message}")
         }
+}
+
+fun fetchAllUsers() {
+    try {
+        val db = FirebaseFirestore.getInstance()
+
+        // Accede a la colección "users"
+        db.collection("users")
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    Log.d("FirestoreUsers", "No se encontraron usuarios en la base de datos.")
+                } else {
+                    for (document in documents) {
+                        // Muestra los datos de cada documento (usuario)
+                        Log.d(
+                            "FirestoreUsers",
+                            "Usuario ID: ${document.id}, Datos: ${document.data}"
+                        )
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirestoreUsers", "Error al obtener usuarios: ${exception.message}")
+            }
+    } catch (e: SecurityException) {
+        Log.e("MyAppTag", "SecurityException: ${e.message}", e) // Log with the exception details
+    } catch (e: Exception){
+        Log.e("MyAppTag", "General exception", e) //Log general exception
+    }
 }
