@@ -9,8 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment=".idea este">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="autenticación funcional">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
@@ -166,6 +165,15 @@
       <option name="presentableId" value="Default" />
       <updated>1741630755006</updated>
     </task>
+    <task id="LOCAL-00001" summary="autenticación funcional">
+      <option name="closed" value="true" />
+      <created>1742237012128</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1742237012128</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -184,6 +192,7 @@
     <MESSAGE value="develop con src" />
     <MESSAGE value="unversioned files" />
     <MESSAGE value=".idea este" />
-    <option name="LAST_COMMIT_MESSAGE" value=".idea este" />
+    <MESSAGE value="autenticación funcional" />
+    <option name="LAST_COMMIT_MESSAGE" value="autenticación funcional" />
   </component>
 </project>
