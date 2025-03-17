@@ -26,6 +26,11 @@ import com.example.diet_app.ui.theme.DietappTheme
 import androidx.compose.material3.Button
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.io.IOException
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +51,7 @@ fun DietForm() {
     var maxFat by remember { mutableStateOf("") }
     var minSalt by remember { mutableStateOf("") }
     var maxSalt by remember { mutableStateOf("") }
+    var result by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "Configurar valores nutricionales", style = MaterialTheme.typography.titleLarge)
@@ -60,11 +66,17 @@ fun DietForm() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            // Aquí puedes procesar los valores ingresados
-            println("Min Kcal: $minCalories, Max Kcal: $maxCalories")
+            sendDataToServer(
+                listOf(minCalories, maxCalories, minFat, maxFat, minSalt, maxSalt)
+                    .mapNotNull { it.toDoubleOrNull() }
+            ) { response ->
+                result = response
+            }
         }) {
             Text("Generar dieta")
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Resultado: $result", style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -76,6 +88,38 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
     )
+}
+
+fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/calculate"
+
+    val json = JSONObject()
+    json.put("values", values)
+
+    Log.d("DietForm", "Enviando valores al servidor: $values")
+
+    val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            onResult("Error: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                Log.d("DietForm", "Respuesta del servidor: $responseBody")
+                val jsonResponse = JSONObject(responseBody)
+                val total = jsonResponse.optDouble("total", 0.0)
+                onResult("Total: $total")
+            }
+        }
+    })
 }
 
 fun checkDatabaseConnection() {
