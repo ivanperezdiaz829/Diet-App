@@ -25,16 +25,45 @@ import androidx.compose.ui.unit.dp
 import com.example.diet_app.ui.theme.DietappTheme
 import androidx.compose.material3.Button
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
+    private val authManager = AuthManager()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             DietForm()
         }
-        checkDatabaseConnection()
-        fetchAllUsers()
+        if (authManager.usuarioActual()) {
+            Log.d("AuthTest", "Usuario autenticado. Probando conexión a la base de datos...")
+            checkDatabaseConnection()
+            fetchAllUsers()
+        } else {
+            Log.d("AuthTest", "No hay usuario autenticado. Intentando iniciar sesión...")
+
+            val email = "gloton3@gloton3.com"
+            val password = "gloton3"
+
+            authManager.iniciarSesion(email, password) { success, message ->
+                if (success) {
+                    Log.d("AuthTest", "Inicio de sesión exitoso.")
+                    checkDatabaseConnection()
+                    fetchAllUsers()
+                } else {
+                    Log.e("AuthTest", "Error de inicio de sesión: $message. Registrando usuario...")
+
+                    authManager.registrarUsuario(email, password) { regSuccess, regMessage ->
+                        if (regSuccess) {
+                            Log.d("AuthTest", "Registro exitoso. Iniciando sesión de nuevo...")
+                            authManager.iniciarSesion(email, password) { _, _ -> }
+                        } else {
+                            Log.e("AuthTest", "Error en el registro: $regMessage")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -77,6 +106,39 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
     )
 }
+
+class AuthManager {
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    fun usuarioActual(): Boolean {
+        return auth.currentUser != null
+    }
+
+    fun iniciarSesion(email: String, password: String, callback: (Boolean, String?) -> Unit) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                Log.d("AuthManager", "Inicio de sesión exitoso para: $email")
+                callback(true, null)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("AuthManager", "Error de inicio de sesión: ${exception.message}")
+                callback(false, exception.message)
+            }
+    }
+
+    fun registrarUsuario(email: String, password: String, callback: (Boolean, String?) -> Unit) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                Log.d("AuthManager", "Registro exitoso para: $email")
+                callback(true, null)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("AuthManager", "Error de registro: ${exception.message}")
+                callback(false, exception.message)
+            }
+    }
+}
+
 
 fun checkDatabaseConnection() {
     val db = FirebaseFirestore.getInstance()
