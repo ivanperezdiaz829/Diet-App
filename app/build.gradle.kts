@@ -61,4 +61,5 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("androidx.navigation:navigation-compose:2.4.0")
 }
