@@ -66,11 +66,19 @@ fun DietForm() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            sendDataToServer(
-                listOf(minCalories, maxCalories, minFat, maxFat, minSalt, maxSalt)
-                    .mapNotNull { it.toDoubleOrNull() }
-            ) { response ->
-                result = response
+            // Convertir todos los valores a Double, ignorando los que no sean válidos
+            val numericValues = listOf(minCalories, maxCalories, minFat, maxFat, minSalt, maxSalt)
+                .map { it.replace(",", ".") }  // Asegura el formato correcto de decimales
+                .mapNotNull { it.toDoubleOrNull() }  // Convierte String a Double si es válido
+
+            Log.d("DietForm", "Valores convertidos a Double: $numericValues")
+
+            if (numericValues.size == 6) { // Asegurar que todos los valores sean numéricos
+                sendDataToServer(numericValues) { response ->
+                    result = response
+                }
+            } else {
+                result = "Error: Ingresa valores numéricos válidos"
             }
         }) {
             Text("Generar dieta")
