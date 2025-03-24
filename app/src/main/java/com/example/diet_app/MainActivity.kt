@@ -28,6 +28,8 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import com.google.firebase.firestore.FirebaseFirestore
@@ -103,35 +105,53 @@ fun WelcomeScreen(navController: NavController) {
 
 @Composable
 fun DietForm() {
-    var minCalories by remember { mutableStateOf("") }
-    var maxCalories by remember { mutableStateOf("") }
-    var minFat by remember { mutableStateOf("") }
-    var maxFat by remember { mutableStateOf("") }
+    var minCarbohydrates by remember { mutableStateOf("") }
+    var maxCarbohydrates by remember { mutableStateOf("") }
+    var minSugar by remember { mutableStateOf("") }
+    var maxSugar by remember { mutableStateOf("") }
+    var minEnergy by remember { mutableStateOf("") }
+    var maxEnergy by remember { mutableStateOf("") }
+    var minProtein by remember { mutableStateOf("") }
+    var maxProtein by remember { mutableStateOf("") }
     var minSalt by remember { mutableStateOf("") }
     var maxSalt by remember { mutableStateOf("") }
+    var minFat by remember { mutableStateOf("") }
+    var maxFat by remember { mutableStateOf("") }
+    var budget by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .verticalScroll(rememberScrollState())
+    ) {
         Text(text = "Configurar valores nutricionales", style = MaterialTheme.typography.titleLarge)
 
-        InputField(label = "Kcal mínimas", value = minCalories) { minCalories = it }
-        InputField(label = "Kcal máximas", value = maxCalories) { maxCalories = it }
-        InputField(label = "Grasa mínima (g)", value = minFat) { minFat = it }
-        InputField(label = "Grasa máxima (g)", value = maxFat) { maxFat = it }
+        InputField(label = "Carbs mínimas", value = minCarbohydrates) { minCarbohydrates= it }
+        InputField(label = "Carbs máximas", value = maxCarbohydrates) { maxCarbohydrates = it }
+        InputField(label = "Azúcar mínimas", value = minSugar) { minSugar = it }
+        InputField(label = "Azúcar máximas", value = maxSugar) { maxSugar = it }
+        InputField(label = "Energía mínimas", value = minEnergy) { minEnergy = it }
+        InputField(label = "Energía máximas", value = maxEnergy) { maxEnergy = it }
+        InputField(label = "Proteina mínimas", value = minProtein) { minProtein= it }
+        InputField(label = "Proteina máximas", value = maxProtein) { maxProtein= it }
         InputField(label = "Sal mínima (g)", value = minSalt) { minSalt = it }
         InputField(label = "Sal máxima (g)", value = maxSalt) { maxSalt = it }
+        InputField(label = "Grasa mínima (g)", value = minFat) { minFat = it }
+        InputField(label = "Grasa máxima (g)", value = maxFat) { maxFat = it }
+        InputField(label = "Presupuesto", value = budget) { budget = it }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
             // Convertir todos los valores a Double, ignorando los que no sean válidos
-            val numericValues = listOf(minCalories, maxCalories, minFat, maxFat, minSalt, maxSalt)
+            val numericValues = listOf(minCarbohydrates, maxCarbohydrates, minSugar, maxSugar,
+                minEnergy, maxEnergy, minProtein, maxProtein, minSalt, maxSalt, minFat, maxFat, budget)
                 .map { it.replace(",", ".") }  // Asegura el formato correcto de decimales
                 .mapNotNull { it.toDoubleOrNull() }  // Convierte String a Double si es válido
 
             Log.d("DietForm", "Valores convertidos a Double: $numericValues")
 
-            if (numericValues.size == 6) { // Asegurar que todos los valores sean numéricos
+            if (numericValues.size == 13) { // Asegurar que todos los valores sean numéricos
                 sendDataToServer(numericValues) { response ->
                     result = response
                 }
@@ -180,9 +200,34 @@ fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
         override fun onResponse(call: Call, response: Response) {
             response.body?.string()?.let { responseBody ->
                 Log.d("DietForm", "Respuesta del servidor: $responseBody")
-                val jsonResponse = JSONObject(responseBody)
-                val total = jsonResponse.optDouble("total", 0.0)
-                onResult("Total: $total")
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+                    if (jsonResponse.has("error")) {
+                        onResult("Error: ${jsonResponse.getString("error")}")
+                    } else {
+                        val breakfast = jsonResponse.getString("breakfast")
+                        val lunch = jsonResponse.getJSONArray("lunch")
+                        val dinner = jsonResponse.getJSONArray("dinner")
+
+                        // Convierte JSONArray a String
+                        val lunchList = (0 until lunch.length()).map { lunch.getString(it) }
+                        val dinnerList = (0 until dinner.length()).map { dinner.getString(it) }
+
+                        val resultString = """
+                            🍳 **Desayuno:** $breakfast
+                            
+                            🥗 **Almuerzo:** 
+                            - ${lunchList.joinToString("\n- ")}
+                            
+                            🍽 **Cena:** 
+                            - ${dinnerList.joinToString("\n- ")}
+                        """.trimIndent()
+
+                        onResult(resultString)
+                    }
+                } catch (e: Exception) {
+                    onResult("Error al procesar la respuesta")
+                }
             }
         }
     })
