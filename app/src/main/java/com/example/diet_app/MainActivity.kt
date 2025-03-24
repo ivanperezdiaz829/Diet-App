@@ -29,34 +29,38 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
-    private val authManager = AuthManager()
+
+    private val authHandler = AuthHandler()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             DietForm()
         }
-        if (authManager.usuarioActual()) {
+
+        // Verificar usuario actual y manejar autenticación
+        if (!authHandler.usuarioActual()) {
             Log.d("AuthTest", "Usuario autenticado. Probando conexión a la base de datos...")
-            checkDatabaseConnection()
-            fetchAllUsers()
+            authHandler.checkDatabaseConnection()
+            authHandler.fetchAllUsers()
         } else {
             Log.d("AuthTest", "No hay usuario autenticado. Intentando iniciar sesión...")
 
             val email = "gloton3@gloton3.com"
             val password = "gloton3"
 
-            authManager.iniciarSesion(email, password) { success, message ->
+            authHandler.iniciarSesion(email, password) { success, message ->
                 if (success) {
                     Log.d("AuthTest", "Inicio de sesión exitoso.")
-                    checkDatabaseConnection()
-                    fetchAllUsers()
+                    authHandler.checkDatabaseConnection()
+                    authHandler.fetchAllUsers()
                 } else {
                     Log.e("AuthTest", "Error de inicio de sesión: $message. Registrando usuario...")
 
-                    authManager.registrarUsuario(email, password) { regSuccess, regMessage ->
+                    authHandler.registrarUsuario(email, password) { regSuccess, regMessage ->
                         if (regSuccess) {
                             Log.d("AuthTest", "Registro exitoso. Iniciando sesión de nuevo...")
-                            authManager.iniciarSesion(email, password) { _, _ -> }
+                            authHandler.iniciarSesion(email, password) { _, _ -> }
                         } else {
                             Log.e("AuthTest", "Error en el registro: $regMessage")
                         }
@@ -66,6 +70,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Composable
 fun DietForm() {
@@ -105,85 +110,4 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
     )
-}
-
-class AuthManager {
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-    fun usuarioActual(): Boolean {
-        return auth.currentUser != null
-    }
-
-    fun iniciarSesion(email: String, password: String, callback: (Boolean, String?) -> Unit) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                Log.d("AuthManager", "Inicio de sesión exitoso para: $email")
-                callback(true, null)
-            }
-            .addOnFailureListener { exception ->
-                Log.e("AuthManager", "Error de inicio de sesión: ${exception.message}")
-                callback(false, exception.message)
-            }
-    }
-
-    fun registrarUsuario(email: String, password: String, callback: (Boolean, String?) -> Unit) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                Log.d("AuthManager", "Registro exitoso para: $email")
-                callback(true, null)
-            }
-            .addOnFailureListener { exception ->
-                Log.e("AuthManager", "Error de registro: ${exception.message}")
-                callback(false, exception.message)
-            }
-    }
-}
-
-
-fun checkDatabaseConnection() {
-    val db = FirebaseFirestore.getInstance()
-
-    // Intenta realizar una consulta simple a la base de datos
-    db.collection("testConnection")
-        .get()
-        .addOnSuccessListener { documents ->
-            if (documents.isEmpty) {
-                Log.d("FirestoreConnection", "Conexión exitosa: la colección está vacía o no existe.")
-            } else {
-                Log.d("FirestoreConnection", "Conexión exitosa: datos encontrados en la colección.")
-            }
-        }
-        .addOnFailureListener { exception ->
-            Log.e("FirestoreConnection", "Error al conectar con la base de datos: ${exception.message}")
-        }
-}
-
-fun fetchAllUsers() {
-    try {
-        val db = FirebaseFirestore.getInstance()
-
-        // Accede a la colección "users"
-        db.collection("users")
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents.isEmpty) {
-                    Log.d("FirestoreUsers", "No se encontraron usuarios en la base de datos.")
-                } else {
-                    for (document in documents) {
-                        // Muestra los datos de cada documento (usuario)
-                        Log.d(
-                            "FirestoreUsers",
-                            "Usuario ID: ${document.id}, Datos: ${document.data}"
-                        )
-                    }
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("FirestoreUsers", "Error al obtener usuarios: ${exception.message}")
-            }
-    } catch (e: SecurityException) {
-        Log.e("MyAppTag", "SecurityException: ${e.message}", e) // Log with the exception details
-    } catch (e: Exception){
-        Log.e("MyAppTag", "General exception", e) //Log general exception
-    }
 }
