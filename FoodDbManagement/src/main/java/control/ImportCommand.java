@@ -17,7 +17,7 @@ public class ImportCommand implements Command{
 
     @Override
     public void execute() {
-        try(PlateWriter writer = PlateDatabaseWriter.open(new File("plates.db"));
+        try(PlateWriter writer = PlateDatabaseWriter.open(new File("DietApp.db"));
                 PlateReader reader = new PlateFileReader(new PlateCsvDeserializer(), dialog.get())) {
             doExecute(reader, writer);
         } catch (Exception e) {
