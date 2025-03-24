@@ -78,8 +78,10 @@ solution = resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat, budg
 
 # Mostrar la mejor solución
 if solution:
-    print(f"\nDesayuno: {solution[0]}")
-    print(f'\nAlmuerzo: {solution[1]}')
+    print("\n--- SOLUCION ---")
+    print(f'\nDesayuno: {solution[0]}')
+    print(f'Almuerzo: {solution[1]}')
+    print(f'Cena: {solution[2]}')
 
     end_time = time.time()
     print(f'\nEl tiempo de ejecución del programa es: {time.process_time()}')

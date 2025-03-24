@@ -25,21 +25,79 @@ import androidx.compose.ui.unit.dp
 import com.example.diet_app.ui.theme.DietappTheme
 import androidx.compose.material3.Button
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.diet_app.ui.theme.DietappTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            DietForm()
+            DietApp()
         }
         checkDatabaseConnection()
         fetchAllUsers()
+    }
+}
+
+@Composable
+fun DietApp() {
+    // Usamos NavController para manejar la navegación
+    val navController = rememberNavController()
+
+    // Configuración de la navegación entre pantallas
+    NavHost(navController = navController, startDestination = "welcome") {
+        composable("welcome") {
+            WelcomeScreen(navController)  // Pantalla de bienvenida
+        }
+        composable("diet_form") {
+            DietForm()  // Pantalla del formulario de la dieta
+        }
+    }
+}
+
+@Composable
+fun WelcomeScreen(navController: NavController) {
+    // Pantalla de bienvenida con fondo verde y mensaje
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF8BC34A)), // Fondo verde
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "¡Bienvenido a la aplicación de dieta!",
+                style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
+                modifier = Modifier.padding(16.dp)
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = {
+                    // Navegar a la pantalla del formulario de la dieta
+                    navController.navigate("diet_form")
+                },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Ir al formulario")
+            }
+        }
     }
 }
 
@@ -66,11 +124,19 @@ fun DietForm() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            sendDataToServer(
-                listOf(minCalories, maxCalories, minFat, maxFat, minSalt, maxSalt)
-                    .mapNotNull { it.toDoubleOrNull() }
-            ) { response ->
-                result = response
+            // Convertir todos los valores a Double, ignorando los que no sean válidos
+            val numericValues = listOf(minCalories, maxCalories, minFat, maxFat, minSalt, maxSalt)
+                .map { it.replace(",", ".") }  // Asegura el formato correcto de decimales
+                .mapNotNull { it.toDoubleOrNull() }  // Convierte String a Double si es válido
+
+            Log.d("DietForm", "Valores convertidos a Double: $numericValues")
+
+            if (numericValues.size == 6) { // Asegurar que todos los valores sean numéricos
+                sendDataToServer(numericValues) { response ->
+                    result = response
+                }
+            } else {
+                result = "Error: Ingresa valores numéricos válidos"
             }
         }) {
             Text("Generar dieta")
