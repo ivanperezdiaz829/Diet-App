@@ -14,7 +14,7 @@ def obtain_restrictions():
             carbohydrates.append(float(input("Introduce el mínimo de carbohidratos (g): ")))
         else:
             carbohydrates.append(float(input("Introduce el máximo de carbohidratos (g): ")))
-    # carbohydrates = [281.25, 406.25]
+    carbohydrates = [281.25, 406.25]
 
     # Promedio -> [31.5, 62.5]
     for i in range(2):
@@ -22,7 +22,7 @@ def obtain_restrictions():
             sugar.append(float(input("Introduce el mínimo de azucar (g): ")))
         else:
             sugar.append(float(input("Introduce el máximo de azucar (g): ")))
-    # sugar = [0, 125]
+    sugar = [0, 125]
 
     # Promedio -> [1800, 3000]
     for i in range(2):
@@ -30,7 +30,7 @@ def obtain_restrictions():
             energy.append(float(input("Introduce el mínimo de calorías (kcal): ")))
         else:
             energy.append(float(input("Introduce el máximo de calorías (kcal): ")))
-    # energy = [1800, 3000]
+    energy = [1800, 3000]
 
     # Promedio -> [62.5, 218.75]
     for i in range(2):
@@ -46,7 +46,7 @@ def obtain_restrictions():
             salt.append(float(input("Introduce el mínimo de sal (g): ")))
         else:
             salt.append(float(input("Introduce el máximo de sal (g): ")))
-    # salt = [100, 5000]
+    salt = [0, 500]
 
     # Promedio -> [55.56, 97.22]
     for i in range(2):
@@ -54,7 +54,7 @@ def obtain_restrictions():
             fat.append(float(input("Introduce el mínimo de grasa (g): ")))
         else:
             fat.append(float(input("Introduce el máximo de grasa (g): ")))
-    # fat = [55.56, 97.22]
+    fat = [55.56, 97.22]
 
     budget = float(input("Introduce el presupuesto máximo (euros): "))
 
@@ -74,7 +74,7 @@ def obtain_restrictions():
 carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
 
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
-solution = resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat, budget, 1)
+solution = resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, set(), set(), set())
 
 # Mostrar la mejor solución
 if solution:

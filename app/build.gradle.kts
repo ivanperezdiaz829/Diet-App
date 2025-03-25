@@ -63,4 +63,5 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("androidx.navigation:navigation-compose:2.4.0")
+    implementation ("androidx.sqlite:sqlite:2.3.0")
 }
