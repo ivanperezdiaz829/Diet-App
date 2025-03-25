@@ -1,6 +1,5 @@
 package com.example.diet_app
 
-import DatabaseManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -43,6 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.diet_app.DatabaseManager
 import com.example.diet_app.ui.theme.DietappTheme
 
 class MainActivity : ComponentActivity() {
