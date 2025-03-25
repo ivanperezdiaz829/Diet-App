@@ -68,6 +68,9 @@ fun DietApp() {
         composable("diet_form") {
             DietForm()  // Pantalla del formulario de la dieta
         }
+        composable("basal_metabolism") {
+            BasalMetabolismScreen()
+        }
     }
 }
 
@@ -98,6 +101,10 @@ fun WelcomeScreen(navController: NavController) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text("Ir al formulario")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { navController.navigate("basal_metabolism") }) {
+                Text("Calcular Gasto Energético Basal")
             }
         }
     }
@@ -167,6 +174,53 @@ fun DietForm() {
 }
 
 @Composable
+fun BasalMetabolismScreen() {
+    var weight by remember { mutableStateOf("") }
+    var height by remember { mutableStateOf("") }
+    var age by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf("") }
+    var result by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        InputField("Peso (kg)", weight) { weight = it }
+        InputField("Altura (cm)", height) { height = it }
+        InputField("Edad (años)", age) { age = it }
+        InputField("Género (M/F)", gender) { gender = it }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
+            result = calculateBasalMetabolicRate(weight, height, age, gender)
+        }) {
+            Text("Calcular")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = result)
+    }
+}
+
+fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gender: String): String {
+    val w = weight.toDoubleOrNull() ?: return "Peso no válido"
+    val h = height.toDoubleOrNull() ?: return "Altura no válida"
+    val a = age.toDoubleOrNull() ?: return "Edad no válida"
+
+    return if (gender.equals("M", ignoreCase = true)) {
+        val bmr = 88.362 + (13.397 * w) + (4.799 * h) - (5.677 * a)
+        "Gasto Energético Basal: ${String.format("%.2f", bmr)} kcal/día"
+    } else if (gender.equals("F", ignoreCase = true)) {
+        val bmr = 447.593 + (9.247 * w) + (3.098 * h) - (4.330 * a)
+        "Gasto Energético Basal: ${String.format("%.2f", bmr)} kcal/día"
+    } else {
+        "Género no válido"
+    }
+}
+
+@Composable
 fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
     OutlinedTextField(
         value = value,
@@ -178,7 +232,7 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
 
 fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.0.2.2:8000/calculate"
+    val url = "http://10.193.223.36:8000/calculate"
 
     val json = JSONObject()
     json.put("values", values)
