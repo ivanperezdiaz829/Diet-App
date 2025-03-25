@@ -3,50 +3,124 @@ import random
 import os
 
 
-def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, food_type, mult, sentence_type, sub_sentence, sub_type):
+def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, food_type, mult, sentence_type, sub_sentence):
 
-    print(carbohydrates, sugar, energy, protein, salt, fat, budget, food_type, mult)
-
+    print(carbohydrates, sugar, energy, protein, salt, fat, budget, food_type, mult, sentence_type, sub_sentence)
     if sentence_type == 1:
         sql = ("SELECT * FROM plates WHERE type == ? AND "
-               "carbohydrates * ? BETWEEN ? AND ? "
-               "AND sugar * ? BETWEEN ? AND ? "
-               "AND calories * ? BETWEEN ? AND ? "
-               "AND protein * ? BETWEEN ? AND ? "
-               "AND sodium * ? BETWEEN ? AND ? "
-               "AND fats * ? BETWEEN ? AND ? "
-               "AND price * ? <= ?")
+               "carbohydrates BETWEEN ? AND ? "
+               "AND sugar BETWEEN ? AND ? "
+               "AND calories BETWEEN ? AND ? "
+               "AND protein BETWEEN ? AND ? "
+               "AND sodium BETWEEN ? AND ? "
+               "AND fats BETWEEN ? AND ? "
+               "AND price <= ?")
 
         cursor.execute(sql, (food_type,
-                             mult, carbohydrates[0], carbohydrates[1],
-                             mult, sugar[0], sugar[1],
-                             mult, energy[0], energy[1],
-                             mult, protein[0], protein[1],
-                             mult, salt[0], salt[1],
-                             mult, fat[0], fat[1],
-                             mult, budget))
+                             carbohydrates[0], carbohydrates[1],
+                             sugar[0], sugar[1],
+                             energy[0], energy[1],
+                             protein[0], protein[1],
+                             salt[0], salt[1],
+                             fat[0], fat[1],
+                             budget))
         return cursor.fetchall()
 
-    elif sentence_type == 2:
-        sql = "SELECT SUM(?) FROM plates WHERE type ?"
-        nutritional = ""
+    if sentence_type == 2:
+        columns = {
+            1: "carbohydrates",
+            2: "sugar",
+            3: "calories",
+            4: "protein",
+            5: "sodium",
+            6: "fats",
+            7: "price",
+        }
+        column = columns.get(sub_sentence)
 
-        if sub_sentence == 1:
-            nutritional = "carbohydrates"
+        if column:
+            sql = f"SELECT SUM({column}) FROM plates WHERE type = ?"
+            cursor.execute(sql, (food_type,))
+            return cursor.fetchone()[0]
 
-        elif sub_sentence == 2:
-            nutritional = "sugar"
+        return None
 
-        elif sub_sentence == 3:
-            nutritional = "calories"
 
-        cursor.execute(sql, (nutritional, sub_type))
+def percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, food_time, sub_sentence):
+
+    result = []
+    if food_time == 1:
+        breakfast1 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 1, -1, 2, sub_sentence)
+        breakfast4 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 4, -1, 2, sub_sentence)
+        breakfast_total = breakfast1 + breakfast4
+        result.append(breakfast_total)
+        breakfast1_percent = breakfast1 / breakfast_total
+        result.append(breakfast1_percent)
+        breakfast4_percent = breakfast4 / breakfast_total
+        result.append(breakfast4_percent)
+        print(f"PORCENTAJE PRINCIPAL DESAYUNO = {breakfast1_percent}")
+        print(f"PORCENTAJE BEBIDA DESAYUNO = {breakfast4_percent}")
+
+    elif food_time == 2:
+        lunch2 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, -1, 2, sub_sentence)
+        lunch3 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 3, -1, 2, sub_sentence)
+        lunch4 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 4, -1, 2, sub_sentence)
+        lunch5 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 5, -1, 2, sub_sentence)
+        lunch_total = lunch2 + lunch3 + lunch4 + lunch5
+        result.append(lunch_total)
+        lunch2_percent = lunch2 / lunch_total
+        result.append(lunch2_percent)
+        lunch3_percent = lunch3 / lunch_total
+        result.append(lunch3_percent)
+        lunch4_percent = lunch4 / lunch_total
+        result.append(lunch4_percent)
+        lunch5_percent = lunch5 / lunch_total
+        result.append(lunch5_percent)
+        print(f"\nPORCENTAJE PRINCIPAL ALMUERZO: {lunch2_percent}")
+        print(f"PORCENTAJE SECUNDARIO ALMUERZO: {lunch3_percent}")
+        print(f"PORCENTAJE BEBIDA ALMUERZO: {lunch4_percent}")
+        print(f"PORCENTAJE POSTRE ALMUERZO: {lunch5_percent}")
+
+    elif food_time == 3:
+        dinner2 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, -1, 2, sub_sentence)
+        dinner4 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 4, -1, 2, sub_sentence)
+        dinner_total = dinner2 + dinner4
+        result.append(dinner_total)
+        dinner2_percent = dinner2 / dinner_total
+        result.append(dinner2_percent)
+        dinner4_percent = dinner4 / dinner_total
+        result.append(dinner4_percent)
+        print(f"\nPORCENTAJE PRINCIPAL CENA = {dinner2_percent}")
+        print(f"PORCENTAJE BEBIDA CENA = {dinner4_percent}")
+
+    return result
+
+
+def percents_generator_day(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, sub_sentence):
+
+    solution = []
+    breakfast_total = percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 1, sub_sentence)[0]
+    lunch_total = percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, sub_sentence)[0]
+    dinner_total = percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 3, sub_sentence)[0]
+    total = breakfast_total + lunch_total + dinner_total
+
+    breakfast_percent = breakfast_total / total
+    solution.append(breakfast_percent)
+    lunch_percent = lunch_total / total
+    solution.append(lunch_percent)
+    dinner_percent = dinner_total / total
+    solution.append(dinner_percent)
+
+    print(f"\nPORCENTAJE DEL DÍA EN DESAYUNO = {breakfast_percent}")
+    print(f"PORCENTAJE DEL DÍA EN ALMUERZO = {lunch_percent}")
+    print(f"PORCENTAJE DEL DÍA EN CENA: {dinner_percent}")
+    return solution
 
 
 def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, protein, salt, fat, budget):
 
     print("\n----------DESAYUNO--------------")
-    valid = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 3)
+    valid = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 2, 1, -1)
     print(f'\nSentencia de desayuno: {valid}')
 
     if valid:
@@ -66,24 +140,49 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
 def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein, salt, fat, budget):
 
     print("\n--------------ALMUERZO-------------------")
-    print("PRINCIPAL:")
-    mains = sql_sentences(cursor, [0.4 * carbohydrates[0], 0.4 * carbohydrates[1]], [0.4 * sugar[0], 0.4 * sugar[1]],
-                          [0.4 * energy[0], 0.4 * energy[1]], [0.4 * protein[0], 0.4 * protein[1]], [0.4 * salt[0], 0.4 * salt[1]],
-                          [0.4 * fat[0], 0.4 * fat[1]], budget, 2, 3)
-    print("SECUNDARIO")
-    sides = sql_sentences(cursor, [0.4 * carbohydrates[0], 0.4 * carbohydrates[1]], [0.4 * sugar[0], 0.4 * sugar[1]],
-                          [0.4 * energy[0], 0.4 * energy[1]], [0.4 * protein[0], 0.4 * protein[1]], [0.4 * salt[0], 0.4 * salt[1]],
-                          [0.4 * fat[0], 0.4 * fat[1]], budget, 3, 2)
-    print("BEBIDA")
-    drinks = sql_sentences(cursor, [0, carbohydrates[1]], [0, sugar[1]], [0, energy[1]], [0, protein[1]], [0, salt[1]], [0, fat[1]], budget, 4, 1)
-    print("POSTRE")
-    desserts = sql_sentences(cursor, [0.2 * carbohydrates[0], 0.2 * carbohydrates[1]], [0.2 * sugar[0], 0.2 * sugar[1]],
-                          [0.2 * energy[0], 0.2 * energy[1]], [0.2 * protein[0], 0.2 * protein[1]], [0.2 * salt[0], 0.2 * salt[1]],
-                          [0.2 * fat[0], 0.2 * fat[1]], budget, 5, 1)
+    nutritional_percents = []
+    for i in range(1, 8):
+        nutritional_percents.append(percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, i)[1:])
+    print(nutritional_percents)
+    print("\nCARBOHIDRATOS - AZUCARES - CALORIAS - PROTEINAS - SALES - GRASAS - PRECIO")
+    print("\nPRINCIPAL:")
+    mains = sql_sentences(cursor, [nutritional_percents[0][0] * carbohydrates[0], nutritional_percents[0][0] * carbohydrates[1]],
+                          [nutritional_percents[1][0] * sugar[0], nutritional_percents[1][0] * sugar[1]],
+                          [nutritional_percents[2][0] * energy[0], nutritional_percents[2][0] * energy[1]],
+                          [nutritional_percents[3][0] * protein[0], nutritional_percents[3][0] * protein[1]],
+                          [nutritional_percents[4][0] * salt[0], nutritional_percents[4][0] * salt[1]],
+                          [nutritional_percents[5][0] * fat[0], nutritional_percents[5][0] * fat[1]],
+                          nutritional_percents[6][0] * budget, 2, 2, 1, -1)
+    print(f'tipo2 almuerzo: {mains}')
 
-    print(f'\ntipo2 almuerzo: {mains}')
+    print("\nSECUNDARIO:")
+    sides = sql_sentences(cursor, [nutritional_percents[0][1] * carbohydrates[0], nutritional_percents[0][1] * carbohydrates[1]],
+                          [nutritional_percents[1][1] * sugar[0], nutritional_percents[1][1] * sugar[1]],
+                          [nutritional_percents[2][1] * energy[0], nutritional_percents[2][1] * energy[1]],
+                          [nutritional_percents[3][1] * protein[0], nutritional_percents[3][1] * protein[1]],
+                          [nutritional_percents[4][1] * salt[0], nutritional_percents[4][1] * salt[1]],
+                          [nutritional_percents[5][1] * fat[0], nutritional_percents[5][1] * fat[1]],
+                          nutritional_percents[6][1] * budget, 2, 2, 1, -1)
     print(f'tipo3 almuerzo: {sides}')
+
+    print("\nBEBIDA:")
+    drinks = sql_sentences(cursor, [nutritional_percents[0][2] * carbohydrates[0], nutritional_percents[0][2] * carbohydrates[1]],
+                          [nutritional_percents[1][2] * sugar[0], nutritional_percents[1][2] * sugar[1]],
+                          [nutritional_percents[2][2] * energy[0], nutritional_percents[2][2] * energy[1]],
+                          [nutritional_percents[3][2] * protein[0], nutritional_percents[3][2] * protein[1]],
+                          [nutritional_percents[4][2] * salt[0], nutritional_percents[4][2] * salt[1]],
+                          [nutritional_percents[5][2] * fat[0], nutritional_percents[5][2] * fat[1]],
+                          nutritional_percents[6][2] * budget, 2, 1, 1, -1)
     print(f'tipo4 almuerzo: {drinks}')
+
+    print("\nPOSTRE:")
+    desserts = sql_sentences(cursor, [nutritional_percents[0][3] * carbohydrates[0], nutritional_percents[0][3] * carbohydrates[1]],
+                          [nutritional_percents[1][3] * sugar[0], nutritional_percents[1][3] * sugar[1]],
+                          [nutritional_percents[2][3] * energy[0], nutritional_percents[2][3] * energy[1]],
+                          [nutritional_percents[3][3] * protein[0], nutritional_percents[3][3] * protein[1]],
+                          [nutritional_percents[4][3] * salt[0], nutritional_percents[4][3] * salt[1]],
+                          [nutritional_percents[5][3] * fat[0], nutritional_percents[5][3] * fat[1]],
+                          nutritional_percents[6][3] * budget, 2, 1, 1, -1)
     print(f'tipo5 almuerzo: {desserts}')
 
     valid_combinations = []
@@ -128,9 +227,9 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
 
     print("\n---------CENA----------")
     print("PRINCIPAL")
-    mains = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, 3)
+    mains = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, 3, 1, -1)
     print("SECUNDARIO")
-    drinks = sql_sentences(cursor, [0, carbohydrates[1]], [0, sugar[1]], [0, energy[1]], [0, protein[1]], [0, salt[1]], [0, fat[1]], budget, 4, 1)
+    drinks = sql_sentences(cursor, [0, carbohydrates[1]], [0, sugar[1]], [0, energy[1]], [0, protein[1]], [0, salt[1]], [0, fat[1]], budget, 4, 1, 1, -1)
 
     print(f'\ntipo2 cena: {mains}')
     print(f'tipo4 cena: {drinks}')
@@ -318,7 +417,7 @@ def obtener_valores(cursor):
     return 1
 
 
-def resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat, budget, person_type, selected_breakfasts, selected_lunches, selected_dinners):
+def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, person_type, selected_breakfasts, selected_lunches, selected_dinners):
     db_path = os.path.join('../../FoodDbManagement', 'plates.db')
 
     conn = sqlite3.connect(db_path)
@@ -329,10 +428,17 @@ def resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat, budget, per
     obtener_valores(cursor)
     print("\n")
 
-    print("\n CARBOHIDRATOS - AZUCARES - CALORIAS - PROTEINAS - SALES - GRASAS - PRECIO")
+    print("\n")
+    a = percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1)
+    print(a)
+    print("\n")
+
+    print("\nGENERADOR DÍA")
+    a = percents_generator_day(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 1)
+    print(a)
+    print("\n")
+
     print(f"\nValores de entrada resolver_dieta: {carbohydrates, sugar, energy, protein, salt, fat, budget}")
-
-
 
     breakfast = obtain_breakfast(cursor, selected_breakfasts,
                                  [carbohydrates[0] * 0.55, carbohydrates[1] * 0.55],
