@@ -1,5 +1,6 @@
 package com.example.diet_app
 
+import DatabaseManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -45,8 +46,22 @@ import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.ui.theme.DietappTheme
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var dbManager: DatabaseManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        dbManager = DatabaseManager(this)
+
+        // Prueba abriendo la base de datos
+        try {
+            val database = dbManager.openDatabase()
+            Log.d("MainActivity", "Base de datos abierta correctamente: $database")
+            database.close()
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
+        }
+
         setContent {
             DietApp()
         }
