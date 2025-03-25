@@ -58,7 +58,7 @@ class DatabaseManager(private val context: Context) {
 
     // Autenticar un usuario con email y contraseña
     fun authenticateUser(email: String, password: String): Boolean {
-        val query = "SELECT * FROM Users WHERE email = ? AND password = ?"
+        val query = "SELECT * FROM users WHERE email = ? AND password = ?"
         var isAuthenticated = false
 
         try {
@@ -69,10 +69,49 @@ class DatabaseManager(private val context: Context) {
             }
             cursor.close()
             database.close()
+            Log.d("DatabaseManager", "Autenticación exitosa: $isAuthenticated")
         } catch (e: Exception) {
             Log.e("DatabaseManager", "Error en la autenticación: ${e.message}")
         }
 
         return isAuthenticated
     }
+
+    fun registerUser(name: String, email: String, password: String): Boolean {
+        var isRegistered = false
+        val query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
+
+        try {
+            // Abre la base de datos en modo escritura
+            val database = SQLiteDatabase.openDatabase(databasePath, null, SQLiteDatabase.OPEN_READWRITE)
+            database.execSQL(query, arrayOf(name, email, password)) // Ejecuta la inserción
+            database.close() // Cierra la base de datos
+            isRegistered = true
+        } catch (e: Exception) {
+            Log.e("DatabaseManager", "Error al registrar el usuario: ${e.message}")
+        }
+
+        return isRegistered
+    }
+
+    fun getName(email: String): String? {
+        val query = "SELECT name FROM users WHERE email = ?"
+        var name: String? = null
+
+        try {
+            val database = SQLiteDatabase.openDatabase(databasePath, null, SQLiteDatabase.OPEN_READWRITE)
+            val cursor: Cursor = database.rawQuery(query, arrayOf(email))
+            if (cursor.moveToFirst()) {
+                name = cursor.getString(cursor.getColumnIndexOrThrow("name")) // Obtén el nombre
+            }
+            cursor.close()
+            database.close()
+        } catch (e: Exception) {
+            Log.e("DatabaseManager", "Error al obtener el nombre: ${e.message}")
+        }
+
+        return name // Devuelve el nombre o null si no se encontró el usuario
+    }
+
+
 }

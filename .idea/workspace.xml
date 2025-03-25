@@ -16,9 +16,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="intento de DatabaseManager para SQL">
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="aparente conexion a SQL">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/assets/DietApp.db" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/DietApp.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/assets/DietApp.db" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/DietApp.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/DatabaseManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/DatabaseManager.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
     </list>
@@ -136,7 +136,7 @@
     "com.google.services.firebase.aqiPopupShown": "true",
     "git-widget-placeholder": "#1 on develop",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/assets",
+    "last_opened_file_path": "C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/main/assets",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -148,6 +148,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\assets" />
       <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\assets" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -249,7 +250,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742930069340</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="aparente conexion a SQL">
+      <option name="closed" value="true" />
+      <created>1742932327948</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1742932327948</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -267,7 +276,8 @@
     <MESSAGE value="Base de datos conectada" />
     <MESSAGE value="develop con src" />
     <MESSAGE value="intento de DatabaseManager para SQL" />
-    <option name="LAST_COMMIT_MESSAGE" value="intento de DatabaseManager para SQL" />
+    <MESSAGE value="aparente conexion a SQL" />
+    <option name="LAST_COMMIT_MESSAGE" value="aparente conexion a SQL" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

@@ -62,6 +62,42 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
 
+        // Prueba de autenticación
+        var email = "gloton@gloton"
+        var password = "gloton"
+        val isAuthenticated = dbManager.authenticateUser(email, password)
+
+        if (isAuthenticated) {
+            Log.d("MainActivity", "Usuario autenticado correctamente.")
+        } else {
+            Log.e("MainActivity", "Error en la autenticación.")
+        }
+
+        val email2 = "gloton@gloton"
+        val name = dbManager.getName(email)
+
+        if (name != null) {
+            Log.d("MainActivity", "El nombre del usuario es: $name")
+        } else {
+            Log.e("MainActivity", "No se encontró el nombre para el usuario con correo: $email2")
+        }
+
+        val email4 = "gloton2@gloton2.com"
+        val name4 = dbManager.getName(email4)
+        Log.d("MainActivity", "El nombre del usuario es: $name4")
+
+        val email3 = "kasbfvljabfb"
+        val password3 = "gloton"
+        val name2 = "gloton2"
+
+        val isRegistered = dbManager.registerUser(name2, email3, password3)
+        if (isRegistered) {
+            Log.d("MainActivity", "Usuario registrado con éxito.")
+        } else {
+            Log.e("MainActivity", "Error al registrar el usuario.")
+        }
+
+
         setContent {
             DietApp()
         }
