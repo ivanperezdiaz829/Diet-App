@@ -25,52 +25,81 @@ import androidx.compose.ui.unit.dp
 import com.example.diet_app.ui.theme.DietappTheme
 import androidx.compose.material3.Button
 import android.util.Log
-import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import com.google.firebase.firestore.FirebaseFirestore
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.io.IOException
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.diet_app.ui.theme.DietappTheme
 
 class MainActivity : ComponentActivity() {
-
-    private val authHandler = AuthHandler()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            DietForm()
+            DietApp()
         }
+        checkDatabaseConnection()
+        fetchAllUsers()
+    }
+}
 
-        // Verificar usuario actual y manejar autenticación
-        if (!authHandler.usuarioActual()) {
-            Log.d("AuthTest", "Usuario autenticado. Probando conexión a la base de datos...")
-            authHandler.checkDatabaseConnection()
-            authHandler.fetchAllUsers()
-        } else {
-            Log.d("AuthTest", "No hay usuario autenticado. Intentando iniciar sesión...")
+@Composable
+fun DietApp() {
+    // Usamos NavController para manejar la navegación
+    val navController = rememberNavController()
 
-            val email = "gloton3@gloton3.com"
-            val password = "gloton3"
-
-            authHandler.iniciarSesion(email, password) { success, message ->
-                if (success) {
-                    Log.d("AuthTest", "Inicio de sesión exitoso.")
-                    authHandler.checkDatabaseConnection()
-                    authHandler.fetchAllUsers()
-                } else {
-                    Log.e("AuthTest", "Error de inicio de sesión: $message. Registrando usuario...")
-
-                    authHandler.registrarUsuario(email, password) { regSuccess, regMessage ->
-                        if (regSuccess) {
-                            Log.d("AuthTest", "Registro exitoso. Iniciando sesión de nuevo...")
-                            authHandler.iniciarSesion(email, password) { _, _ -> }
-                        } else {
-                            Log.e("AuthTest", "Error en el registro: $regMessage")
-                        }
-                    }
-                }
-            }
+    // Configuración de la navegación entre pantallas
+    NavHost(navController = navController, startDestination = "welcome") {
+        composable("welcome") {
+            WelcomeScreen(navController)  // Pantalla de bienvenida
+        }
+        composable("diet_form") {
+            DietForm()  // Pantalla del formulario de la dieta
         }
     }
 }
 
+@Composable
+fun WelcomeScreen(navController: NavController) {
+    // Pantalla de bienvenida con fondo verde y mensaje
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF8BC34A)), // Fondo verde
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "¡Bienvenido a la aplicación de dieta!",
+                style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
+                modifier = Modifier.padding(16.dp)
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = {
+                    // Navegar a la pantalla del formulario de la dieta
+                    navController.navigate("diet_form")
+                },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Ir al formulario")
+            }
+        }
+    }
+}
 
 @Composable
 fun DietForm() {
@@ -80,6 +109,7 @@ fun DietForm() {
     var maxFat by remember { mutableStateOf("") }
     var minSalt by remember { mutableStateOf("") }
     var maxSalt by remember { mutableStateOf("") }
+    var result by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "Configurar valores nutricionales", style = MaterialTheme.typography.titleLarge)
@@ -94,11 +124,25 @@ fun DietForm() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            // Aquí puedes procesar los valores ingresados
-            println("Min Kcal: $minCalories, Max Kcal: $maxCalories")
+            // Convertir todos los valores a Double, ignorando los que no sean válidos
+            val numericValues = listOf(minCalories, maxCalories, minFat, maxFat, minSalt, maxSalt)
+                .map { it.replace(",", ".") }  // Asegura el formato correcto de decimales
+                .mapNotNull { it.toDoubleOrNull() }  // Convierte String a Double si es válido
+
+            Log.d("DietForm", "Valores convertidos a Double: $numericValues")
+
+            if (numericValues.size == 6) { // Asegurar que todos los valores sean numéricos
+                sendDataToServer(numericValues) { response ->
+                    result = response
+                }
+            } else {
+                result = "Error: Ingresa valores numéricos válidos"
+            }
         }) {
             Text("Generar dieta")
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Resultado: $result", style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -110,4 +154,84 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
     )
+}
+
+fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/calculate"
+
+    val json = JSONObject()
+    json.put("values", values)
+
+    Log.d("DietForm", "Enviando valores al servidor: $values")
+
+    val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            onResult("Error: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                Log.d("DietForm", "Respuesta del servidor: $responseBody")
+                val jsonResponse = JSONObject(responseBody)
+                val total = jsonResponse.optDouble("total", 0.0)
+                onResult("Total: $total")
+            }
+        }
+    })
+}
+
+fun checkDatabaseConnection() {
+    val db = FirebaseFirestore.getInstance()
+
+    // Intenta realizar una consulta simple a la base de datos
+    db.collection("testConnection")
+        .get()
+        .addOnSuccessListener { documents ->
+            if (documents.isEmpty) {
+                Log.d("FirestoreConnection", "Conexión exitosa: la colección está vacía o no existe.")
+            } else {
+                Log.d("FirestoreConnection", "Conexión exitosa: datos encontrados en la colección.")
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.e("FirestoreConnection", "Error al conectar con la base de datos: ${exception.message}")
+        }
+}
+
+fun fetchAllUsers() {
+    try {
+        val db = FirebaseFirestore.getInstance()
+
+        // Accede a la colección "users"
+        db.collection("users")
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    Log.d("FirestoreUsers", "No se encontraron usuarios en la base de datos.")
+                } else {
+                    for (document in documents) {
+                        // Muestra los datos de cada documento (usuario)
+                        Log.d(
+                            "FirestoreUsers",
+                            "Usuario ID: ${document.id}, Datos: ${document.data}"
+                        )
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirestoreUsers", "Error al obtener usuarios: ${exception.message}")
+            }
+    } catch (e: SecurityException) {
+        Log.e("MyAppTag", "SecurityException: ${e.message}", e) // Log with the exception details
+    } catch (e: Exception){
+        Log.e("MyAppTag", "General exception", e) //Log general exception
+    }
 }
