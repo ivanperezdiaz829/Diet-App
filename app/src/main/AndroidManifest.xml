@@ -19,10 +19,15 @@
             android:theme="@style/Theme.Dietapp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <!-- Declaración de AuthActivity -->
+        <activity
+            android:name=".AuthActivity"
+            android:exported="true"
+            android:label="Autenticación"
+            android:theme="@style/Theme.Dietapp" />
+    </application>
 </manifest>
