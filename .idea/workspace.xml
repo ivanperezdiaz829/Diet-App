@@ -16,8 +16,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="develop con src">
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="intento de DatabaseManager para SQL">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/assets/DietApp.db" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/DietApp.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/DatabaseManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/DatabaseManager.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -28,7 +30,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Portatil\.android\avd\Pixel_3a_API_34_extension_level_7_x86_64.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Asus\.android\avd\Medium_Phone_API_35.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -76,12 +78,40 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="resourceFile" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Gab-branch" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Cherly5&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/ivanperezdiaz829/Diet-App",
+    "accountId": "e3078dab-b2be-4b46-a5df-6683d17757c3"
+  },
+  "recentNewPullRequestHead": {
+    "server": {
+      "useHttp": false,
+      "host": "github.com",
+      "port": null,
+      "suffix": null
+    },
+    "owner": "ivanperezdiaz829",
+    "repository": "Diet-App"
+  }
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -94,25 +124,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Android App.app.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "com.google.services.firebase.aqiPopupShown": "true",
+    "git-widget-placeholder": "#1 on develop",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/assets",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
-}</component>
+}]]></component>
   <component name="PsdUISettings">
     <option name="LAST_EDITED_BUILD_TYPE" value="release" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\assets" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main" />
+      <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\java" />
+    </key>
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.example.diet_app" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
@@ -132,6 +176,7 @@
       <option name="MODE" value="default_activity" />
       <option name="RESTORE_ENABLED" value="false" />
       <option name="RESTORE_FILE" value="" />
+      <option name="RESTORE_FRESH_INSTALL_ONLY" value="false" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -196,6 +241,15 @@
       <option name="presentableId" value="Default" />
       <updated>1741630755006</updated>
     </task>
+    <task id="LOCAL-00001" summary="intento de DatabaseManager para SQL">
+      <option name="closed" value="true" />
+      <created>1742930069340</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1742930069340</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -212,7 +266,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Base de datos conectada" />
     <MESSAGE value="develop con src" />
-    <option name="LAST_COMMIT_MESSAGE" value="develop con src" />
+    <MESSAGE value="intento de DatabaseManager para SQL" />
+    <option name="LAST_COMMIT_MESSAGE" value="intento de DatabaseManager para SQL" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

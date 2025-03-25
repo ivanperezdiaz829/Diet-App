@@ -42,11 +42,26 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.diet_app.DatabaseManager
 import com.example.diet_app.ui.theme.DietappTheme
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var dbManager: DatabaseManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        dbManager = DatabaseManager(this)
+
+        // Prueba abriendo la base de datos
+        try {
+            val database = dbManager.openDatabase()
+            Log.d("MainActivity", "Base de datos abierta correctamente: $database")
+            database.close()
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
+        }
+
         setContent {
             DietApp()
         }
