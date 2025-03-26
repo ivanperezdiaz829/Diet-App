@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 
@@ -112,6 +113,34 @@ class DatabaseManager(private val context: Context) {
 
         return name // Devuelve el nombre o null si no se encontró el usuario
     }
+
+    fun overwriteOriginalDatabase(destinationPath: String): Boolean {
+        val modifiedDatabasePath = databasePath // Ruta de la base de datos modificada en almacenamiento interno
+
+        return try {
+            val modifiedDbFile = File(modifiedDatabasePath)
+            val destinationFile = File(destinationPath)
+
+            // Copiar la base de datos modificada al destino
+            FileInputStream(modifiedDbFile).use { inputStream ->
+                FileOutputStream(destinationFile).use { outputStream ->
+                    val buffer = ByteArray(1024)
+                    var length: Int
+                    while (inputStream.read(buffer).also { length = it } > 0) {
+                        outputStream.write(buffer, 0, length)
+                    }
+                    outputStream.flush()
+                }
+            }
+
+            Log.d("DatabaseManager", "Base de datos sobrescrita en: $destinationPath")
+            true
+        } catch (e: IOException) {
+            Log.e("DatabaseManager", "Error al sobrescribir la base de datos: ${e.message}")
+            false
+        }
+    }
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.diet_app
 
+import android.R.attr.height
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,6 +33,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontVariation.weight
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -97,6 +99,15 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al registrar el usuario.")
         }
 
+        val destinationPath = "C:\\Users\\Asus\\AndroidStudioProjects\\Diet-App\\FoodDbManagement\\DietApp.db" // Ruta personalizada fuera del APK
+        val isOverwritten = dbManager.overwriteOriginalDatabase(destinationPath)
+
+        if (isOverwritten) {
+            Log.d("MainActivity", "Base de datos sobrescrita correctamente en: $destinationPath")
+        } else {
+            Log.e("MainActivity", "Error al sobrescribir la base de datos.")
+        }
+
 
         setContent {
             DietApp()
@@ -159,6 +170,10 @@ fun WelcomeScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { navController.navigate("basal_metabolism") }) {
                 Text("Calcular Gasto Energético Basal")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {navController.navigate("maintenance_calories")}) {
+                Text("Calcular Calorías de Mantenimiento")
             }
         }
     }
@@ -280,7 +295,7 @@ fun MaintenanceCaloriesScreen() {
     var height by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
-    var physicalActivityLevel by remember { mutableStateOd("") }
+    var physicalActivityLevel by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
     Column(
             modifier = Modifier
@@ -306,17 +321,17 @@ fun MaintenanceCaloriesScreen() {
     }
 }
 
-fun calculateMaintenanceCalories(weight: String, height: String, age: String, gender: String, physicalActivityLevel: String): String) {            Sex.MALE -> 66 + (13.7 * weight) + (5 * height) - (6.8 * age)
+fun calculateMaintenanceCalories(weight: String, height: String, age: String, gender: String, physicalActivityLevel: String): String {
     val w = weight.toDoubleOrNull() ?: return "Peso no válido"
     val h = height.toDoubleOrNull() ?: return "Altura no válida"
     val a = age.toDoubleOrNull() ?: return "Edad no válida"
     val pal = physicalActivityLevel.toDoubleOrNull() ?: return "Nivel de actividad física no válido"
     val physicalActivityCoefficients = arrayOf(1.2, 1.375,1.55, 1.725, 1.9)
     return if (gender.equals("M", ignoreCase = true)) {
-        val mc = physicalActivityCoefficients[pal] * (66 + (13.7 * w) + (5 * h) - (6.8 * a))
+        val mc = physicalActivityCoefficients[pal.toInt()] * (66 + (13.7 * w) + (5 * h) - (6.8 * a))
         "Calorías de mantenimiento: ${String.format("%.2f", mc)} kcal/día"
     } else if (gender.equals("F", ignoreCase = true)) {
-        val mc = physicalActivityCoefficients[pal] * (665 + (9,6 * w) + (1.8 * h) - (4.7 * a))
+        val mc = physicalActivityCoefficients[pal.toInt()] * (665 + (9.6 * w) + (1.8 * h) - (4.7 * a))
         "Calorías de mantenimiento: ${String.format("%.2f", mc)} kcal/día"
     } else {
         "Género no válido"

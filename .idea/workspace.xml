@@ -16,8 +16,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="base de datos interna funciona">
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="conexion a base de datos sql local">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/DatabaseManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/DatabaseManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -263,7 +265,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742935664333</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="conexion a base de datos sql local">
+      <option name="closed" value="true" />
+      <created>1742989368484</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742989368484</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -271,7 +281,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/develop" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -283,7 +305,8 @@
     <MESSAGE value="intento de DatabaseManager para SQL" />
     <MESSAGE value="aparente conexion a SQL" />
     <MESSAGE value="base de datos interna funciona" />
-    <option name="LAST_COMMIT_MESSAGE" value="base de datos interna funciona" />
+    <MESSAGE value="conexion a base de datos sql local" />
+    <option name="LAST_COMMIT_MESSAGE" value="conexion a base de datos sql local" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
