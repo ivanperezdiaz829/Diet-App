@@ -29,7 +29,9 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -46,10 +48,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.DatabaseManager
 import com.example.diet_app.ui.theme.DietappTheme
+import com.google.firebase.firestore.auth.User
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var dbManager: DatabaseManager
+    private lateinit var currentUser: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,53 +68,8 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
 
-        // Prueba de autenticación
-        var email = "gloton@gloton"
-        var password = "gloton"
-        val isAuthenticated = dbManager.authenticateUser(email, password)
-
-        if (isAuthenticated) {
-            Log.d("MainActivity", "Usuario autenticado correctamente.")
-        } else {
-            Log.e("MainActivity", "Error en la autenticación.")
-        }
-
-        email = "gloton@gloton"
-        var name = dbManager.getName(email)
-
-        if (name != null) {
-            Log.d("MainActivity", "El nombre del usuario es: $name")
-        } else {
-            Log.e("MainActivity", "No se encontró el nombre para el usuario con correo: $email")
-        }
-
-        email = "gloton2@gloton2.com"
-        name = dbManager.getName(email)
-        Log.d("MainActivity", "El nombre del usuario es: $name")
-
-        email = "kasbfvljabfb"
-        password = "gloton"
-        name = "gloton2"
-
-        val isRegistered = dbManager.registerUser(name, email, password)
-        if (isRegistered) {
-            Log.d("MainActivity", "Usuario registrado con éxito.")
-        } else {
-            Log.e("MainActivity", "Error al registrar el usuario.")
-        }
-
-        val destinationPath = "C:\\Users\\Asus\\AndroidStudioProjects\\Diet-App\\FoodDbManagement\\DietApp.db" // Ruta personalizada fuera del APK
-        val isOverwritten = dbManager.overwriteOriginalDatabase(destinationPath)
-
-        if (isOverwritten) {
-            Log.d("MainActivity", "Base de datos sobrescrita correctamente en: $destinationPath")
-        } else {
-            Log.e("MainActivity", "Error al sobrescribir la base de datos.")
-        }
-
-
         setContent {
-            DietApp()
+            DietApp("")
         }
         checkDatabaseConnection()
         fetchAllUsers()
@@ -118,14 +77,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun DietApp() {
+fun DietApp(currentUser: String = "") {
     // Usamos NavController para manejar la navegación
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
     NavHost(navController = navController, startDestination = "welcome") {
         composable("welcome") {
-            WelcomeScreen(navController)  // Pantalla de bienvenida
+            WelcomeScreen(navController, currentUser)  // Pantalla de bienvenida
         }
         composable("diet_form") {
             DietForm()  // Pantalla del formulario de la dieta
@@ -140,23 +99,54 @@ fun DietApp() {
 }
 
 @Composable
-fun WelcomeScreen(navController: NavController) {
-    // Pantalla de bienvenida con fondo verde y mensaje
+fun WelcomeScreen(navController: NavController, currentUser: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF8BC34A)), // Fondo verde
         contentAlignment = Alignment.Center
     ) {
+        // Contenido principal de la pantalla
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "¡Bienvenido a la aplicación de dieta!",
-                style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
-                modifier = Modifier.padding(16.dp)
-            )
+            // Si el usuario está autenticado (currentUser no está vacío)
+            if (currentUser.isNotEmpty()) {
+                // Símbolo en la esquina superior izquierda y mensaje de bienvenida
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp), // Margen superior
+                ) {
+                    // Mensaje "Bienvenido gloton" en el centro superior
+                    Text(
+                        text = "¡Bienvenido $currentUser!",
+                        style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
+
+                    // Símbolo en la esquina superior izquierda
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(Color.White, shape = CircleShape)
+                            .align(Alignment.TopStart),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "✓", // Símbolo
+                            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Green)
+                        )
+                    }
+                }
+            } else {
+                Text(
+                    text = "¡Bienvenido a la aplicación de dieta!",
+                    style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = {
@@ -172,12 +162,13 @@ fun WelcomeScreen(navController: NavController) {
                 Text("Calcular Gasto Energético Basal")
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {navController.navigate("maintenance_calories")}) {
+            Button(onClick = { navController.navigate("maintenance_calories") }) {
                 Text("Calcular Calorías de Mantenimiento")
             }
         }
     }
 }
+
 
 @Composable
 fun DietForm() {
