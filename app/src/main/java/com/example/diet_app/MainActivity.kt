@@ -122,6 +122,9 @@ fun DietApp() {
         composable("basal_metabolism") {
             BasalMetabolismScreen()
         }
+        composable("maintenance_calories") {
+            MaintenanceCaloriesScreen()
+        }
     }
 }
 
@@ -266,6 +269,55 @@ fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gen
     } else if (gender.equals("F", ignoreCase = true)) {
         val bmr = 447.593 + (9.247 * w) + (3.098 * h) - (4.330 * a)
         "Gasto Energético Basal: ${String.format("%.2f", bmr)} kcal/día"
+    } else {
+        "Género no válido"
+    }
+}
+
+@Composable
+fun MaintenanceCaloriesScreen() {
+    var weight by remember { mutableStateOf("") }
+    var height by remember { mutableStateOf("") }
+    var age by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf("") }
+    var physicalActivityLevel by remember { mutableStateOd("") }
+    var result by remember { mutableStateOf("") }
+    Column(
+            modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        InputField("Peso (kg)", weight) { weight = it }
+        InputField("Altura (cm)", height) { height = it }
+        InputField("Edad (años)", age) { age = it }
+        InputField("Género (M/F)", gender) { gender = it }
+        InputField("Nivel de actividad física (1/2/3/4/5)", physicalActivityLevel) { physicalActivityLevel = it }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
+            result = calculateMaintenanceCalories(weight, height, age, gender, physicalActivityLevel)
+        }) {
+            Text("Calcular")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = result)
+    }
+}
+
+fun calculateMaintenanceCalories(weight: String, height: String, age: String, gender: String, physicalActivityLevel: String): String) {            Sex.MALE -> 66 + (13.7 * weight) + (5 * height) - (6.8 * age)
+    val w = weight.toDoubleOrNull() ?: return "Peso no válido"
+    val h = height.toDoubleOrNull() ?: return "Altura no válida"
+    val a = age.toDoubleOrNull() ?: return "Edad no válida"
+    val pal = physicalActivityLevel.toDoubleOrNull() ?: return "Nivel de actividad física no válido"
+    val physicalActivityCoefficients = arrayOf(1.2, 1.375,1.55, 1.725, 1.9)
+    return if (gender.equals("M", ignoreCase = true)) {
+        val mc = physicalActivityCoefficients[pal] * (66 + (13.7 * w) + (5 * h) - (6.8 * a))
+        "Calorías de mantenimiento: ${String.format("%.2f", mc)} kcal/día"
+    } else if (gender.equals("F", ignoreCase = true)) {
+        val mc = physicalActivityCoefficients[pal] * (665 + (9,6 * w) + (1.8 * h) - (4.7 * a))
+        "Calorías de mantenimiento: ${String.format("%.2f", mc)} kcal/día"
     } else {
         "Género no válido"
     }
