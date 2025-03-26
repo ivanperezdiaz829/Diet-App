@@ -73,24 +73,24 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error en la autenticación.")
         }
 
-        val email2 = "gloton@gloton"
-        val name = dbManager.getName(email)
+        email = "gloton@gloton"
+        var name = dbManager.getName(email)
 
         if (name != null) {
             Log.d("MainActivity", "El nombre del usuario es: $name")
         } else {
-            Log.e("MainActivity", "No se encontró el nombre para el usuario con correo: $email2")
+            Log.e("MainActivity", "No se encontró el nombre para el usuario con correo: $email")
         }
 
-        val email4 = "gloton2@gloton2.com"
-        val name4 = dbManager.getName(email4)
-        Log.d("MainActivity", "El nombre del usuario es: $name4")
+        email = "gloton2@gloton2.com"
+        name = dbManager.getName(email)
+        Log.d("MainActivity", "El nombre del usuario es: $name")
 
-        val email3 = "kasbfvljabfb"
-        val password3 = "gloton"
-        val name2 = "gloton2"
+        email = "kasbfvljabfb"
+        password = "gloton"
+        name = "gloton2"
 
-        val isRegistered = dbManager.registerUser(name2, email3, password3)
+        val isRegistered = dbManager.registerUser(name, email, password)
         if (isRegistered) {
             Log.d("MainActivity", "Usuario registrado con éxito.")
         } else {
