@@ -14,7 +14,7 @@ def obtain_restrictions():
             carbohydrates.append(float(input("Introduce el mínimo de carbohidratos (g): ")))
         else:
             carbohydrates.append(float(input("Introduce el máximo de carbohidratos (g): ")))
-    carbohydrates = [281.25, 406.25]
+    carbohydrates = [0, 406.25]
 
     # Promedio -> [31.5, 62.5]
     for i in range(2):
@@ -46,7 +46,7 @@ def obtain_restrictions():
             salt.append(float(input("Introduce el mínimo de sal (g): ")))
         else:
             salt.append(float(input("Introduce el máximo de sal (g): ")))
-    salt = [0, 500]
+    salt = [0, 100000000000000]
 
     # Promedio -> [55.56, 97.22]
     for i in range(2):
@@ -54,9 +54,10 @@ def obtain_restrictions():
             fat.append(float(input("Introduce el mínimo de grasa (g): ")))
         else:
             fat.append(float(input("Introduce el máximo de grasa (g): ")))
-    fat = [55.56, 97.22]
+    fat = [0, 10000]
 
     budget = float(input("Introduce el presupuesto máximo (euros): "))
+    budget = 2000.0
 
     """
     print(f'\nPresupuesto máximo (euros): {budget}')
@@ -74,7 +75,7 @@ def obtain_restrictions():
 carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
 
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
-solution = resolver_dieta(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, set(), set(), set())
+solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, set(), set(), set())
 
 # Mostrar la mejor solución
 if solution:
