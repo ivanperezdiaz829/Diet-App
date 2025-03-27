@@ -28,7 +28,7 @@ def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budg
 
         else:
             sql = ("SELECT * FROM plates WHERE type == ? AND "
-                   "carbohydrates  BETWEEN ? AND ? "
+                   "carbohydrates BETWEEN ? AND ? "
                    "AND sugar BETWEEN ? AND ? "
                    "AND calories BETWEEN ? AND ? "
                    "AND protein BETWEEN ? AND ? "
@@ -70,15 +70,15 @@ def percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt,
 
     result = []
     if food_time == 1:
-        breakfast_total = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 1, -1, 2, sub_sentence)
+        breakfast_total = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 1, -1, 2, sub_sentence) * 2
         print(breakfast_total)
         result.append(breakfast_total)
         breakfast1_percent = 1.0
         result.append(breakfast1_percent)
 
     elif food_time == 2:
-        lunch2 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, -1, 2, sub_sentence)
-        lunch3 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 3, -1, 2, sub_sentence)
+        lunch2 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, -1, 2, sub_sentence) * 2
+        lunch3 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 3, -1, 2, sub_sentence) * 2
         lunch5 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 5, -1, 2, sub_sentence)
         lunch_total = lunch2 + lunch3 + lunch5
         result.append(lunch_total)
@@ -90,7 +90,7 @@ def percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt,
         result.append(lunch5_percent)
 
     elif food_time == 3:
-        dinner_total = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, -1, 2, sub_sentence)
+        dinner_total = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, -1, 2, sub_sentence) * 2
         result.append(dinner_total)
         dinner2_percent = 1.0
         result.append(dinner2_percent)
