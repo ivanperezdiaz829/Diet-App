@@ -41,7 +41,7 @@ def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budg
                                  0, sugar[1],
                                  energy[0], energy[1],
                                  protein[0], protein[1],
-                                 0, salt[1],
+                                 salt[0], salt[1],
                                  fat[0], fat[1],
                                  budget))
             return cursor.fetchall()
@@ -136,7 +136,7 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
     if breakfasts and drinks:
         for breakfast in breakfasts:
             for drink in drinks:
-                combination = (breakfast, drink[1])
+                combination = (breakfast[1], drink[1])
 
                 if combination in selected_breakfasts:
                     continue
@@ -156,7 +156,7 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
                         salt[0] <= combined_salt <= salt[1] and
                         fat[0] <= combined_fat <= fat[1] and
                         combined_price <= budget):
-                    valid_combinations.append((breakfast, drink[0]))
+                    valid_combinations.append((breakfast[0], drink[0]))
 
             if valid_combinations:
                 selected_combination = random.choice(valid_combinations)
@@ -261,15 +261,16 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
 
 
 def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protein, salt, fat, budget):
-
-    print("\n---------CENA----------")
-    print("PRINCIPAL")
-    mains = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, 3, 1, -1)
-    print("SECUNDARIO")
-    drinks = sql_sentences(cursor, [0, carbohydrates[1]], [0, sugar[1]], [0, energy[1]], [0, protein[1]], [0, salt[1]], [0, fat[1]], budget, 4, 1, 1, -1)
-
-    print(f'\ntipo2 cena: {mains}')
-    print(f'tipo4 cena: {drinks}')
+    print("\n----------CENA--------------")
+    print(f"Valores del cena: {selected_dinners, carbohydrates, sugar, energy, protein, salt, fat, budget}")
+    mains = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, 2, 1, -1)
+    drinks = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 4, 0, 1, -1)
+    print(f'\nPRINCIPAL:')
+    for i in range(len(mains)):
+        print(f"breakfast: {mains[i]}")
+    print(f'\nBEBIDA:')
+    for i in range(len(drinks)):
+        print(f"drink: {drinks[i]}")
 
     valid_combinations = []
 
@@ -281,13 +282,13 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
                 if combination in selected_dinners:
                     continue
 
-                combined_carbs = main[2] + drink[2]
-                combined_sugar = main[5] + drink[2]
-                combined_energy = main[1] + drink[1]
-                combined_protein = main[3] + drink[3]
-                combined_salt = main[6] + drink[6]
-                combined_fat = main[4] + drink[4]
-                combined_price = main[7] + drink[7]
+                combined_carbs = drink[2] + main[2]
+                combined_sugar = drink[5] + main[5]
+                combined_energy = drink[1] + main[1]
+                combined_protein = drink[3] + main[3]
+                combined_salt = drink[6] + main[6]
+                combined_fat = drink[4] + main[4]
+                combined_price = drink[7] + main[7]
 
                 if (carbohydrates[0] <= combined_carbs <= carbohydrates[1] and
                         sugar[0] <= combined_sugar <= sugar[1] and
@@ -296,14 +297,12 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
                         salt[0] <= combined_salt <= salt[1] and
                         fat[0] <= combined_fat <= fat[1] and
                         combined_price <= budget):
-
                     valid_combinations.append((main[0], drink[0]))
 
-    print(valid_combinations)
-    if valid_combinations:
-        selected_dinner = random.choice(valid_combinations)
-        selected_dinners.add(selected_dinner)
-        return selected_dinner
+            if valid_combinations:
+                selected_combination = random.choice(valid_combinations)
+                selected_dinners.add(selected_combination)
+                return selected_combination
 
     return None
 

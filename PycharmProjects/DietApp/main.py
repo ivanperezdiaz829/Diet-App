@@ -46,7 +46,7 @@ def obtain_restrictions():
             salt.append(float(input("Introduce el mínimo de sal (g): ")))
         else:
             salt.append(float(input("Introduce el máximo de sal (g): ")))
-    salt = [0, 100000000000000]
+    salt = [0, 10000]
 
     # Promedio -> [55.56, 97.22]
     for i in range(2):
