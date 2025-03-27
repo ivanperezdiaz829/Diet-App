@@ -1,0 +1,176 @@
+nombre_comida,calorias,carbohidratos,proteinas,grasas,azucar,sodio,precio,tipo,Apto_Veganos,Apto_Vegetarianos,Apto_Celiacos
+Avena con frutas,300,50,10,5,20,10,2.5,1,1,1,0
+Tostadas con aguacate,250,30,6,10,3,150,3.0,1,1,1,0
+Yogur con granola y miel,200,35,8,4,15,50,2.0,1,0,1,0
+Batido de plátano y avena,180,40,5,2,20,20,1.5,1,1,1,1
+Huevos revueltos con espinacas,200,1,15,15,1,150,2.8,1,1,1,1
+Pan integral con mantequilla de maní,350,40,12,16,8,180,2.5,1,1,1,0
+Porridge de quinoa con frutas secas,280,50,7,8,25,10,3.2,1,1,1,1
+Tortitas de avena y plátano,320,60,6,9,30,25,2.0,1,1,1,0
+Batido verde,150,35,3,1,22,10,1.8,1,1,1,1
+Muffin de zanahoria y nueces,340,45,6,15,20,200,2.5,1,1,1,1
+Croissant con mermelada,400,45,5,22,30,300,3.5,1,1,1,0
+Sandwich de pavo y queso,320,30,20,12,4,450,4.0,1,1,1,1
+Cereal integral con leche de almendra,220,40,5,6,18,200,3.0,1,1,1,0
+Chía pudding con fruta fresca,190,25,4,9,15,5,2.0,1,1,1,1
+Galletas de avena y pasas,300,45,6,10,25,150,2.8,1,1,1,0
+Tortilla de vegetales,250,5,18,12,3,350,3.2,2,1,1,0
+Smoothie de frutos rojos,130,30,2,1,20,5,1.5,1,1,1,0
+Panqueques con sirope de arce,450,75,8,10,35,400,3.0,1,1,1,0
+Fruta fresca con yogurt griego,200,35,10,5,25,50,2.0,1,0,1,0
+Gofres con fresas y nata,380,60,6,18,30,150,3.5,1,0,1,0
+Pollo asado con vegetales,400,15,35,15,5,500,6.0,2,0,0,0
+Salmón a la parrilla,450,0,40,25,0,200,8.0,2,0,0,0
+Spaghetti a la boloñesa,600,80,25,20,10,600,7.0,2,0,0,0
+Enchiladas de pollo,550,45,30,25,6,800,7.5,2,0,0,0
+Risotto de hongos,500,70,15,18,7,400,6.5,2,0,0,0
+Paella de mariscos,600,65,35,15,2,800,9.0,2,0,0,0
+Lasagna de carne,700,60,30,35,10,900,8.5,2,0,0,0
+Tacos de pescado,450,35,25,20,3,500,6.0,2,0,0,0
+Chuletas de cerdo con puré de papa,650,50,30,25,2,900,7.5,2,0,0,0
+Pollo al curry con arroz,500,60,30,15,6,700,6.5,2,0,0,0
+Hamburguesa con queso,750,50,40,45,8,1200,9.0,2,0,0,0
+Fajitas de carne,600,45,35,20,5,700,8.0,2,0,0,0
+Pollo teriyaki con arroz,550,65,30,12,15,800,6.5,2,0,0,0
+Guiso de lentejas con chorizo,500,50,25,20,5,1000,5.0,2,0,0,0
+Pollo tikka masala,600,50,35,25,8,800,7.0,2,0,0,0
+Cazuela de mariscos,700,40,50,25,3,900,8.5,2,0,0,0
+Falafel con ensalada,450,40,15,25,5,500,5.5,2,0,0,0
+Camarones al ajillo,400,5,35,25,1,600,8.0,2,0,0,0
+Estofado de res con papas,650,30,45,25,4,800,9.0,2,0,0,0
+Ensalada César con pollo,500,20,40,30,2,700,7.0,2,0,0,0
+Pollo a la parrilla con quinoa,450,35,35,12,3,600,6.0,2,0,0,0
+Tortilla española,500,30,20,30,6,700,5.0,2,0,0,0
+Pollo a la mostaza con papas,550,45,35,20,4,600,6.5,2,0,0,0
+Pechuga de pavo al horno,400,5,40,15,1,300,7.5,2,0,0,0
+Moussaka,600,50,25,30,5,800,8.0,2,1,1,0
+Ensalada mixta,120,10,3,7,5,150,3.0,3,1,1,0
+Patatas bravas,250,30,5,12,1,400,2.5,3,1,1,0
+Brócoli al vapor,50,10,4,0,2,20,1.5,3,1,1,0
+Guacamole con nachos,350,25,6,25,2,500,4.0,3,1,1,0
+Hummus con zanahorias,200,20,6,10,1,150,2.5,3,1,1,0
+Macarrones con queso,450,60,15,20,5,600,3.0,3,1,1,0
+Ensalada de col,150,15,2,10,5,300,1.8,3,1,1,0
+Arroz pilaf,200,40,4,3,1,350,2.0,3,1,1,0
+Garbanzos al curry,250,40,8,6,2,450,2.8,3,1,1,0
+Tostadas de ajo,300,35,7,15,1,400,2.2,3,1,1,0
+Espárragos a la parrilla,100,10,5,5,2,150,3.0,3,1,1,0
+Judías verdes salteadas,80,15,4,2,1,200,2.0,3,1,1,0
+Puré de patatas,200,30,4,10,2,300,2.5,3,1,1,0
+Coles de Bruselas asadas,150,20,5,7,3,250,3.0,3,1,1,0
+Cuscús con vegetales,180,35,6,3,2,200,2.5,3,1,1,0
+Patatas al horno,160,35,4,2,1,300,2.0,3,1,1,0
+Falafel,300,40,10,15,1,350,3.5,3,1,1,0
+Ensalada de quinoa,250,45,8,6,2,300,3.0,3,1,1,0
+Batatas fritas,300,50,4,12,5,400,3.5,3,1,1,0
+Champiñones salteados,100,10,4,5,1,200,2.5,3,1,1,0
+Tabbouleh,150,25,5,3,1,200,2.0,3,1,1,0
+Col rizada al horno,80,15,3,2,1,150,3.0,3,1,1,0
+Lentejas guisadas,200,30,10,5,1,250,2.8,3,1,1,0
+Ensalada de espinacas con fresas,150,20,4,7,5,100,2.0,3,1,1,0
+Tomates asados,90,15,2,4,3,150,2.5,3,1,1,0
+Jugo de naranja,120,30,2,0,25,5,1.2,4,1,1,0
+Té verde sin azúcar,0,0,0,0,0,0,0.5,4,1,1,0
+Limonada,150,40,0,0,30,10,2.0,4,1,1,0
+Batido de fresa,200,45,5,2,35,20,3.0,4,1,1,0
+Café con leche,120,12,6,4,10,40,2.0,4,1,1,0
+Smoothie de mango,180,40,2,1,30,5,2.5,4,1,1,0
+Agua de coco,60,15,1,0,12,15,2.0,4,1,1,0
+Jugo de manzana,100,25,0,0,22,5,1.5,4,1,1,0
+Leche de almendra,30,1,1,2,0,150,1.8,4,1,1,0
+Batido de proteínas,250,20,30,5,10,100,4.0,4,1,1,0
+Agua con gas,0,0,0,0,0,0,0.5,4,1,1,0
+Té helado,80,20,0,0,18,15,1.5,4,1,1,0
+Chocolate caliente,250,40,5,8,30,200,3.0,4,1,1,0
+Jugo de uva,150,35,1,0,32,10,2.0,4,1,1,0
+Smoothie verde,130,30,3,1,25,20,2.5,4,1,1,0
+Refresco de cola,150,40,0,0,40,35,1.2,4,1,1,0
+Lassi de mango,180,35,5,3,25,150,3.0,4,1,1,0
+Té de hierbas,0,0,0,0,0,0,0.8,4,1,1,0
+Batido de plátano y avena,180,40,5,2,20,20,1.5,4,1,1,1
+Jugo de arándano,120,30,0,0,28,10,1.5,4,1,1,0
+Tarta de manzana,400,60,5,20,30,20,3.5,5,1,1,0
+Helado de vainilla,250,30,4,15,25,80,2.0,5,0,1,0
+Brownie de chocolate,450,50,5,25,35,200,3.0,5,0,1,0
+Tiramisu,500,60,7,25,40,150,4.0,5,0,1,0
+Mousse de chocolate,350,40,6,18,30,100,3.0,5,0,1,0
+Cheesecake,400,45,7,22,35,250,4.5,5,0,1,0
+Panna cotta,300,25,5,20,20,50,2.5,5,0,1,0
+Profiteroles,350,40,6,20,30,200,3.5,5,0,1,0
+Tarta de queso con frutas,450,55,8,25,35,150,4.0,5,0,1,0
+Gelatina con frutas,150,30,2,0,25,5,1.0,5,1,1,0
+Galletas de chocolate,300,45,4,15,25,150,2.0,5,1,1,0
+Flan de caramelo,250,35,6,10,20,100,2.5,5,0,1,0
+Natillas,200,25,6,8,15,50,1.8,5,0,1,0
+Cremoso de limón,180,30,4,7,20,30,2.0,5,0,1,0
+Tarta de zanahoria,400,50,6,20,25,200,3.5,5,0,1,0
+Macarons,150,20,3,6,18,100,2.5,5,0,1,0
+Arroz con leche,250,40,6,8,20,150,2.0,5,0,1,0
+Pastel de chocolate,450,55,7,22,35,250,4.0,5,0,1,0
+Muffin de arándanos,350,50,5,15,30,200,3.0,5,0,1,0
+Churros con chocolate,400,45,4,20,35,300,4.5,5,0,1,0
+Crepes con nutella,380,45,8,18,30,120,3.2,1,0,1,0
+Yogur con chia y miel,180,25,6,5,15,60,2.2,1,0,1,1
+Tostada francesa,320,40,10,12,20,250,3.5,1,0,1,0
+Bowl de acai,220,35,4,8,25,40,4.5,1,1,1,1
+Granola casera,400,60,10,12,25,50,3.0,1,1,1,0
+Huevos benedictinos,350,20,18,20,2,450,5.0,1,0,1,0
+Bagel con salmón,380,35,20,15,3,500,4.8,1,0,0,0
+Smoothie bowl tropical,200,45,5,3,30,30,3.8,1,1,1,1
+Té chai latte,150,25,4,3,20,80,2.5,1,0,1,1
+Burrito de desayuno,450,40,20,22,5,800,4.5,1,0,1,0
+Pancakes de proteína,300,35,25,8,10,350,4.0,1,0,1,0
+Cordero al horno,550,5,40,35,0,600,9.5,2,0,0,0
+Pasta carbonara,650,70,25,30,5,850,7.8,2,0,0,0
+Filete mignon,500,0,45,35,0,400,12.0,2,0,0,0
+Pollo al pesto,480,30,35,25,4,550,7.2,2,0,0,0
+Costillas BBQ,700,45,40,45,30,1100,8.5,2,0,0,0
+Sushi variado,350,50,20,5,10,500,10.0,2,0,0,1
+Pescado al horno,300,0,35,15,0,400,8.5,2,0,0,0
+Ratatouille,180,20,5,10,8,300,5.5,2,1,1,1
+Pollo al limón,420,10,40,25,5,500,7.0,2,0,0,0
+Langosta a la parrilla,400,2,45,25,0,500,15.0,2,0,0,0
+Pasta primavera,400,60,15,12,8,450,6.8,2,1,1,1
+Solomillo de cerdo,450,0,40,30,0,600,9.0,2,0,0,0
+Calamares a la romana,380,30,25,20,2,700,7.5,2,0,0,0
+Pollo a la naranja,470,25,35,25,15,600,7.2,2,0,0,0
+Pasta alfredo,550,45,20,35,5,650,7.0,2,0,0,0
+Berenjenas a la parmesana,320,25,12,20,8,500,6.0,2,0,1,1
+Pimientos rellenos,280,20,15,15,6,400,5.5,2,1,1,1
+Ensalada griega,200,10,8,15,4,450,5.0,3,1,1,0
+Papas dauphinoise,350,30,8,22,4,500,3.5,3,0,1,0
+Espinacas a la crema,150,10,5,12,3,350,3.0,3,0,1,1
+Remolacha asada,100,20,3,2,12,150,2.5,3,1,1,1
+Zanahorias glaseadas,120,25,2,3,15,200,2.0,3,1,1,1
+Alcachofas al vapor,80,15,5,1,1,120,3.0,3,1,1,1
+Calabaza asada,90,20,2,2,8,10,2.2,3,1,1,1
+Aguacate relleno,250,10,5,22,2,300,4.0,3,1,1,1
+Coliflor gratinada,200,15,8,12,5,400,3.5,3,0,1,1
+Endivias con queso azul,180,10,6,14,3,350,4.5,3,0,1,0
+Caprese de tomate,150,5,6,12,3,200,3.8,3,0,1,1
+Sopa de tomate,120,20,3,5,10,600,2.5,3,1,1,1
+Ensalada de pepino,70,10,2,3,5,150,1.8,3,1,1,1
+Batido de café,180,30,5,5,25,80,3.0,4,0,1,1
+Leche dorada,200,25,5,8,15,120,2.8,4,1,1,1
+Agua de jamaica,50,12,0,0,10,5,1.5,4,1,1,1
+Smoothie de piña colada,220,40,2,5,30,15,3.2,4,1,1,1
+Café irlandés,280,20,2,12,15,40,4.5,4,0,1,1
+Jugo de zanahoria,90,20,2,0,15,50,1.8,4,1,1,1
+Matcha latte,120,15,5,5,10,70,3.5,4,1,1,1
+Horchata,200,35,3,5,25,80,2.0,4,1,1,0
+Té de burbujas,250,60,2,3,45,30,3.8,4,1,1,0
+Champurrado,220,35,5,6,25,120,2.5,4,1,1,0
+Malteada de vainilla,300,45,8,10,35,150,3.5,4,0,1,1
+Café vienés,200,25,3,10,20,50,3.0,4,0,1,1
+Sorbete de limón,180,45,1,0,40,5,2.5,5,1,1,1
+Tarta de limón,380,50,5,20,30,100,3.8,5,0,1,0
+Pastel de tres leches,420,55,8,20,40,200,4.0,5,0,1,0
+Crema catalana,280,30,5,15,25,80,3.2,5,0,1,0
+Donuts glaseados,350,45,4,18,25,250,2.8,5,0,1,0
+Galletas de avena,320,50,6,12,25,180,2.5,5,1,1,0
+Strudel de manzana,300,45,4,12,30,150,3.5,5,0,1,0
+Baklava,400,50,6,22,35,200,4.0,5,1,1,0
+Tarta de frutas,350,55,4,15,40,100,3.8,5,1,1,0
+Pudín de pan,280,40,6,10,25,300,2.5,5,0,1,0
+Magdalenas caseras,280,35,4,15,20,200,2.0,5,0,1,0
+Alfajores,300,45,5,12,30,150,3.0,5,0,1,0
