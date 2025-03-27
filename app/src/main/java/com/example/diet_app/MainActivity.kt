@@ -1,5 +1,7 @@
 package com.example.diet_app
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.diet_app.ui.theme.DietappTheme
 import androidx.compose.material3.Button
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,65 +49,43 @@ import com.example.diet_app.DatabaseManager
 import com.example.diet_app.ui.theme.DietappTheme
 
 class MainActivity : ComponentActivity() {
-
-    private lateinit var dbManager: DatabaseManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dbManager = DatabaseManager(this)
-
-        // Prueba abriendo la base de datos
-        try {
-            val database = dbManager.openDatabase()
-            Log.d("MainActivity", "Base de datos abierta correctamente: $database")
-            database.close()
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
-        }
-
-        // Prueba de autenticación
-        var email = "gloton@gloton"
-        var password = "gloton"
-        val isAuthenticated = dbManager.authenticateUser(email, password)
-
-        if (isAuthenticated) {
-            Log.d("MainActivity", "Usuario autenticado correctamente.")
-        } else {
-            Log.e("MainActivity", "Error en la autenticación.")
-        }
-
-        email = "gloton@gloton"
-        var name = dbManager.getName(email)
-
-        if (name != null) {
-            Log.d("MainActivity", "El nombre del usuario es: $name")
-        } else {
-            Log.e("MainActivity", "No se encontró el nombre para el usuario con correo: $email")
-        }
-
-        email = "gloton2@gloton2.com"
-        name = dbManager.getName(email)
-        Log.d("MainActivity", "El nombre del usuario es: $name")
-
-        email = "kasbfvljabfb"
-        password = "gloton"
-        name = "gloton2"
-
-        val isRegistered = dbManager.registerUser(name, email, password)
-        if (isRegistered) {
-            Log.d("MainActivity", "Usuario registrado con éxito.")
-        } else {
-            Log.e("MainActivity", "Error al registrar el usuario.")
-        }
-
 
         setContent {
-            DietApp()
+            DietappTheme {
+                val navController = rememberNavController()
+
+                NavHost(navController = navController, startDestination = "auth") {
+                    composable("auth") {
+                        AuthScreen(
+                            onAuthenticate = { email, password ->
+                                navController.navigate("welcome") {
+                                    popUpTo("auth") { inclusive = true }
+                                }
+                            },
+                            onRegister = { name, email, password ->
+                                navController.navigate("welcome") {
+                                    popUpTo("auth") { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+                    composable("welcome") {
+                        WelcomeScreen(navController)
+                    }
+                    composable("diet_form") {
+                        DietForm()
+                    }
+                    composable("basal_metabolism") {
+                        BasalMetabolismScreen()
+                    }
+                }
+            }
         }
-        checkDatabaseConnection()
-        fetchAllUsers()
     }
 }
+
 
 @Composable
 fun DietApp() {
@@ -127,7 +108,6 @@ fun DietApp() {
 
 @Composable
 fun WelcomeScreen(navController: NavController) {
-    // Pantalla de bienvenida con fondo verde y mensaje
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -146,8 +126,7 @@ fun WelcomeScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = {
-                    // Navegar a la pantalla del formulario de la dieta
-                    navController.navigate("diet_form")
+                    navController.navigate("diet_form") // Navegar al formulario de la dieta
                 },
                 modifier = Modifier.padding(16.dp)
             ) {
@@ -160,6 +139,7 @@ fun WelcomeScreen(navController: NavController) {
         }
     }
 }
+
 
 @Composable
 fun DietForm() {

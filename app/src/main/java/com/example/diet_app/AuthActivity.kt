@@ -1,6 +1,7 @@
 package com.example.diet_app
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -10,14 +11,55 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.ui.theme.MyAppTheme
 
 class AuthActivity : ComponentActivity() {
+    private lateinit var databaseManager: DatabaseManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        databaseManager = DatabaseManager(this) // Inicializar DatabaseManager
+
         setContent {
             MyAppTheme {
-                AuthScreen()
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "auth") {
+                    composable("auth") {
+                        AuthScreen(
+                            onAuthenticate = { email, password ->
+                                val isAuthenticated = databaseManager.authenticateUser(email, password)
+                                if (isAuthenticated) {
+                                    Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                                    navController.navigate("welcome")
+                                } else {
+                                    Toast.makeText(applicationContext, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            onRegister = { name, email, password ->
+                                val isRegistered = databaseManager.registerUser(name, email, password)
+                                if (isRegistered) {
+                                    Toast.makeText(applicationContext, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                                    navController.navigate("welcome")
+                                } else {
+                                    Toast.makeText(applicationContext, "Error al registrar el usuario", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        )
+                    }
+                    composable("welcome") {
+                        WelcomeScreen(navController)
+                    }
+                    composable("diet_form") {
+                        DietForm()
+                    }
+                    composable("basal_metabolism") {
+                        BasalMetabolismScreen()
+                    }
+                }
             }
         }
     }
@@ -25,10 +67,14 @@ class AuthActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthScreen() {
+fun AuthScreen(
+    onAuthenticate: (email: String, password: String) -> Unit,
+    onRegister: (name: String, email: String, password: String) -> Unit
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var isRegisterMode by remember { mutableStateOf(false) }
+    var name by remember { mutableStateOf("") }
+    var isRegisterMode by remember { mutableStateOf(true) } // Predeterminado en modo registro
 
     Scaffold(
         topBar = {
@@ -45,6 +91,15 @@ fun AuthScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (isRegisterMode) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -62,11 +117,10 @@ fun AuthScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    // Aquí se llama a la función correspondiente según el modo (registro o login)
                     if (isRegisterMode) {
-                        // Registrar usuario
+                        onRegister(name, email, password)
                     } else {
-                        // Iniciar sesión
+                        onAuthenticate(email, password)
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
