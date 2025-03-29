@@ -50,15 +50,6 @@ class AuthActivity : ComponentActivity() {
                             }
                         )
                     }
-                    composable("welcome") {
-                        WelcomeScreen(navController)
-                    }
-                    composable("diet_form") {
-                        DietForm()
-                    }
-                    composable("basal_metabolism") {
-                        BasalMetabolismScreen()
-                    }
                 }
             }
         }

@@ -59,9 +59,11 @@ class DatabaseManager(private val context: Context) {
 
     // Autenticar un usuario con email y contraseña
     fun authenticateUser(email: String, password: String): Boolean {
+        if (email.isEmpty() || password.isEmpty()) {
+            return false
+        }
         val query = "SELECT * FROM users WHERE email = ? AND password = ?"
         var isAuthenticated = false
-
         try {
             val database = SQLiteDatabase.openDatabase(databasePath, null, SQLiteDatabase.OPEN_READWRITE)
             val cursor: Cursor = database.rawQuery(query, arrayOf(email, password))
@@ -79,6 +81,9 @@ class DatabaseManager(private val context: Context) {
     }
 
     fun registerUser(name: String, email: String, password: String): Boolean {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            return false
+        }
         var isRegistered = false
         val query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
 
