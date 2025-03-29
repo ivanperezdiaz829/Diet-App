@@ -57,34 +57,28 @@ def obtain_restrictions():
 
 # Obtener las restricciones de dieta
 #carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
-carbohydrates = [150, 200]
-energy = [2200, 3000]
-sugar = [0, 50]
-protein = [75, 100]
+carbohydrates = [0, 1000]
+energy = [1000, 3000]
+sugar = [0, 200]
+protein = [0, 100]
 salt = [0, 5000]
-fat = [30, 80]
+fat = [0, 100]
 budget = 50
 
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
-solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, set(), set(), set())
-solution_vegan = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 2, set(), set(), set())
-solution_vegetarian = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 3, set(), set(), set())
-solution_glucemic = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 4, set(), set(), set())
 
+print("Dieta Estándar")
+solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, set(), set(), set())
 print_solution(solution)
 
+print("Dieta Vegetariana")
+solution_vegetarian = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 3, set(), set(), set())
+print_solution(solution_vegetarian)
 
-"""
-# Mostrar la mejor solución
-if solution:
-    print("\n--- SOLUCION ---")
-    print(f'Desayuno: {solution[0]}')
-    print(f'Almuerzo: {solution[1]}')
-    print(f'Cena: {solution[2]}')
+print("Dieta Veganana")
+solution_vegan = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 2, set(), set(), set())
+print_solution(solution_vegan)
 
-    end_time = time.time()
-    print(f'\nEl tiempo de ejecución del programa es: {time.process_time()}')
-
-else:
-    print("No se encontró una solución que cumpla con las restricciones.")
-"""
+print("Dieta Glucémica")
+solution_glucemic = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 4, set(), set(), set())
+print_solution(solution_glucemic)
