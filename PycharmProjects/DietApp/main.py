@@ -57,17 +57,24 @@ def obtain_restrictions():
 
 # Obtener las restricciones de dieta
 #carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
-carbohydrates = [75, 250]
-energy = [1500, 2200]
+carbohydrates = [150, 200]
+energy = [2200, 3000]
 sugar = [0, 50]
 protein = [75, 100]
 salt = [0, 5000]
-fat = [55, 80]
-budget = 2000.0
+fat = [30, 80]
+budget = 50
 
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
 solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, set(), set(), set())
+solution_vegan = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 2, set(), set(), set())
+solution_vegetarian = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 3, set(), set(), set())
+solution_glucemic = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 4, set(), set(), set())
 
+print_solution(solution)
+
+
+"""
 # Mostrar la mejor solución
 if solution:
     print("\n--- SOLUCION ---")
@@ -80,4 +87,4 @@ if solution:
 
 else:
     print("No se encontró una solución que cumpla con las restricciones.")
-
+"""
