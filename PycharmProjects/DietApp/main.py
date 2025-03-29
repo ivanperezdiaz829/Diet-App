@@ -71,7 +71,7 @@ solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budg
 # Mostrar la mejor solución
 if solution:
     print("\n--- SOLUCION ---")
-    print(f'\nDesayuno: {solution[0]}')
+    print(f'Desayuno: {solution[0]}')
     print(f'Almuerzo: {solution[1]}')
     print(f'Cena: {solution[2]}')
 

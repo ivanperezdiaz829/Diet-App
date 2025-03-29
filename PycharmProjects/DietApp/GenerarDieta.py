@@ -132,6 +132,7 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
                         salt[0] <= combined_salt <= salt[1] and
                         fat[0] <= combined_fat <= fat[1] and
                         combined_price <= budget):
+
                     valid_combinations.append((breakfast[0], drink[0]))
 
     if valid_combinations:
@@ -145,12 +146,12 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
 def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein, salt, fat, budget):
 
     print("\n--------------ALMUERZO-------------------")
+    print("\nCARBOHIDRATOS - AZUCARES - CALORIAS - PROTEINAS - SALES - GRASAS - PRECIO")
     nutritional_percents = []
     for i in range(1, 8):
         nutritional_percents.append(percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, budget, 2, i)[1:])
     for i in range(len(nutritional_percents)):
         print(f"{i} = {nutritional_percents[i]}")
-    print("\nCARBOHIDRATOS - AZUCARES - CALORIAS - PROTEINAS - SALES - GRASAS - PRECIO")
     print("\nPRINCIPAL:")
 
     mains = sql_sentences(cursor, [nutritional_percents[0][0] * carbohydrates[0], nutritional_percents[0][0] * carbohydrates[1]],
@@ -165,7 +166,6 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
         print(f"main: {mains[i]}")
 
     print("\nSECUNDARIO:")
-    print(nutritional_percents[0][1])
     sides = sql_sentences(cursor, [nutritional_percents[0][1] * carbohydrates[0], nutritional_percents[0][1] * carbohydrates[1]],
                           [0 * sugar[0], nutritional_percents[1][1] * sugar[1]],
                           [nutritional_percents[2][1] * energy[0], nutritional_percents[2][1] * energy[1]],
@@ -268,6 +268,7 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
                         salt[0] <= combined_salt <= salt[1] and
                         fat[0] <= combined_fat <= fat[1] and
                         combined_price <= budget):
+
                     valid_combinations.append((main[0], drink[0]))
 
     if valid_combinations:
