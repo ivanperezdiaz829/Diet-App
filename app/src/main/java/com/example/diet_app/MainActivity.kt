@@ -247,7 +247,7 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
 
 fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.193.223.36:8000/calculate"
+    val url = "http://10.193.249.185:8000/calculate"
 
     val json = JSONObject()
     json.put("values", values)
