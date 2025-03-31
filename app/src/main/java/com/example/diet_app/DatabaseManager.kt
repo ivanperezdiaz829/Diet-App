@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 
@@ -58,9 +59,11 @@ class DatabaseManager(private val context: Context) {
 
     // Autenticar un usuario con email y contraseña
     fun authenticateUser(email: String, password: String): Boolean {
-        val query = "SELECT * FROM Users WHERE email = ? AND password = ?"
+        if (email.isEmpty() || password.isEmpty()) {
+            return false
+        }
+        val query = "SELECT * FROM users WHERE email = ? AND password = ?"
         var isAuthenticated = false
-
         try {
             val database = SQLiteDatabase.openDatabase(databasePath, null, SQLiteDatabase.OPEN_READWRITE)
             val cursor: Cursor = database.rawQuery(query, arrayOf(email, password))
@@ -69,10 +72,80 @@ class DatabaseManager(private val context: Context) {
             }
             cursor.close()
             database.close()
+            Log.d("DatabaseManager", "Autenticación exitosa: $isAuthenticated")
         } catch (e: Exception) {
             Log.e("DatabaseManager", "Error en la autenticación: ${e.message}")
         }
 
         return isAuthenticated
     }
+
+    fun registerUser(name: String, email: String, password: String): Boolean {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            return false
+        }
+        var isRegistered = false
+        val query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
+
+        try {
+            // Abre la base de datos en modo escritura
+            val database = SQLiteDatabase.openDatabase(databasePath, null, SQLiteDatabase.OPEN_READWRITE)
+            database.execSQL(query, arrayOf(name, email, password)) // Ejecuta la inserción
+            database.close() // Cierra la base de datos
+            isRegistered = true
+        } catch (e: Exception) {
+            Log.e("DatabaseManager", "Error al registrar el usuario: ${e.message}")
+        }
+
+        return isRegistered
+    }
+
+    fun getName(email: String): String? {
+        val query = "SELECT name FROM users WHERE email = ?"
+        var name: String? = null
+
+        try {
+            val database = SQLiteDatabase.openDatabase(databasePath, null, SQLiteDatabase.OPEN_READWRITE)
+            val cursor: Cursor = database.rawQuery(query, arrayOf(email))
+            if (cursor.moveToFirst()) {
+                name = cursor.getString(cursor.getColumnIndexOrThrow("name")) // Obtén el nombre
+            }
+            cursor.close()
+            database.close()
+        } catch (e: Exception) {
+            Log.e("DatabaseManager", "Error al obtener el nombre: ${e.message}")
+        }
+
+        return name // Devuelve el nombre o null si no se encontró el usuario
+    }
+
+    fun overwriteOriginalDatabase(destinationPath: String): Boolean {
+        val modifiedDatabasePath = databasePath // Ruta de la base de datos modificada en almacenamiento interno
+
+        return try {
+            val modifiedDbFile = File(modifiedDatabasePath)
+            val destinationFile = File(destinationPath)
+
+            // Copiar la base de datos modificada al destino
+            FileInputStream(modifiedDbFile).use { inputStream ->
+                FileOutputStream(destinationFile).use { outputStream ->
+                    val buffer = ByteArray(1024)
+                    var length: Int
+                    while (inputStream.read(buffer).also { length = it } > 0) {
+                        outputStream.write(buffer, 0, length)
+                    }
+                    outputStream.flush()
+                }
+            }
+
+            Log.d("DatabaseManager", "Base de datos sobrescrita en: $destinationPath")
+            true
+        } catch (e: IOException) {
+            Log.e("DatabaseManager", "Error al sobrescribir la base de datos: ${e.message}")
+            false
+        }
+    }
+
+
+
 }
