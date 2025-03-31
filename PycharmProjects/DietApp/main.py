@@ -61,7 +61,7 @@ carbohydrates = [200, 827.13]
 energy = [1200, 2800]
 sugar = [0, 187.23]
 protein = [0, 253.27]
-salt = [0, 5000]
+salt = [0, 5000]    # 5g
 fat = [0, 87]
 budget = 50
 
@@ -70,6 +70,8 @@ budget = 50
 # print("Dieta Estándar")
 solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, set(), set(), set())
 print_solution(solution)
+end_time = time.time() - start_time
+print(f"\nTiempo de ejecución {end_time}")
 
 """
 print("Dieta Vegetariana")
