@@ -56,7 +56,7 @@ def obtain_restrictions():
 
 
 # Obtener las restricciones de dieta
-#carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
+# carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
 carbohydrates = [200, 827.13]
 energy = [1200, 2800]
 sugar = [0, 187.23]

@@ -2,6 +2,7 @@ import sqlite3
 import random
 import os
 
+
 def filter_plates(plates, person_type):
     if person_type == 1:  # Persona normal
         return plates
@@ -12,6 +13,7 @@ def filter_plates(plates, person_type):
     elif person_type == 4:  # Diabético
         return [plate for plate in plates if plate[11] == 1]  # Asumiendo que columna 10 es diabetic
     return plates
+
 
 def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, meal_type, sentence_type, sub_sentence):
 
