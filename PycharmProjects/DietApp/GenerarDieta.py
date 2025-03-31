@@ -2,6 +2,7 @@ import sqlite3
 import random
 import os
 
+
 def filter_plates(plates, person_type):
     if person_type == 1:  # Persona normal
         return plates
@@ -12,6 +13,7 @@ def filter_plates(plates, person_type):
     elif person_type == 4:  # Diabético
         return [plate for plate in plates if plate[11] == 1]  # Asumiendo que columna 10 es diabetic
     return plates
+
 
 def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, meal_type, sentence_type, sub_sentence):
 
@@ -105,12 +107,12 @@ def percents_generator_day(cursor, carbohydrates, sugar, energy, protein, salt, 
 
 def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
     print()
-    print("\n* Platos disponibles para el desayuno *")
+    print("\n--------- PLATOS DISPOBIBLES DESAYUNO ---------")
     breakfasts = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1)
     breakfasts = filter_plates(breakfasts, person_type)
     drinks = sql_sentences(cursor, [0, carbohydrates[1]], [0, sugar[1]], [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1)
     drinks = filter_plates(drinks, person_type)
-    print(f'\DESAYUNO:')
+    print(f'\nPRINCIPAL:')
     for i in range(len(breakfasts)):
         print(f"breakfast: {breakfasts[i]}")
     print(f'\nBEBIDA:')
@@ -153,7 +155,7 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
 
 def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
     print()
-    print("* Platos disponibles para el almuerzo *")
+    print("\n--------- PLATOS DISPONIBLES ALMUERZO ---------")
     nutritional_percents = []
     for i in range(1, 8):
         nutritional_percents.append(percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, i)[1:])
@@ -242,7 +244,7 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
 
 def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
     print()
-    print("* Platos disponibles para la cena *")
+    print("\n--------- PLATOS DISPONIBLES CENA ---------")
     mains = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1)
     mains = filter_plates(mains, person_type)
     drinks = sql_sentences(cursor, [0, carbohydrates[1]], [0, sugar[1]], [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1)
@@ -340,21 +342,26 @@ def print_solution(solution):
         print("\n--- SOLUCIÓN ---")
         # Nombres de los atributos nutricionales y el precio
         requirements = ["name", "energy", "carbohydrates", "sugar", "protein", "fat", "salt", "price"]
+        print(f"\nDesayuno: {solution[0][0][0]}, {solution[0][1][0]}")
+        print(f"Almuerzo: {solution[1][0][0]}, {solution[1][1][0]}, {solution[1][2][0]}")
+        print(f"Cena: {solution[2][0][0]}, {solution[2][1][0]}")
         
         # Inicializa una lista con ceros para acumular las cualidades de la dieta (carbohidratos, azúcar, etc.)
         diet_qualities = [0] * 8  # Excluye "name", que es texto
 
+        print("\n--------- VALORES NUTRICIONALES ---------")
         for meal in solution:
             for plate in meal:
                 print("\n")
                 # Imprime los valores de cada plato y acumula los datos numéricos
-                for i in range(0,8):
+                for i in range(0, 8):
                     print(f"{requirements[i]}: {plate[i]}")
                     if i > 0:  # Evita sumar el nombre del plato
                         diet_qualities[i - 1] += plate[i]
 
         # Imprime el total acumulado de las cualidades de la dieta
-        print("\nTotales de la dieta:")
+        print()
+        print("\n--------- TOTALES DE LA DIETA ---------\n")
         for i in range(1, 8):
             print(f"{requirements[i]} total: {diet_qualities[i - 1]}")
         
