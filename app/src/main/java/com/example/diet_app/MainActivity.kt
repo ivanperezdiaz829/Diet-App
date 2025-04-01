@@ -144,6 +144,15 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
         composable("maintenance_calories") {
             MaintenanceCaloriesScreen(viewModel)
         }
+
+        composable("calendar") {
+            CalendarScreen(navController, viewModel)  // Pantalla de calendario
+        }
+
+        composable("edit_meal/{dayIndex}") { backStackEntry ->
+            val dayIndex = backStackEntry.arguments?.getString("dayIndex")?.toInt() ?: 0
+            EditMealScreen(navController, dayIndex, viewModel)  // Pantalla de edición de comidas
+        }
     }
 }
 
@@ -215,6 +224,10 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
             Button(onClick = { navController.navigate("maintenance_calories") }) {
                 Text("Calcular Calorías de Mantenimiento")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { navController.navigate("calendar") }) {
+                Text("Ver Calendario de Comidas")
+            }
         }
     }
 }
@@ -223,13 +236,11 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
 fun DietForm(viewModel: MainViewModel) {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxCarbohydrates by remember { mutableStateOf("") }
-    var minSugar by remember { mutableStateOf("") }
     var maxSugar by remember { mutableStateOf("") }
     var minEnergy by remember { mutableStateOf("") }
     var maxEnergy by remember { mutableStateOf("") }
     var minProtein by remember { mutableStateOf("") }
     var maxProtein by remember { mutableStateOf("") }
-    var minSalt by remember { mutableStateOf("") }
     var maxSalt by remember { mutableStateOf("") }
     var minFat by remember { mutableStateOf("") }
     var maxFat by remember { mutableStateOf("") }
@@ -244,13 +255,11 @@ fun DietForm(viewModel: MainViewModel) {
 
         InputField(label = "Carbs mínimas", value = minCarbohydrates) { minCarbohydrates= it }
         InputField(label = "Carbs máximas", value = maxCarbohydrates) { maxCarbohydrates = it }
-        InputField(label = "Azúcar mínimas", value = minSugar) { minSugar = it }
         InputField(label = "Azúcar máximas", value = maxSugar) { maxSugar = it }
         InputField(label = "Energía mínimas", value = minEnergy) { minEnergy = it }
         InputField(label = "Energía máximas", value = maxEnergy) { maxEnergy = it }
         InputField(label = "Proteina mínimas", value = minProtein) { minProtein= it }
         InputField(label = "Proteina máximas", value = maxProtein) { maxProtein= it }
-        InputField(label = "Sal mínima (g)", value = minSalt) { minSalt = it }
         InputField(label = "Sal máxima (g)", value = maxSalt) { maxSalt = it }
         InputField(label = "Grasa mínima (g)", value = minFat) { minFat = it }
         InputField(label = "Grasa máxima (g)", value = maxFat) { maxFat = it }
@@ -260,8 +269,8 @@ fun DietForm(viewModel: MainViewModel) {
 
         Button(onClick = {
             // Convertir todos los valores a Double, ignorando los que no sean válidos
-            val numericValues = listOf(minCarbohydrates, maxCarbohydrates, minSugar, maxSugar,
-                minEnergy, maxEnergy, minProtein, maxProtein, minSalt, maxSalt, minFat, maxFat, budget)
+            val numericValues = listOf(minCarbohydrates, maxCarbohydrates, maxSugar,
+                minEnergy, maxEnergy, minProtein, maxProtein, maxSalt, minFat, maxFat, budget)
                 .map { it.replace(",", ".") }  // Asegura el formato correcto de decimales
                 .mapNotNull { it.toDoubleOrNull() }  // Convierte String a Double si es válido
 
@@ -392,7 +401,7 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
 
 fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.193.249.185:8000/calculate"
+    val url = "http://10.0.2.2:8000/calculate"
 
     val json = JSONObject()
     json.put("values", values)
@@ -445,6 +454,91 @@ fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
             }
         }
     })
+}
+
+@Composable
+fun CalendarScreen(navController: NavController, viewModel: MainViewModel) {
+    val daysOfWeek = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+    val meals = remember { mutableStateOf(emptyList<String>()) }  // Aquí se guardarán las comidas del día
+
+    // Simulamos que tenemos una comida por cada día
+    val mealList = daysOfWeek.map { "$it: Desayuno, Almuerzo, Cena" }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text("Calendario de comidas", style = MaterialTheme.typography.titleLarge)
+
+        mealList.forEachIndexed { index, day ->
+            Text(day, modifier = Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodyLarge)
+            Button(
+                onClick = {
+                    // Accede al día específico para editar las comidas
+                    navController.navigate("edit_meal/$index")
+                },
+                modifier = Modifier.padding(vertical = 4.dp)
+            ) {
+                Text("Editar Comidas")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("welcome") }) {
+            Text("Regresar al inicio")
+        }
+    }
+}
+
+@Composable
+fun EditMealScreen(navController: NavController, dayIndex: Int, viewModel: MainViewModel) {
+    var breakfast by remember { mutableStateOf("") }
+    var lunch by remember { mutableStateOf("") }
+    var dinner by remember { mutableStateOf("") }
+
+    // Aquí podrías consultar los datos del servidor para obtener las comidas del día
+    // Simulamos que obtenemos las comidas para el día seleccionado
+    val meal = when (dayIndex) {
+        0 -> listOf("Huevos", "Ensalada", "Pollo al horno")
+        1 -> listOf("Avena", "Arroz con pollo", "Pasta")
+        else -> listOf("", "", "")
+    }
+
+    breakfast = meal[0]
+    lunch = meal[1]
+    dinner = meal[2]
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text("Editar Comidas", style = MaterialTheme.typography.titleLarge)
+
+        InputField("Desayuno", breakfast) { breakfast = it }
+        InputField("Almuerzo", lunch) { lunch = it }
+        InputField("Cena", dinner) { dinner = it }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = {
+            // Aquí puedes enviar las comidas al servidor para actualizarlas
+            val updatedMeals = mapOf(
+                "breakfast" to breakfast,
+                "lunch" to lunch,
+                "dinner" to dinner
+            )
+            updateMealsForDay(dayIndex, updatedMeals)
+            navController.navigate("calendar")
+        }) {
+            Text("Guardar Cambios")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("calendar") }) {
+            Text("Cancelar")
+        }
+    }
 }
 
 fun checkDatabaseConnection() {
