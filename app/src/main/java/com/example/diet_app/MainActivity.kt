@@ -1,6 +1,7 @@
 package com.example.diet_app
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,6 +25,7 @@ import androidx.compose.material3.Button
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +46,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.app.ui.ScreenActivities.GoalSelectionScreen
+import com.example.diet_app.ScreenActivities.InputDesign
 
 class MainActivity : ComponentActivity() {
 
@@ -51,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dbManager = DatabaseManager(this)
@@ -64,7 +69,9 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
+            GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //InputDesign()
+            // DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
         }
     }
 }
