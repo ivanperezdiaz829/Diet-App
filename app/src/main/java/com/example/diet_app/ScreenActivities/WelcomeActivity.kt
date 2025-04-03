@@ -38,7 +38,7 @@ fun InputDesign() {
             .fillMaxSize()
             .background(Color.White)
     ) {
-        StatusBar()
+        // StatusBar()
         MainContent(screenWidth, screenHeight)
     }
 }
@@ -88,7 +88,7 @@ private fun StatusBar() {
             )
 
             // Battery Icon
-            BatteryIcon()
+            // BatteryIcon()
         }
     }
 }

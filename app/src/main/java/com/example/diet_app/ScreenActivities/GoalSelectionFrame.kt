@@ -51,9 +51,9 @@ fun GoalSelectionScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .background(Color.White)
     ) {
-        StatusBar()
 
         Column(
             modifier = Modifier
@@ -65,7 +65,7 @@ fun GoalSelectionScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            TitleSection()
+            TitleSection("What is your", "goal?")
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -81,67 +81,6 @@ fun GoalSelectionScreen(
                 onClick = { selectedGoal?.let { onNext(it) } }
             )
         }
-    }
-}
-
-@Composable
-private fun StatusBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .padding(horizontal = 20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(17.dp, 11.dp)
-                    .background(Color.Black)
-            )
-            Box(
-                modifier = Modifier
-                    .size(15.dp, 11.dp)
-                    .background(Color.Black)
-            )
-            Icon(
-                painter = painterResource(id = android.R.drawable.ic_lock_idle_charging),
-                contentDescription = "Battery",
-                tint = Color.Black,
-                modifier = Modifier.size(24.dp, 11.dp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun TitleSection() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = buildAnnotatedString {
-                append("What is your ")
-                withStyle(SpanStyle(color = PrimaryGreen)) {
-                    append("goal?")
-                }
-            },
-            style = Typography.titleLarge,
-            modifier = Modifier.padding(bottom = 8.dp),
-            fontSize = 32.sp
-        )
-
-        Text(
-            text = "We will use this data to give you a better diet type for you",
-            style = Typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp,
-            color = com.example.diet_app.ui.theme.GrayGreen
-        )
     }
 }
 

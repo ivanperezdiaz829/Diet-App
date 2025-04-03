@@ -35,6 +35,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
@@ -48,6 +50,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.app.ui.ScreenActivities.GoalSelectionScreen
 import com.example.diet_app.ScreenActivities.InputDesign
+import com.example.diet_app.ScreenActivities.SexSelectionScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -58,6 +61,10 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Forzar íconos oscuros en la barra de estado
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         dbManager = DatabaseManager(this)
 
         // Prueba abriendo la base de datos
@@ -69,7 +76,8 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //SexSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //InputDesign()
             // DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
         }
