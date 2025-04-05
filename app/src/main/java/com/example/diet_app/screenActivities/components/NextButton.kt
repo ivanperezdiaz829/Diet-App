@@ -1,4 +1,4 @@
-package com.example.diet_app.ScreenActivities.Components
+package com.example.diet_app.screenActivities.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,7 +17,7 @@ import com.example.diet_app.ui.theme.PrimaryGreen
 import com.example.diet_app.ui.theme.Typography
 
 @Composable
-public fun NextButton(
+fun NextButton(
     enabled: Boolean,
     onClick: () -> Unit
 ) {

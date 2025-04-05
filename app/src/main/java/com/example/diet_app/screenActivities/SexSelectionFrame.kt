@@ -1,4 +1,4 @@
-package com.example.diet_app.ScreenActivities
+package com.example.diet_app.screenActivities
 
 import Sex
 import androidx.compose.foundation.Image
@@ -29,11 +29,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.app.ui.ScreenActivities.Goal
 import com.example.diet_app.R
-import com.example.diet_app.ScreenActivities.Components.Header
-import com.example.diet_app.ScreenActivities.Components.NextButton
-import com.example.diet_app.ScreenActivities.Components.TitleSection
+import com.example.diet_app.screenActivities.components.Header
+import com.example.diet_app.screenActivities.components.NextButton
+import com.example.diet_app.screenActivities.components.TitleSection
 import com.example.diet_app.ui.theme.DarkGreen
 import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen

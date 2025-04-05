@@ -1,4 +1,4 @@
-package com.example.diet_app.ScreenActivities
+package com.example.diet_app.screenActivities
 
 import android.os.Build
 import androidx.annotation.RequiresApi

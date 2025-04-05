@@ -1,4 +1,4 @@
-package com.example.diet_app.ScreenActivities.Components
+package com.example.diet_app.screenActivities.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,7 +25,7 @@ import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.ui.theme.Typography
 
 @Composable
-public fun Header(onNavigateBack: () -> Unit, onSkip: () -> Unit) {
+fun Header(onNavigateBack: () -> Unit, onSkip: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

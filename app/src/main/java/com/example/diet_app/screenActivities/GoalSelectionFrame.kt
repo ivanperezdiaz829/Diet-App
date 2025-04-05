@@ -1,37 +1,27 @@
-package com.example.app.ui.ScreenActivities
+package com.example.diet_app.screenActivities
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.example.diet_app.screenActivities.components.Header
+import com.example.diet_app.screenActivities.components.NextButton
+import com.example.diet_app.screenActivities.components.TitleSection
 import com.example.diet_app.ui.theme.Typography
-import com.example.diet_app.ui.theme.BackButtonBackground
-import com.example.diet_app.ScreenActivities.Components.*
 import com.example.diet_app.ui.theme.DarkGreen
 import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
-import com.example.diet_app.ui.theme.PrimaryGreen
 
 enum class Goal {
     LOSE_WEIGHT,
@@ -41,7 +31,6 @@ enum class Goal {
 
 @Composable
 fun GoalSelectionScreen(
-
     onNavigateBack: () -> Unit,
     onSkip: () -> Unit,
     onNext: (Goal) -> Unit
@@ -54,6 +43,7 @@ fun GoalSelectionScreen(
             .statusBarsPadding()
             .background(Color.White)
     ) {
+        Spacer(modifier = Modifier.height(120.dp))
 
         Column(
             modifier = Modifier

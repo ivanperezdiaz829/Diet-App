@@ -1,4 +1,4 @@
-package com.example.diet_app.ScreenActivities.Components
+package com.example.diet_app.screenActivities.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

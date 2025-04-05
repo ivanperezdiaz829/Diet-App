@@ -48,10 +48,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.app.ui.ScreenActivities.GoalSelectionScreen
-import com.example.diet_app.ScreenActivities.AgeSelectionScreen
-import com.example.diet_app.ScreenActivities.InputDesign
-import com.example.diet_app.ScreenActivities.SexSelectionScreen
+import com.example.diet_app.screenActivities.*
 
 class MainActivity : ComponentActivity() {
 
@@ -77,7 +74,7 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            AgeSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            AgeSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
             //SexSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //InputDesign()
