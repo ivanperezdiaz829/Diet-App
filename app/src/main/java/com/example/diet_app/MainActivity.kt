@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "login") {
                     // Cambiar la pantalla inicial a "login"
                     composable("login") {
-                        LoginScreen() // Usar la nueva pantalla de inicio de sesión
+                        LoginScreen(navController) // Usar la nueva pantalla de inicio de sesión
                     }
                     composable("welcome") {
                         WelcomeScreen(navController)

@@ -1,5 +1,7 @@
 package com.example.diet_app
 
+import android.content.Context
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,16 +16,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    navController: NavController,
+    context: Context = LocalContext.current // por si no lo pasas explícitamente
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -31,14 +39,29 @@ fun LoginScreen() {
             .padding(top = 82.dp, start = 8.dp, end = 8.dp),
         contentAlignment = Alignment.TopCenter
     ) {
-        LoginCard()
+        LoginCard(context = context) { success ->
+            if (success) {
+                navController.navigate("welcome") {
+                    popUpTo("login") { inclusive = true } // evita volver con back
+                }
+            }
+        }
     }
 }
-@Preview
+
 @Composable
-private fun LoginCard() {
+private fun LoginCard(
+    context: Context,
+    onLoginResult: (Boolean) -> Unit
+) {
+    var isLogin by remember { mutableStateOf(true) } // Alterna entre login y signup
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") } // Mensaje de error
+    var showError by remember { mutableStateOf(false) }
+
+    val dbManager = remember { DatabaseManager(context) }
 
     Card(
         modifier = Modifier
@@ -50,10 +73,10 @@ private fun LoginCard() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState()) // Permitir scroll si el contenido es largo
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 20.dp)
         ) {
-            // Header Images
+            // Header image
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -67,55 +90,26 @@ private fun LoginCard() {
                         .clip(RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)),
                     contentScale = ContentScale.Crop
                 )
-                Image(
-                    painter = painterResource(id = R.drawable.close),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(14.dp)
-                        .padding(top = 21.dp, start = 15.dp)
-                )
             }
+            Spacer(modifier = Modifier.height(30.dp))
 
-            // Login/Signup Buttons
+            // Botones Log In / Sign Up
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 30.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // Botón de Log In con borde interno
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(39.dp)  // Ajusta la altura del Box
-                        .border(
-                            width = 0.1.dp,
-                            color = Color(0xFFFBFBFB),
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                ) {
-                    Button(
-                        onClick = { },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(1.dp), // Esto hace que el botón ocupe todo el espacio del Box
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF40B93C)),
-                        shape = RoundedCornerShape(20.dp),
-                    ) {
-                        Text(
-                            text = "Log In",
-                            fontSize = 15.sp,
-                            fontFamily = FontFamily.Default,
-                            color = Color.White
-                        )
-                    }
-                }
+                val selectedColor = Color(0xFF40B93C)
+                val unselectedColor = Color.White
+                val selectedTextColor = Color.White
+                val unselectedTextColor = Color(0xFF767676)
 
-                // Botón de Sign Up con borde interno
+                // Botón Log In
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .height(39.dp)  // Ajusta la altura del Box
+                        .height(39.dp)
                         .border(
                             width = 0.8.dp,
                             color = Color(0x40000000),
@@ -123,109 +117,153 @@ private fun LoginCard() {
                         )
                 ) {
                     Button(
-                        onClick = { },
+                        onClick = { isLogin = true },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(2.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isLogin) selectedColor else unselectedColor
+                        ),
+                        shape = RoundedCornerShape(20.dp)
+                    ) {
+                        Text(
+                            text = "Log In",
+                            fontSize = 15.sp,
+                            color = if (isLogin) selectedTextColor else unselectedTextColor
+                        )
+                    }
+                }
+
+                // Botón Sign Up
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(39.dp)
+                        .border(
+                            width = 0.8.dp,
+                            color = Color(0x40000000),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                ) {
+                    Button(
+                        onClick = { isLogin = false },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(2.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (!isLogin) selectedColor else unselectedColor
+                        ),
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Text(
                             text = "Sign Up",
                             fontSize = 15.sp,
-                            fontFamily = FontFamily.Default,
-                            color = Color(0xFF767676)
+                            color = if (!isLogin) selectedTextColor else unselectedTextColor
                         )
                     }
                 }
             }
 
-            // Username Input
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp)
-            ) {
-                Text(
-                    text = "Enter username or email",
-                    style = TextStyle(
-                        fontSize = 15.sp,
-                        fontFamily = FontFamily.Default,
-                        color = Color(0xFFC4C4C4)
-                    ),
-                    modifier = Modifier.padding(bottom = 6.dp)
-                )
-                Divider(
-                    color = Color(0xFFC4C4C4),
-                    thickness = 1.dp
-                )
-            }
-
-            // Password Input
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 30.dp)
-            ) {
+            // Transición animada
+            AnimatedContent(targetState = isLogin, label = "FormSwitch") { login ->
                 Column {
-                    Text(
-                        text = "Password",
-                        style = TextStyle(
+                    if (!login) {
+                        // Campo de nombre solo si es Sign Up
+                        CustomTextField(
+                            label = "Name",
+                            value = name,
+                            onValueChange = { name = it },
+                            isError = showError,
+                            errorMessage = errorMessage
+                        )
+                    }
+
+                    CustomTextField(
+                        label = "Email or Username",
+                        value = username,
+                        onValueChange = { username = it },
+                        isError = showError,
+                        errorMessage = errorMessage
+                    )
+
+                    CustomTextField(
+                        label = "Password",
+                        value = password,
+                        onValueChange = { password = it },
+                        isError = showError,
+                        errorMessage = errorMessage
+                    )
+
+                    // Botón principal
+                    Button(
+                        onClick = {
+                            // Validación
+                            if (username.isEmpty() || password.isEmpty() || (!login && name.isEmpty())) {
+                                errorMessage = "All fields are required"
+                                showError = true
+                            } else if (!isLogin && !android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
+                                errorMessage = "Please enter a valid email address"
+                                showError = true
+                            } else if (login) {
+                                // Validar si el usuario existe
+                                val userExists = dbManager.authenticateUser(username.trim(), password.trim())
+                                if (userExists) {
+                                    errorMessage = ""
+                                    showError = false
+                                    onLoginResult(true)
+                                } else {
+                                    errorMessage = "User not found"
+                                    showError = true
+                                }
+                            } else {
+                                // Validar que las contraseñas coinciden (solo Sign Up)
+                                if (password.length < 6) {
+                                    errorMessage = "Password must be at least 6 characters long"
+                                    showError = true
+                                } else {
+                                    // Llamada para registro
+                                    val success = dbManager.registerUser(name.trim(), username.trim(), password.trim())
+                                    if (success) {
+                                        errorMessage = ""
+                                        showError = false
+                                        onLoginResult(true)
+                                    } else {
+                                        errorMessage = "Registration failed"
+                                        showError = true
+                                    }
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .width(183.dp)
+                            .height(39.dp)
+                            .align(Alignment.CenterHorizontally),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF40B93C)),
+                        shape = RoundedCornerShape(15.dp)
+                    ) {
+                        Text(
+                            text = if (login) "Log In" else "Sign Up",
                             fontSize = 15.sp,
                             fontFamily = FontFamily.Default,
-                            color = Color(0xFFC4C4C4)
-                        ),
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
-                    Divider(
-                        color = Color(0xFFC4C4C4),
-                        thickness = 1.dp
-                    )
+                            color = Color.White
+                        )
+                    }
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.show),
-                    contentDescription = "Show/Hide Password",
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(top = 4.dp, end = 4.dp)
-                        .size(14.dp)
-                )
-            }
-
-            // Login Button
-            Button(
-                onClick = { },
-                modifier = Modifier
-                    .width(183.dp)
-                    .height(39.dp)
-                    .align(Alignment.CenterHorizontally),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF40B93C)),
-                shape = RoundedCornerShape(15.dp)
-            ) {
-                Text(
-                    text = "Log In",
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily.Default,
-                    color = Color.White
-                )
             }
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // OR Divider
+            // Divider
             Text(
                 text = "OR",
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily.Default,
-                    color = Color(0xFF929292)
-                ),
+                fontSize = 15.sp,
+                color = Color(0xFF929292),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Social Login Icons
+            // Login con redes sociales
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -234,19 +272,53 @@ private fun LoginCard() {
                     painter = painterResource(id = R.drawable.facebook),
                     contentDescription = "Facebook Login",
                     modifier = Modifier
-                        .size(27.dp)
+                        .size(45.dp)
                         .padding(end = 16.dp)
                 )
                 Image(
                     painter = painterResource(id = R.drawable.google),
                     contentDescription = "Google Login",
                     modifier = Modifier
-                        .size(27.dp)
+                        .size(45.dp)
                         .padding(start = 16.dp)
                 )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
         }
+    }
+}
+
+// Componente para el TextField sin bordes con retroalimentación
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomTextField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    isError: Boolean = false, // Variable para manejar el estado de error
+    errorMessage: String = "" // Mensaje de error
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        isError = isError, // Indicador de error
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.Transparent,
+            focusedIndicatorColor = if (isError) Color.Red else Color(0xFFC4C4C4),
+            unfocusedIndicatorColor = if (isError) Color.Red else Color(0xFFC4C4C4),
+            disabledIndicatorColor = Color.Transparent,
+        ),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+    )
+
+    // Mensaje de error si existe
+    if (isError && errorMessage.isNotEmpty()) {
+        Text(
+            text = errorMessage,
+            color = Color.Red,
+            style = TextStyle(fontSize = 12.sp)
+        )
     }
 }
