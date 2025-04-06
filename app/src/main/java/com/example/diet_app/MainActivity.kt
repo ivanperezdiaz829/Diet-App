@@ -1,9 +1,11 @@
 package com.example.diet_app
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,21 +22,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.diet_app.ui.theme.DietappTheme
 import androidx.compose.material3.Button
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -45,163 +46,77 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
+
 class MainActivity : ComponentActivity() {
-
-    private lateinit var dbManager: DatabaseManager
-
-    private val viewModel: MainViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dbManager = DatabaseManager(this)
 
-        // Prueba abriendo la base de datos
-        try {
-            val database = dbManager.openDatabase()
-            Log.d("MainActivity", "Base de datos abierta correctamente: $database")
-            database.close()
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
-        }
         setContent {
-            DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
+            DietappTheme {
+                val navController = rememberNavController()
+
+                NavHost(navController = navController, startDestination = "login") {
+                    // Cambiar la pantalla inicial a "login"
+                    composable("login") {
+                        LoginScreen() // Usar la nueva pantalla de inicio de sesión
+                    }
+                    composable("welcome") {
+                        WelcomeScreen(navController)
+                    }
+                    composable("diet_form") {
+                        DietForm()
+                    }
+                    composable("basal_metabolism") {
+                        BasalMetabolismScreen()
+                    }
+                }
+            }
         }
     }
 }
 
-class MainViewModel : ViewModel() {
-    internal lateinit var currentUser: String
-    internal lateinit var currentEmail: String
-    internal lateinit var basalMetabolism: String
-    internal lateinit var maintenanceCalories: String
-
-    fun updateUser(
-        currentUser: String = "",
-        currentEmail: String = "",
-        basalMetabolism: String = "",
-        maintenanceCalories: String = ""
-    ) {
-        if (currentUser.isNotEmpty()) {
-            this.currentUser = currentUser
-        }
-        if (currentEmail.isNotEmpty()) {
-            this.currentEmail = currentEmail
-        }
-        if (basalMetabolism.isNotEmpty()) {
-            this.basalMetabolism = basalMetabolism
-        }
-        if (maintenanceCalories.isNotEmpty()) {
-            this.maintenanceCalories = maintenanceCalories
-        }
-    }
-}
 
 
 @Composable
-fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: MainViewModel) {
+fun DietApp() {
     // Usamos NavController para manejar la navegación
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = "auth") {
-
-        composable("auth") {
-            AuthScreen(
-                onAuthenticate = { email, password ->
-                    val isAuthenticated = dbManager.authenticateUser(email, password)
-                    if (isAuthenticated) {
-                        Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                        viewModel.updateUser(currentEmail = email)
-                        viewModel.updateUser(currentUser = dbManager.getName(email).toString())
-                        navController.navigate("welcome")
-                    } else {
-                        Toast.makeText(applicationContext, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
-                    }
-                },
-                onRegister = { name, email, password ->
-                    val isRegistered = dbManager.registerUser(name, email, password)
-                    if (isRegistered) {
-                        Toast.makeText(applicationContext, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                        viewModel.updateUser(currentEmail = email)
-                        viewModel.updateUser(currentUser = dbManager.getName(email).toString())
-                        navController.navigate("welcome")
-                    } else {
-                        Toast.makeText(applicationContext, "Error al registrar el usuario", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            )
-        }
-
+    NavHost(navController = navController, startDestination = "welcome") {
         composable("welcome") {
-            WelcomeScreen(navController, viewModel)  // Pantalla de bienvenida
+            WelcomeScreen(navController)  // Pantalla de bienvenida
         }
         composable("diet_form") {
-            DietForm(viewModel)  // Pantalla del formulario de la dieta
+            DietForm()  // Pantalla del formulario de la dieta
         }
         composable("basal_metabolism") {
-            BasalMetabolismScreen(viewModel)
-        }
-        composable("maintenance_calories") {
-            MaintenanceCaloriesScreen(viewModel)
+            BasalMetabolismScreen()
         }
     }
 }
 
 @Composable
-fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
+fun WelcomeScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF8BC34A)), // Fondo verde
         contentAlignment = Alignment.Center
     ) {
-        // Contenido principal de la pantalla
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Si el usuario está autenticado (currentUser no está vacío)
-            var currentUser = viewModel.currentUser
-            if (currentUser.isNotEmpty()) {
-                // Símbolo en la esquina superior izquierda y mensaje de bienvenida
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp), // Margen superior
-                ) {
-                    // Mensaje "Bienvenido gloton" en el centro superior
-                    Text(
-                        text = "¡Bienvenido $currentUser!",
-                        style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
-                        modifier = Modifier.align(Alignment.TopCenter)
-                    )
-
-                    // Símbolo en la esquina superior izquierda
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(Color.White, shape = CircleShape)
-                            .align(Alignment.TopStart),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "✓", // Símbolo
-                            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Green)
-                        )
-                    }
-                }
-            } else {
-                Text(
-                    text = "¡Bienvenido a la aplicación de dieta!",
-                    style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
+            Text(
+                text = "¡Bienvenido a la aplicación de dieta!",
+                style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
+                modifier = Modifier.padding(16.dp)
+            )
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = {
-                    // Navegar a la pantalla del formulario de la dieta
-                    navController.navigate("diet_form")
+                    navController.navigate("diet_form") // Navegar al formulario de la dieta
                 },
                 modifier = Modifier.padding(16.dp)
             ) {
@@ -211,16 +126,13 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
             Button(onClick = { navController.navigate("basal_metabolism") }) {
                 Text("Calcular Gasto Energético Basal")
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("maintenance_calories") }) {
-                Text("Calcular Calorías de Mantenimiento")
-            }
         }
     }
 }
 
+
 @Composable
-fun DietForm(viewModel: MainViewModel) {
+fun DietForm() {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxCarbohydrates by remember { mutableStateOf("") }
     var minSugar by remember { mutableStateOf("") }
@@ -283,7 +195,7 @@ fun DietForm(viewModel: MainViewModel) {
 }
 
 @Composable
-fun BasalMetabolismScreen(viewModel: MainViewModel) {
+fun BasalMetabolismScreen() {
     var weight by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -311,7 +223,6 @@ fun BasalMetabolismScreen(viewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = result)
     }
-    viewModel.updateUser(basalMetabolism = result)
 }
 
 fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gender: String): String {
@@ -325,56 +236,6 @@ fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gen
     } else if (gender.equals("F", ignoreCase = true)) {
         val bmr = 447.593 + (9.247 * w) + (3.098 * h) - (4.330 * a)
         "Gasto Energético Basal: ${String.format("%.2f", bmr)} kcal/día"
-    } else {
-        "Género no válido"
-    }
-}
-
-@Composable
-fun MaintenanceCaloriesScreen(viewModel: MainViewModel) {
-    var weight by remember { mutableStateOf("") }
-    var height by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
-    var gender by remember { mutableStateOf("") }
-    var physicalActivityLevel by remember { mutableStateOf("") }
-    var result by remember { mutableStateOf("") }
-    Column(
-            modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        InputField("Peso (kg)", weight) { weight = it }
-        InputField("Altura (cm)", height) { height = it }
-        InputField("Edad (años)", age) { age = it }
-        InputField("Género (M/F)", gender) { gender = it }
-        InputField("Nivel de actividad física (1/2/3/4/5)", physicalActivityLevel) { physicalActivityLevel = it }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            result = calculateMaintenanceCalories(weight, height, age, gender, physicalActivityLevel)
-        }) {
-            Text("Calcular")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = result)
-    }
-    viewModel.updateUser(maintenanceCalories = result)
-}
-
-fun calculateMaintenanceCalories(weight: String, height: String, age: String, gender: String, physicalActivityLevel: String): String {
-    val w = weight.toDoubleOrNull() ?: return "Peso no válido"
-    val h = height.toDoubleOrNull() ?: return "Altura no válida"
-    val a = age.toDoubleOrNull() ?: return "Edad no válida"
-    val pal = physicalActivityLevel.toDoubleOrNull() ?: return "Nivel de actividad física no válido"
-    val physicalActivityCoefficients = arrayOf(1.2, 1.375,1.55, 1.725, 1.9)
-    return if (gender.equals("M", ignoreCase = true)) {
-        val mc = physicalActivityCoefficients[pal.toInt()] * (66 + (13.7 * w) + (5 * h) - (6.8 * a))
-        "Calorías de mantenimiento: ${String.format("%.2f", mc)} kcal/día"
-    } else if (gender.equals("F", ignoreCase = true)) {
-        val mc = physicalActivityCoefficients[pal.toInt()] * (665 + (9.6 * w) + (1.8 * h) - (4.7 * a))
-        "Calorías de mantenimiento: ${String.format("%.2f", mc)} kcal/día"
     } else {
         "Género no válido"
     }
