@@ -44,6 +44,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
 
@@ -144,9 +148,11 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
         composable("maintenance_calories") {
             MaintenanceCaloriesScreen(viewModel)
         }
-
         composable("calendar") {
             CalendarScreen(navController, viewModel)  // Pantalla de calendario
+        }
+        composable("main_screen") {
+            ButtonGridScreen(navController) // Pasar el navController aquí
         }
 
         composable("edit_meal/{dayIndex}") { backStackEntry ->
@@ -227,6 +233,10 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { navController.navigate("calendar") }) {
                 Text("Ver Calendario de Comidas")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { navController.navigate("main_screen") }) {
+                Text("Ver Pantalla Principal")
             }
         }
     }
@@ -529,7 +539,7 @@ fun EditMealScreen(navController: NavController, dayIndex: Int, viewModel: MainV
                 "lunch" to lunch,
                 "dinner" to dinner
             )
-            updateMealsForDay(dayIndex, updatedMeals)
+            // updateMealsForDay(dayIndex, updatedMeals)
             navController.navigate("calendar")
         }) {
             Text("Guardar Cambios")
@@ -586,5 +596,54 @@ fun fetchAllUsers() {
         Log.e("MyAppTag", "SecurityException: ${e.message}", e) // Log with the exception details
     } catch (e: Exception){
         Log.e("MyAppTag", "General exception", e) //Log general exception
+    }
+}
+
+@Composable
+fun ButtonGridScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF8BC34A)),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Fila de botones para las diferentes funcionalidades
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ColoredButton("Formulario Dieta", Color.Black) {
+                navController.navigate("diet_form")
+            }
+            ColoredButton("Gasto Basal", Color.Black) {
+                navController.navigate("basal_metabolism")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ColoredButton("Calorías Mantenimiento", Color.Black) {
+                navController.navigate("maintenance_calories")
+            }
+            ColoredButton("Calendario", Color.Black) {
+                navController.navigate("calendar")
+            }
+        }
+    }
+}
+
+@Composable
+fun ColoredButton(text: String, color: Color, onClick: () -> Unit) {
+    Button(
+        onClick = onClick, // Llama a la función onClick pasada como argumento
+        colors = ButtonDefaults.buttonColors(containerColor = color),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .size(120.dp)
+    ) {
+        Text(text = text, color = Color.White, fontSize = 16.sp)
     }
 }
