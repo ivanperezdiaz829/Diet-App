@@ -43,8 +43,6 @@ fun GoalSelectionScreen(
             .statusBarsPadding()
             .background(Color.White)
     ) {
-        Spacer(modifier = Modifier.height(120.dp))
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
