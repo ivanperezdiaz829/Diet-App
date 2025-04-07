@@ -289,7 +289,7 @@ fun DietForm(viewModel: MainViewModel) {
 
             Log.d("DietForm", "Valores convertidos a Double: $numericValues")
 
-            if (numericValues.size == 13) { // Asegurar que todos los valores sean numéricos
+            if (numericValues.size == 11) { // Asegurar que todos los valores sean numéricos
                 sendDataToServer(context, numericValues) { response ->
                     result = response
                 }
