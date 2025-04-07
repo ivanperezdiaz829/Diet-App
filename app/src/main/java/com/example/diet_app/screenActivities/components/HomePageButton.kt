@@ -1,6 +1,13 @@
 package com.example.diet_app.screenActivities.components
 
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
+import okhttp3.*
+import androidx.compose.foundation.layout.*
+
 @Composable
 fun ColoredButton(text: String, color: Color, onClick: () -> Unit) {
     Button(
