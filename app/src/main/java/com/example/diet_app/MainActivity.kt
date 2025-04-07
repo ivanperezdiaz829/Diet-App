@@ -28,11 +28,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
@@ -44,6 +49,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.json.JSONArray
 
 class MainActivity : ComponentActivity() {
 
@@ -144,6 +150,9 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
         composable("maintenance_calories") {
             MaintenanceCaloriesScreen(viewModel)
         }
+        composable("calendar") {
+            DietCalendarScreen(context = applicationContext)
+        }
     }
 }
 
@@ -215,6 +224,13 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
             Button(onClick = { navController.navigate("maintenance_calories") }) {
                 Text("Calcular Calorías de Mantenimiento")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { navController.navigate("calendar") },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Ver Calendario Semanal")
+            }
         }
     }
 }
@@ -235,6 +251,7 @@ fun DietForm(viewModel: MainViewModel) {
     var maxFat by remember { mutableStateOf("") }
     var budget by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Column(modifier = Modifier
         .padding(16.dp)
@@ -268,7 +285,10 @@ fun DietForm(viewModel: MainViewModel) {
             Log.d("DietForm", "Valores convertidos a Double: $numericValues")
 
             if (numericValues.size == 13) { // Asegurar que todos los valores sean numéricos
-                sendDataToServer(numericValues) { response ->
+                sendDataToServer(
+                    context,
+                    numericValues
+                ) { response ->
                     result = response
                 }
             } else {
@@ -390,9 +410,9 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
     )
 }
 
-fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
+fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.193.249.185:8000/calculate"
+    val url = "http://10.193.173.178:8000/calculate"
 
     val json = JSONObject()
     json.put("values", values)
@@ -437,6 +457,16 @@ fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
                             - ${dinnerList.joinToString("\n- ")}
                         """.trimIndent()
 
+                        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+                        val editor = prefs.edit()
+                        val dietData = JSONObject().apply {
+                            put("breakfast", breakfast)
+                            put("lunch", JSONArray(lunchList))
+                            put("dinner", JSONArray(dinnerList))
+                        }
+                        editor.putString("lunes_diet", dietData.toString())
+                        editor.apply()
+
                         onResult(resultString)
                     }
                 } catch (e: Exception) {
@@ -446,6 +476,53 @@ fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
         }
     })
 }
+
+@Composable
+fun DietCalendarScreen(context: Context) {
+    val sharedPreferences = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+    val days = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+
+    val weekDiet = days.map { day ->
+        val data = sharedPreferences.getString("${day.lowercase()}_diet", null)
+        if (data != null) {
+            val json = JSONObject(data)
+            DayDiet(
+                day,
+                breakfast = json.optString("breakfast", null.toString()),
+                lunch = json.optJSONArray("lunch")?.let { arr -> (0 until arr.length()).map { arr.getString(it) } },
+                dinner = json.optJSONArray("dinner")?.let { arr -> (0 until arr.length()).map { arr.getString(it) } }
+            )
+        } else {
+            DayDiet(day, null, null, null)
+        }
+    }
+
+    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        items(weekDiet) { dayDiet ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(dayDiet.day, style = MaterialTheme.typography.titleLarge)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("🍳 Desayuno: ${dayDiet.breakfast ?: "-"}")
+                    Text("🥗 Almuerzo: ${dayDiet.lunch?.joinToString(", ") ?: "-"}")
+                    Text("🍽 Cena: ${dayDiet.dinner?.joinToString(", ") ?: "-"}")
+                }
+            }
+        }
+    }
+}
+
+data class DayDiet(
+    val day: String,
+    val breakfast: String?,
+    val lunch: List<String>?,
+    val dinner: List<String>?
+)
 
 fun checkDatabaseConnection() {
     val db = FirebaseFirestore.getInstance()
