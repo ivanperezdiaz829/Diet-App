@@ -151,7 +151,6 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
                     valid_combinations.append((breakfast, drink))
 
     if valid_combinations:
-        print(valid_combinations)
         selected_combination = random.choice(valid_combinations)
         return selected_combination
 
@@ -229,7 +228,6 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                         valid_combinations.append((main, side, drink))
 
     if valid_combinations:
-        print(valid_combinations)
         selected_combination = random.choice(valid_combinations)
         return selected_combination
 
@@ -283,7 +281,6 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
                     valid_combinations.append((main, drink))
 
     if valid_combinations:
-        print(valid_combinations)
         selected_combination = random.choice(valid_combinations)
         return selected_combination
     return None
