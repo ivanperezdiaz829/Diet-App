@@ -1,3 +1,4 @@
+from Plates import *
 import sqlite3
 import random
 import os
@@ -108,10 +109,12 @@ def percents_generator_day(cursor, carbohydrates, sugar, energy, protein, salt, 
 def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
     print()
     print("\n--------- PLATOS DISPOBIBLES DESAYUNO ---------")
-    breakfasts = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1)
-    breakfasts = filter_plates(breakfasts, person_type)
-    drinks = sql_sentences(cursor, [0, carbohydrates[1]], [0, sugar[1]], [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1)
-    drinks = filter_plates(drinks, person_type)
+    breakfasts_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1)
+    breakfasts_rows = filter_plates(breakfasts_rows, person_type)
+    breakfasts = [Plate(row) for row in breakfasts_rows]
+    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], [0, sugar[1]], [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1)
+    drinks_rows = filter_plates(drinks_rows, person_type)
+    drinks = [Plate(row) for row in drinks_rows]
     print(f'\nPRINCIPAL:')
     for i in range(len(breakfasts)):
         print(f"breakfast: {breakfasts[i]}")
@@ -123,18 +126,18 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
     if breakfasts and drinks:
         for breakfast in breakfasts:
             for drink in drinks:
-                combination = (breakfast[0], drink[0])
+                combination = (breakfast, drink)
 
                 if combination in selected_breakfasts:
                     continue
 
-                combined_carbs = drink[2] + breakfast[2]
-                combined_sugar = drink[5] + breakfast[5]
-                combined_energy = drink[1] + breakfast[1]
-                combined_protein = drink[3] + breakfast[3]
-                combined_salt = drink[6] + breakfast[6]
-                combined_fat = drink[4] + breakfast[4]
-                combined_price = drink[7] + breakfast[7]
+                combined_carbs = drink.carbohydrates + breakfast.carbohydrates
+                combined_sugar = drink.sugar + breakfast.sugar
+                combined_energy = drink.calories + breakfast.calories
+                combined_protein = drink.protein + breakfast.protein
+                combined_salt = drink.salt + breakfast.salt
+                combined_fat = drink.fat + breakfast.fat
+                combined_price = drink.price + breakfast.price
 
                 if (carbohydrates[0] <= combined_carbs <= carbohydrates[1] and
                         sugar[0] <= combined_sugar <= sugar[1] and
@@ -147,6 +150,7 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
                     valid_combinations.append((breakfast, drink))
 
     if valid_combinations:
+        print(valid_combinations)
         selected_combination = random.choice(valid_combinations)
         return selected_combination
 
@@ -177,7 +181,6 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                           [nutritional_percents[5][1] * fat[0], nutritional_percents[5][1] * fat[1]],
                           nutritional_percents[6][1] * price, 3, 1, -1)
     sides = filter_plates(sides, person_type)
-    sides = filter_plates(sides, person_type)
 
     drinks = sql_sentences(cursor, [0, carbohydrates[1]], [0, sugar[1]], [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1)
     drinks = filter_plates(drinks, person_type)
@@ -191,20 +194,6 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
     print(f'\nBEBIDA:')
     for i in range(len(drinks)):
         print(f"drink: {drinks[i]}")
-
-
-    """
-    print("\nPOSTRE:")
-    desserts = sql_sentences(cursor, [nutritional_percents[0][2] * carbohydrates[0], nutritional_percents[0][2] * carbohydrates[1]],
-                          [0 * sugar[0], nutritional_percents[1][2] * sugar[1]],
-                          [nutritional_percents[2][2] * energy[0], nutritional_percents[2][2] * energy[1]],
-                          [nutritional_percents[3][2] * protein[0], nutritional_percents[3][2] * protein[1]],
-                          [0 * salt[0], nutritional_percents[4][2] * salt[1]],
-                          [nutritional_percents[5][2] * fat[0], nutritional_percents[5][2] * fat[1]],
-                          nutritional_percents[6][2] * price, 5, 1, 1)
-    for i in range(len(desserts)):
-        print(f"dessert: {desserts[i]}")
-    """
 
     valid_combinations = []
 
@@ -290,7 +279,7 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
     return None
 
 
-def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, selected_breakfasts, selected_lunches, selected_dinners):
+def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners):
     db_path = os.path.join('../../FoodDbManagement', 'DietApp.db')
 
     conn = sqlite3.connect(db_path)
@@ -332,6 +321,7 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
     solution.append(breakfast)
     solution.append(lunch)
     solution.append(dinner)
+    print(solution)
 
     conn.close()
     return solution
@@ -342,9 +332,9 @@ def print_solution(solution):
         print("\n--- SOLUCIÓN ---")
         # Nombres de los atributos nutricionales y el precio
         requirements = ["name", "energy", "carbohydrates", "sugar", "protein", "fat", "salt", "price"]
-        print(f"\nDesayuno: {solution[0][0][0]}, {solution[0][1][0]}")
-        print(f"Almuerzo: {solution[1][0][0]}, {solution[1][1][0]}, {solution[1][2][0]}")
-        print(f"Cena: {solution[2][0][0]}, {solution[2][1][0]}")
+        print(f"\nDesayuno: {solution[0][0]} y {solution[0][1]}")
+        print(f"Almuerzo: {solution[1][0][0]}, {solution[1][1][0]} y {solution[1][2][0]}")
+        print(f"Cena: {solution[2][0][0]} y {solution[2][1][0]}")
         
         # Inicializa una lista con ceros para acumular las cualidades de la dieta (carbohidratos, azúcar, etc.)
         diet_qualities = [0] * 8  # Excluye "name", que es texto
