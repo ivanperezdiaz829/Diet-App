@@ -1,4 +1,5 @@
 from Plates import *
+from SQLsentences import *
 import sqlite3
 import random
 import os
