@@ -28,16 +28,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
@@ -49,7 +44,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.json.JSONArray
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
 
@@ -151,7 +149,15 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
             MaintenanceCaloriesScreen(viewModel)
         }
         composable("calendar") {
-            DietCalendarScreen(context = applicationContext)
+            CalendarScreen(navController, viewModel)  // Pantalla de calendario
+        }
+        composable("main_screen") {
+            ButtonGridScreen(navController) // Pasar el navController aquí
+        }
+
+        composable("edit_meal/{dayIndex}") { backStackEntry ->
+            val dayIndex = backStackEntry.arguments?.getString("dayIndex")?.toInt() ?: 0
+            EditMealScreen(navController, dayIndex, viewModel)  // Pantalla de edición de comidas
         }
     }
 }
@@ -225,11 +231,12 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
                 Text("Calcular Calorías de Mantenimiento")
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { navController.navigate("calendar") },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text("Ver Calendario Semanal")
+            Button(onClick = { navController.navigate("calendar") }) {
+                Text("Ver Calendario de Comidas")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { navController.navigate("main_screen") }) {
+                Text("Ver Pantalla Principal")
             }
         }
     }
@@ -239,19 +246,16 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
 fun DietForm(viewModel: MainViewModel) {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxCarbohydrates by remember { mutableStateOf("") }
-    var minSugar by remember { mutableStateOf("") }
     var maxSugar by remember { mutableStateOf("") }
     var minEnergy by remember { mutableStateOf("") }
     var maxEnergy by remember { mutableStateOf("") }
     var minProtein by remember { mutableStateOf("") }
     var maxProtein by remember { mutableStateOf("") }
-    var minSalt by remember { mutableStateOf("") }
     var maxSalt by remember { mutableStateOf("") }
     var minFat by remember { mutableStateOf("") }
     var maxFat by remember { mutableStateOf("") }
     var budget by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
-    val context = LocalContext.current
 
     Column(modifier = Modifier
         .padding(16.dp)
@@ -261,13 +265,11 @@ fun DietForm(viewModel: MainViewModel) {
 
         InputField(label = "Carbs mínimas", value = minCarbohydrates) { minCarbohydrates= it }
         InputField(label = "Carbs máximas", value = maxCarbohydrates) { maxCarbohydrates = it }
-        InputField(label = "Azúcar mínimas", value = minSugar) { minSugar = it }
         InputField(label = "Azúcar máximas", value = maxSugar) { maxSugar = it }
         InputField(label = "Energía mínimas", value = minEnergy) { minEnergy = it }
         InputField(label = "Energía máximas", value = maxEnergy) { maxEnergy = it }
         InputField(label = "Proteina mínimas", value = minProtein) { minProtein= it }
         InputField(label = "Proteina máximas", value = maxProtein) { maxProtein= it }
-        InputField(label = "Sal mínima (g)", value = minSalt) { minSalt = it }
         InputField(label = "Sal máxima (g)", value = maxSalt) { maxSalt = it }
         InputField(label = "Grasa mínima (g)", value = minFat) { minFat = it }
         InputField(label = "Grasa máxima (g)", value = maxFat) { maxFat = it }
@@ -277,18 +279,15 @@ fun DietForm(viewModel: MainViewModel) {
 
         Button(onClick = {
             // Convertir todos los valores a Double, ignorando los que no sean válidos
-            val numericValues = listOf(minCarbohydrates, maxCarbohydrates, minSugar, maxSugar,
-                minEnergy, maxEnergy, minProtein, maxProtein, minSalt, maxSalt, minFat, maxFat, budget)
+            val numericValues = listOf(minCarbohydrates, maxCarbohydrates, maxSugar,
+                minEnergy, maxEnergy, minProtein, maxProtein, maxSalt, minFat, maxFat, budget)
                 .map { it.replace(",", ".") }  // Asegura el formato correcto de decimales
                 .mapNotNull { it.toDoubleOrNull() }  // Convierte String a Double si es válido
 
             Log.d("DietForm", "Valores convertidos a Double: $numericValues")
 
             if (numericValues.size == 13) { // Asegurar que todos los valores sean numéricos
-                sendDataToServer(
-                    context,
-                    numericValues
-                ) { response ->
+                sendDataToServer(numericValues) { response ->
                     result = response
                 }
             } else {
@@ -410,9 +409,9 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
     )
 }
 
-fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) -> Unit) {
+fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.193.173.178:8000/calculate"
+    val url = "http://10.0.2.2:8000/calculate"
 
     val json = JSONObject()
     json.put("values", values)
@@ -457,16 +456,6 @@ fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) 
                             - ${dinnerList.joinToString("\n- ")}
                         """.trimIndent()
 
-                        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
-                        val editor = prefs.edit()
-                        val dietData = JSONObject().apply {
-                            put("breakfast", breakfast)
-                            put("lunch", JSONArray(lunchList))
-                            put("dinner", JSONArray(dinnerList))
-                        }
-                        editor.putString("lunes_diet", dietData.toString())
-                        editor.apply()
-
                         onResult(resultString)
                     }
                 } catch (e: Exception) {
@@ -478,51 +467,89 @@ fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) 
 }
 
 @Composable
-fun DietCalendarScreen(context: Context) {
-    val sharedPreferences = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
-    val days = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+fun CalendarScreen(navController: NavController, viewModel: MainViewModel) {
+    val daysOfWeek = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+    val meals = remember { mutableStateOf(emptyList<String>()) }  // Aquí se guardarán las comidas del día
 
-    val weekDiet = days.map { day ->
-        val data = sharedPreferences.getString("${day.lowercase()}_diet", null)
-        if (data != null) {
-            val json = JSONObject(data)
-            DayDiet(
-                day,
-                breakfast = json.optString("breakfast", null.toString()),
-                lunch = json.optJSONArray("lunch")?.let { arr -> (0 until arr.length()).map { arr.getString(it) } },
-                dinner = json.optJSONArray("dinner")?.let { arr -> (0 until arr.length()).map { arr.getString(it) } }
-            )
-        } else {
-            DayDiet(day, null, null, null)
-        }
-    }
+    // Simulamos que tenemos una comida por cada día
+    val mealList = daysOfWeek.map { "$it: Desayuno, Almuerzo, Cena" }
 
-    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        items(weekDiet) { dayDiet ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                elevation = CardDefaults.cardElevation(6.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text("Calendario de comidas", style = MaterialTheme.typography.titleLarge)
+
+        mealList.forEachIndexed { index, day ->
+            Text(day, modifier = Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodyLarge)
+            Button(
+                onClick = {
+                    // Accede al día específico para editar las comidas
+                    navController.navigate("edit_meal/$index")
+                },
+                modifier = Modifier.padding(vertical = 4.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(dayDiet.day, style = MaterialTheme.typography.titleLarge)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("🍳 Desayuno: ${dayDiet.breakfast ?: "-"}")
-                    Text("🥗 Almuerzo: ${dayDiet.lunch?.joinToString(", ") ?: "-"}")
-                    Text("🍽 Cena: ${dayDiet.dinner?.joinToString(", ") ?: "-"}")
-                }
+                Text("Editar Comidas")
             }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("welcome") }) {
+            Text("Regresar al inicio")
         }
     }
 }
 
-data class DayDiet(
-    val day: String,
-    val breakfast: String?,
-    val lunch: List<String>?,
-    val dinner: List<String>?
-)
+@Composable
+fun EditMealScreen(navController: NavController, dayIndex: Int, viewModel: MainViewModel) {
+    var breakfast by remember { mutableStateOf("") }
+    var lunch by remember { mutableStateOf("") }
+    var dinner by remember { mutableStateOf("") }
+
+    // Aquí podrías consultar los datos del servidor para obtener las comidas del día
+    // Simulamos que obtenemos las comidas para el día seleccionado
+    val meal = when (dayIndex) {
+        0 -> listOf("Huevos", "Ensalada", "Pollo al horno")
+        1 -> listOf("Avena", "Arroz con pollo", "Pasta")
+        else -> listOf("", "", "")
+    }
+
+    breakfast = meal[0]
+    lunch = meal[1]
+    dinner = meal[2]
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text("Editar Comidas", style = MaterialTheme.typography.titleLarge)
+
+        InputField("Desayuno", breakfast) { breakfast = it }
+        InputField("Almuerzo", lunch) { lunch = it }
+        InputField("Cena", dinner) { dinner = it }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = {
+            // Aquí puedes enviar las comidas al servidor para actualizarlas
+            val updatedMeals = mapOf(
+                "breakfast" to breakfast,
+                "lunch" to lunch,
+                "dinner" to dinner
+            )
+            // updateMealsForDay(dayIndex, updatedMeals)
+            navController.navigate("calendar")
+        }) {
+            Text("Guardar Cambios")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("calendar") }) {
+            Text("Cancelar")
+        }
+    }
+}
 
 fun checkDatabaseConnection() {
     val db = FirebaseFirestore.getInstance()
@@ -569,5 +596,54 @@ fun fetchAllUsers() {
         Log.e("MyAppTag", "SecurityException: ${e.message}", e) // Log with the exception details
     } catch (e: Exception){
         Log.e("MyAppTag", "General exception", e) //Log general exception
+    }
+}
+
+@Composable
+fun ButtonGridScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF8BC34A)),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Fila de botones para las diferentes funcionalidades
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ColoredButton("Formulario Dieta", Color.Black) {
+                navController.navigate("diet_form")
+            }
+            ColoredButton("Gasto Basal", Color.Black) {
+                navController.navigate("basal_metabolism")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ColoredButton("Calorías Mantenimiento", Color.Black) {
+                navController.navigate("maintenance_calories")
+            }
+            ColoredButton("Calendario", Color.Black) {
+                navController.navigate("calendar")
+            }
+        }
+    }
+}
+
+@Composable
+fun ColoredButton(text: String, color: Color, onClick: () -> Unit) {
+    Button(
+        onClick = onClick, // Llama a la función onClick pasada como argumento
+        colors = ButtonDefaults.buttonColors(containerColor = color),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .size(120.dp)
+    ) {
+        Text(text = text, color = Color.White, fontSize = 16.sp)
     }
 }

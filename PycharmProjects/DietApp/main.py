@@ -68,7 +68,7 @@ budget = 50
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
 
 # print("Dieta Estándar")
-solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, set(), set(), set())
+solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
 print_solution(solution)
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
