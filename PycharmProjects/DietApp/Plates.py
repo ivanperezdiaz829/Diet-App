@@ -16,3 +16,14 @@ class Plate:
 
     def __repr__(self):
         return self.name
+
+    def get_totals(self):
+        return {
+            "calories": self.calories,
+            "carbohydrates": self.carbohydrates,
+            "protein": self.protein,
+            "fat": self.fat,
+            "sugar": self.sugar,
+            "salt": self.salt,
+            "price": self.price
+        }
