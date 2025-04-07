@@ -47,7 +47,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
+import org.json.JSONArray
 
 class MainActivity : ComponentActivity() {
 
@@ -256,6 +258,7 @@ fun DietForm(viewModel: MainViewModel) {
     var maxFat by remember { mutableStateOf("") }
     var budget by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Column(modifier = Modifier
         .padding(16.dp)
@@ -287,7 +290,7 @@ fun DietForm(viewModel: MainViewModel) {
             Log.d("DietForm", "Valores convertidos a Double: $numericValues")
 
             if (numericValues.size == 13) { // Asegurar que todos los valores sean numéricos
-                sendDataToServer(numericValues) { response ->
+                sendDataToServer(context, numericValues) { response ->
                     result = response
                 }
             } else {
@@ -409,7 +412,7 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
     )
 }
 
-fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
+fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) -> Unit) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/calculate"
 
@@ -455,6 +458,17 @@ fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
                             🍽 **Cena:** 
                             - ${dinnerList.joinToString("\n- ")}
                         """.trimIndent()
+
+                        // 🔒 Guardar en SharedPreferences para el lunes
+                        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+                        val editor = prefs.edit()
+                        val dietData = JSONObject().apply {
+                            put("breakfast", breakfast)
+                            put("lunch", JSONArray(lunchList))
+                            put("dinner", JSONArray(dinnerList))
+                        }
+                        editor.putString("lunes_diet", dietData.toString())
+                        editor.apply()
 
                         onResult(resultString)
                     }
