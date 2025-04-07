@@ -290,7 +290,75 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
     return None
 
 
-def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, selected_breakfasts, selected_lunches, selected_dinners):
+def get_nutritional_mults(nutrient, factors):
+    return
+
+
+def percents_person_type(person_type):
+    factors = {
+        1: {  # Tipo por defecto
+            "breakfast": {
+                "carbohydrates": [0.20, 0.35],
+                "sugar": [0, 0.55],
+                "energy": [0.15, 0.30],
+                "protein": [0.075, 0.30],
+                "salt": [0, 0.25],
+                "fat": [0.10, 0.45],
+                "price_divisor": 4
+            },
+            "lunch": {
+                "carbohydrates": [0.45, 0.60],
+                "sugar": [0, 0.40],
+                "energy": [0.40, 0.60],
+                "protein": [0.3525, 0.55],
+                "salt": [0, 0.60],
+                "fat": [0.40, 0.60],
+                "price_divisor": 2
+            },
+            "dinner": {
+                "carbohydrates": [0.15, 0.25],
+                "sugar": [0, 0.25],
+                "energy": [0.25, 0.30],
+                "protein": [0.30, 0.35],
+                "salt": [0, 0.35],
+                "fat": [0.30, 0.35],
+                "price_divisor": 4
+            }
+        },
+        2: {  # Persona activa (ejemplo)
+            "breakfast": {
+                "carbohydrates": [0.25, 0.40],
+                "sugar": [0, 0.50],
+                "energy": [0.20, 0.35],
+                "protein": [0.10, 0.35],
+                "salt": [0, 0.20],
+                "fat": [0.15, 0.50],
+                "price_divisor": 4
+            },
+            "lunch": {
+                "carbohydrates": [0.50, 0.65],
+                "sugar": [0, 0.35],
+                "energy": [0.45, 0.65],
+                "protein": [0.40, 0.60],
+                "salt": [0, 0.55],
+                "fat": [0.45, 0.65],
+                "price_divisor": 2
+            },
+            "dinner": {
+                "carbohydrates": [0.20, 0.30],
+                "sugar": [0, 0.20],
+                "energy": [0.30, 0.35],
+                "protein": [0.35, 0.40],
+                "salt": [0, 0.30],
+                "fat": [0.35, 0.40],
+                "price_divisor": 4
+            }
+        }
+    }
+    return factors.get(person_type)
+
+
+def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, special_diet, person_type, selected_breakfasts, selected_lunches, selected_dinners):
     db_path = os.path.join('../../FoodDbManagement', 'DietApp.db')
 
     conn = sqlite3.connect(db_path)
@@ -306,7 +374,7 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
                                  [protein[0] * 0.075, protein[1] * 0.30],
                                  [salt[0] * 0, salt[1] * 0.25],
                                  [fat[0] * 0.10, fat[1] * 0.45],
-                                 price / 4, person_type)
+                                 price / 4, special_diet)
 
     lunch = obtain_lunch(cursor, selected_lunches,
                                  [carbohydrates[0] * 0.45, carbohydrates[1] * 0.60],
@@ -315,7 +383,7 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
                                  [protein[0] * 0.3525, protein[1] * 0.55],
                                  [salt[0] * 0, salt[1] * 0.60],
                                  [fat[0] * 0.40, fat[1] * 0.60],
-                                 price / 2, person_type)
+                                 price / 2, special_diet)
 
     dinner = obtain_dinner(cursor, selected_dinners,
                                  [carbohydrates[0] * 0.15, carbohydrates[1] * 0.25],
@@ -324,7 +392,7 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
                                  [protein[0] * 0.30, protein[1] * 0.35],
                                  [salt[0] * 0, salt[1] * 0.35],
                                  [fat[0] * 0.30, fat[1] * 0.35],
-                                 price / 4, person_type)
+                                 price / 4, special_diet)
 
     if breakfast is None or lunch is None or dinner is None:
         return None
