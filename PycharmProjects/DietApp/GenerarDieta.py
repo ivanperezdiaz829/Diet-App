@@ -110,6 +110,7 @@ def percents_generator_day(cursor, carbohydrates, sugar, energy, protein, salt, 
 def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
     print()
     print("\n--------- PLATOS DISPOBIBLES DESAYUNO ---------")
+    print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
     breakfasts_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1)
     breakfasts_rows = filter_plates(breakfasts_rows, person_type)
     breakfasts = [Plate(row) for row in breakfasts_rows]
@@ -158,8 +159,9 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
 
 
 def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
-    print()
     print("\n--------- PLATOS DISPONIBLES ALMUERZO ---------")
+    print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
+    print()
     nutritional_percents = []
     for i in range(1, 8):
         nutritional_percents.append(percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, i)[1:])
@@ -237,6 +239,7 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
 def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
     print()
     print("\n--------- PLATOS DISPONIBLES CENA ---------")
+    print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
     mains_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1)
     mains_rows = filter_plates(mains_rows, person_type)
     mains = [Plate(row) for row in mains_rows]
@@ -296,28 +299,28 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
     print(f"\nValores de entrada resolver_dieta: {carbohydrates, sugar, energy, protein, salt, fat, price}")
 
     breakfast = obtain_breakfast(cursor, selected_breakfasts,
-                                 [carbohydrates[0] * 0.20, carbohydrates[1] * 0.30],
+                                 [carbohydrates[0] * 0.050, carbohydrates[1] * 0.30],
                                  sugar * 0.55,
-                                 [energy[0] * 0.175, energy[1] * 0.30],
+                                 [energy[0] * 0.0175, energy[1] * 0.30],
                                  [protein[0] * 0.075, protein[1] * 0.30],
                                  salt * 0.25,
                                  [fat[0] * 0.10, fat[1] * 0.45],
                                  price / 4, person_type)
 
     lunch = obtain_lunch(cursor, selected_lunches,
-                                 [carbohydrates[0] * 0.40, carbohydrates[1] * 0.65],
+                                 [carbohydrates[0] * 0.10, carbohydrates[1] * 0.65],
                                  sugar * 0.45,
-                                 [energy[0] * 0.325, energy[1] * 0.65],
-                                 [protein[0] * 0.3025, protein[1] * 0.60],
+                                 [energy[0] * 0.15, energy[1] * 0.65],
+                                 [protein[0] * 0.20, protein[1] * 0.60],
                                  salt * 0.60,
-                                 [fat[0] * 0.35, fat[1] * 0.60],
+                                 [fat[0] * 0.15, fat[1] * 0.60],
                                  price / 2, person_type)
 
     dinner = obtain_dinner(cursor, selected_dinners,
-                                 [carbohydrates[0] * 0.20, carbohydrates[1] * 0.25],
+                                 [carbohydrates[0] * 0.10, carbohydrates[1] * 0.40],
                                  sugar * 0.20,
-                                 [energy[0] * 0.275, energy[1] * 0.30],
-                                 [protein[0] * 0.25, protein[1] * 0.30],
+                                 [energy[0] * 0.10, energy[1] * 0.40],
+                                 [protein[0] * 0.10, protein[1] * 0.40],
                                  salt * 0.35,
                                  [fat[0] * 0.30, fat[1] * 0.35],
                                  price / 4, person_type)
