@@ -1,4 +1,5 @@
 from GenerarDieta import *
+from ObtainTotals import *
 import time
 
 
@@ -68,8 +69,8 @@ budget = 50
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
 
 # print("Dieta Estándar")
-solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
-print_solution(solution)
+solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 3)
+# solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
 
