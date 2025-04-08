@@ -74,7 +74,8 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            CurrentWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //CurrentWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //HeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //AgeSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
             //SexSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
