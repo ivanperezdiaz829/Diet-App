@@ -59,9 +59,9 @@ def obtain_restrictions():
 # carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
 carbohydrates = [200, 827.13]
 energy = [1200, 2800]
-sugar = [0, 187.23]
+sugar = 187.23
 protein = [0, 253.27]
-salt = [0, 5000]    # 5g
+salt = 5000.0    # 5g
 fat = [0, 87]
 budget = 50
 
