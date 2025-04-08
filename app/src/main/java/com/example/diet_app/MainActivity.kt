@@ -74,12 +74,14 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
+            CurrentWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //HeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //AgeSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
             //SexSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
-            GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //InputDesign()
-            // DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
-            HomePageFrame(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
+            //DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
+            //HomePageFrame(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
         }
     }
 }

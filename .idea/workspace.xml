@@ -17,17 +17,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="Paso3 iniciado a falta de calendario">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/CurrentWeightSelectionFrame.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/ScreenActivities/AgeSelectionFrame.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/AgeSelectionFrame.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/ScreenActivities/Components/Header.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/Header.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/ScreenActivities/Components/NextButton.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/NextButton.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/ScreenActivities/Components/TitleSection.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/TitleSection.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/ScreenActivities/GoalSelectionFrame.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/GoalSelectionFrame.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/ScreenActivities/SexSelectionFrame.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/SexSelectionFrame.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/ScreenActivities/WelcomeActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/WelcomeActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/AgeSelectionFrame.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/AgeSelectionFrame.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/HeightSelectionFrame.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/HeightSelectionFrame.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,7 +139,7 @@
     "com.google.services.firebase.aqiPopupShown": "true",
     "git-widget-placeholder": "#2 on ui__branch",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/main/res/drawable",
+    "last_opened_file_path": "C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/main/java/com/example/diet_app/screenActivities",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -157,6 +151,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\java\com\example\diet_app\screenActivities" />
       <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\res\drawable" />
       <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\assets" />
       <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\assets" />
