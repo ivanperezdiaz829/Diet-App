@@ -76,10 +76,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             //AgeSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
             //SexSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
-            GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //InputDesign()
             // DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
-            HomePageFrame(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
+            HomePageFrame()
         }
     }
 }

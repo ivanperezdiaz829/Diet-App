@@ -102,7 +102,7 @@ private fun SexOptions(
         SexOption(
             sex = Sex.FEMALE,
             text = "Female",
-            imageId = R.drawable.img,
+            imageId = R.drawable.female,
             isSelected = selectedSex == Sex.FEMALE,
             onClick = { onSexSelected(Sex.FEMALE) }
         )
@@ -110,7 +110,7 @@ private fun SexOptions(
         SexOption(
             sex = Sex.MALE,
             text = "Male",
-            imageId = R.drawable.img_1,
+            imageId = R.drawable.male,
             isSelected = selectedSex == Sex.MALE,
             onClick = { onSexSelected(Sex.MALE) }
         )
