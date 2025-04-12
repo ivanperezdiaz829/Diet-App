@@ -36,14 +36,14 @@ fun OptionGrid() {
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             HomePageOptionCard(
-                label = "Calculadora de calorías",
+                label = "Calories Calculator",
                 imageId = R.drawable.calculator,
                 backgroundColor = Color(0xFFFF6C87), // color personalizado
                 onClick = { /* Acción temporal, no se hace nada por ahora */ }
             )
 
             HomePageOptionCard(
-                label = "Calendario Dieta",
+                label = "Diet Calendar",
                 imageId = R.drawable.calendar,
                 backgroundColor = Color(0xFF5C6DFF), // color personalizado
                 onClick = { /* Acción temporal, no se hace nada por ahora */ }
@@ -52,14 +52,14 @@ fun OptionGrid() {
 
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             HomePageOptionCard(
-                label = "Generar Dieta",
+                label = "Generate Diet",
                 imageId = R.drawable.add,
                 backgroundColor = Color(0xFF05D0A0), // color personalizado
                 onClick = { /* Acción temporal, no se hace nada por ahora */ }
             )
 
             HomePageOptionCard(
-                label = "Modificar Dieta",
+                label = "Modify diet",
                 imageId = R.drawable.modify,
                 backgroundColor = Color(0xFFFFB36D), // color personalizado
                 onClick = { /* Acción temporal, no se hace nada por ahora */ }
