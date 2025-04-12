@@ -39,7 +39,9 @@ import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.R
 import com.example.diet_app.ui.theme.DarkOverlay
 import java.util.Calendar
-import com.example.diet_app.screenActivities.components.*
+import com.example.diet_app.screenActivities.components.Header
+import com.example.diet_app.screenActivities.components.NextButton
+import com.example.diet_app.screenActivities.components.TitleSection
 
 
 @Composable
