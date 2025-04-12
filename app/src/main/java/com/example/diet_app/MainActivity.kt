@@ -49,7 +49,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.screenActivities.*
-import com.example.diet_app.screenActivities.Components.ToolBox
+import com.example.diet_app.screenActivities.components.ToolBox
 
 class MainActivity : ComponentActivity() {
 
