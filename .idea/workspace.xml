@@ -16,10 +16,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="components">
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="HomePageFrame completada, a falta de navegación">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/SettingsFrame.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/SettingsContent.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/data_icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/security_icon.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/HomePageButton.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/HomePageButtons.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/HomePageFrame.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/HomePageFrame.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -484,7 +488,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744479506206</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="HomePageFrame completada, a falta de navegación">
+      <option name="closed" value="true" />
+      <created>1744485918597</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1744485918597</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -526,7 +538,8 @@
     <MESSAGE value="ToolBox solo visual" />
     <MESSAGE value="components a comps" />
     <MESSAGE value="components" />
-    <option name="LAST_COMMIT_MESSAGE" value="components" />
+    <MESSAGE value="HomePageFrame completada, a falta de navegación" />
+    <option name="LAST_COMMIT_MESSAGE" value="HomePageFrame completada, a falta de navegación" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
