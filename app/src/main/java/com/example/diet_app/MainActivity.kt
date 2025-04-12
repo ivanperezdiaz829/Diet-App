@@ -49,6 +49,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.screenActivities.*
+import com.example.diet_app.screenActivities.Components.ToolBox
 
 class MainActivity : ComponentActivity() {
 
@@ -74,7 +75,7 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //CurrentWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //HeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //AgeSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
@@ -83,6 +84,7 @@ class MainActivity : ComponentActivity() {
             //InputDesign()
             //DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
             //HomePageFrame(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
+            ToolBox()
         }
     }
 }

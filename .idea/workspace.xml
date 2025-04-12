@@ -16,8 +16,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="Paso4 y paso5">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/TargetWeightSelectionFrame.kt" afterDir="false" />
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="paso6 (igual que paso5)">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/ToolBox.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/book_symbol.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/home_symbol.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/meals_symbol.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/user_symbol.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -140,7 +145,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+    "settings.editor.selected.configurable": "memory.settings"
   }
 }]]></component>
   <component name="PsdUISettings">
@@ -467,7 +472,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744134429928</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="paso6 (igual que paso5)">
+      <option name="closed" value="true" />
+      <created>1744134885130</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1744134885130</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -505,7 +518,8 @@
     <MESSAGE value="paso2 y statusbar corregida" />
     <MESSAGE value="Paso3 iniciado a falta de calendario" />
     <MESSAGE value="Paso4 y paso5" />
-    <option name="LAST_COMMIT_MESSAGE" value="Paso4 y paso5" />
+    <MESSAGE value="paso6 (igual que paso5)" />
+    <option name="LAST_COMMIT_MESSAGE" value="paso6 (igual que paso5)" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
