@@ -28,6 +28,7 @@ fun TitleSection(text: String, textGreen: String, description: String) {
                     append(textGreen)
                 }
             },
+            textAlign = TextAlign.Center,
             style = Typography.titleLarge,
             modifier = Modifier.padding(bottom = 8.dp),
             fontSize = 32.sp,

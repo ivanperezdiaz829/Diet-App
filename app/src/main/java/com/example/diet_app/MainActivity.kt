@@ -87,7 +87,8 @@ class MainActivity : ComponentActivity() {
             //ToolBox()
             //SettingsScreen()
             //FoodViewScreen(onNavigateBack = { finish() })
-            AddNewFoodScreen(onNavigateBack = { finish() }, onNext = {})
+            //AddNewFoodScreen(onNavigateBack = { finish() }, onNext = {})
+            FoodTypeSelectionScreen(onNavigateBack = { finish() }, onNext = {})
         }
     }
 }
