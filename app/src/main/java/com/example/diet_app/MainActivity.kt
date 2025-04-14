@@ -86,7 +86,8 @@ class MainActivity : ComponentActivity() {
             //HomePageFrame()
             //ToolBox()
             //SettingsScreen()
-            FoodViewScreen(onNavigateBack = { finish() })
+            //FoodViewScreen(onNavigateBack = { finish() })
+            AddNewFoodScreen(onNavigateBack = { finish() }, onNext = {})
         }
     }
 }
@@ -117,7 +118,6 @@ class MainViewModel : ViewModel() {
         }
     }
 }
-
 
 @Composable
 fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: MainViewModel) {

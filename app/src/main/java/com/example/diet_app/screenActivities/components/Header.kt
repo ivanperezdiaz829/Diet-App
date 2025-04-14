@@ -31,39 +31,48 @@ fun Header(onNavigateBack: () -> Unit, onSkip: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        BackButton(onNavigateBack)
+        SkipButton(onSkip)
+    }
+}
+
+@Composable
+fun BackButton(onNavigateBack: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(60.dp)
+            .clip(CircleShape)
+            .background(BackButtonBackground)
+            .clickable(onClick = onNavigateBack),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "<",
+            style = Typography.titleLarge.copy(
+                color = DarkGray,
+                fontWeight = FontWeight.Medium
+            )
+        )
+    }
+}
+
+@Composable
+fun SkipButton(onSkip: () -> Unit) {
+    Surface(
+        modifier = Modifier
+            .width(100.dp)
+            .height(60.dp)
+            .clickable(onClick = onSkip),
+        shape = RoundedCornerShape(25.dp),
+        color = LightGray
+    ) {
         Box(
-            modifier = Modifier
-                .size(60.dp)
-                .clip(CircleShape)
-                .background(BackButtonBackground)
-                .clickable(onClick = onNavigateBack),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "<",
-                style = Typography.titleLarge.copy(
-                    color = DarkGray,
-                    fontWeight = FontWeight.Medium
-                )
+                text = "Skip",
+                style = Typography.labelMedium
             )
-        }
-
-        Surface(
-            modifier = Modifier
-                .width(100.dp)
-                .height(60.dp)
-                .clickable(onClick = onSkip),
-            shape = RoundedCornerShape(25.dp),
-            color = LightGray
-        ) {
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Skip",
-                    style = Typography.labelMedium
-                )
-            }
         }
     }
 }

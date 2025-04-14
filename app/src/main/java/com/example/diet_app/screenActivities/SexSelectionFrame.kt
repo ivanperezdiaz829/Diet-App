@@ -69,7 +69,7 @@ fun SexSelectionScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            TitleSection("What is your", "sex?")
+            TitleSection("What is your", "sex?","We will use this data to give you a better diet type for you")
 
             Spacer(modifier = Modifier.height(40.dp))
 

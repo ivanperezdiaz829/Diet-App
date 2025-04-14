@@ -64,7 +64,7 @@ fun CurrentWeightSelectionScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            TitleSection("Your ", "current weight")
+            TitleSection("Your ", "current weight","We will use this data to give you a better diet type for you")
 
             Spacer(modifier = Modifier.height(40.dp))
 
