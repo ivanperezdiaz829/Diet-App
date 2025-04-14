@@ -85,7 +85,8 @@ class MainActivity : ComponentActivity() {
             //DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
             //HomePageFrame()
             //ToolBox()
-            SettingsScreen()
+            //SettingsScreen()
+            FoodViewScreen(onNavigateBack = { finish() })
         }
     }
 }
