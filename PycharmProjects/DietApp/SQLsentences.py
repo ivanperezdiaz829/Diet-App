@@ -23,7 +23,7 @@ def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, pric
                              price))
         return cursor.fetchall()
 
-    if sentence_type == 2:
+    elif sentence_type == 2:
         columns = {
             1: "carbohydrates",
             2: "sugar",
@@ -40,4 +40,4 @@ def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, pric
             cursor.execute(sql, (meal_type,))
             return cursor.fetchone()[0]
 
-        return None
+    return None

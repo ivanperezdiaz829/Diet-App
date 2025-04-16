@@ -18,3 +18,25 @@ def total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price
             solution.append(comida)
 
     return solution
+
+
+def nutritional_values_day(diet_day):
+
+    calories, carbohydrates, protein, fat, sugar, salt, price = 0, 0, 0, 0, 0, 0, 0
+    for food_group in diet_day:
+        for food in food_group:
+            calories += food.calories
+            carbohydrates += food.carbohydrates
+            protein += food.protein
+            fat += food.fat
+            sugar += food.sugar
+            salt += food.salt
+            price += food.price
+
+    return calories, carbohydrates, protein, fat, sugar, salt/1000, price
+
+"""
+def total_nutritional_values(diet):
+
+    return 0
+"""
