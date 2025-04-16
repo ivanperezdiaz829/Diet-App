@@ -1,4 +1,5 @@
 from GenerarDieta import *
+from ObtainTotals import *
 import time
 
 
@@ -57,19 +58,19 @@ def obtain_restrictions():
 
 # Obtener las restricciones de dieta
 # carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
-carbohydrates = [200, 827.13]
-energy = [1200, 2800]
-sugar = [0, 187.23]
-protein = [0, 253.27]
-salt = [0, 5000]    # 5g
-fat = [0, 87]
+carbohydrates = [250, 300]  # Aproximadamente 50-60% de las calorías totales
+energy = [1800, 2200]  # Rango recomendado de calorías diarias
+sugar = 50  # Menos de 50g de azúcar añadido por día
+protein = [50, 75]  # 50-75g de proteína por día
+salt = 5000.0  # 5g de sal (límite recomendado)
+fat = [70, 90]  # Aproximadamente 25-35% de las calorías totales de grasa
 budget = 50
 
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
 
 # print("Dieta Estándar")
-solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
-print_solution(solution)
+solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 3)
+# solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
 
