@@ -144,7 +144,7 @@ fun AddNewFoodScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             NextButton(
-                enabled = true,
+                enabled = protein.isNotEmpty() && fats.isNotEmpty() && sugar.isNotEmpty() && salt.isNotEmpty() && carbohydrates.isNotEmpty() && calories.isNotEmpty() && price.isNotEmpty(),
                 onClick = {}
             )
         }
