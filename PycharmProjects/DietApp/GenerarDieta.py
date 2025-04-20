@@ -1,5 +1,8 @@
+from enum import nonmember
+
 from Plates import *
 from SQLsentences import *
+
 import sqlite3
 import random
 import os
@@ -17,60 +20,18 @@ def filter_plates(plates, person_type):
     return plates
 
 
-def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, meal_type, sentence_type, sub_sentence):
-
-    if sentence_type == 1:
-        sql = ("SELECT * FROM plates WHERE type == ? AND "
-               "carbohydrates BETWEEN ? AND ? "
-               "AND sugar <= ? "
-               "AND calories BETWEEN ? AND ? "
-               "AND protein BETWEEN ? AND ? "
-               "AND sodium <= ? "
-               "AND fats BETWEEN ? AND ? "
-               "AND price <= ?")
-
-        cursor.execute(sql, (meal_type,
-                             carbohydrates[0], carbohydrates[1],
-                             sugar,
-                             energy[0], energy[1],
-                             protein[0], protein[1],
-                             salt,
-                             fat[0], fat[1],
-                             price))
-        return cursor.fetchall()
-
-    if sentence_type == 2:
-        columns = {
-            1: "carbohydrates",
-            2: "sugar",
-            3: "calories",
-            4: "protein",
-            5: "sodium",
-            6: "fats",
-            7: "price",
-        }
-        column = columns.get(sub_sentence)
-
-        if column:
-            sql = f"SELECT SUM({column}) FROM plates WHERE type = ?"
-            cursor.execute(sql, (meal_type,))
-            return cursor.fetchone()[0]
-
-        return None
-
-
 def percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, food_time, sub_sentence):
 
     result = []
     if food_time == 1:
-        breakfast_total = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 2, sub_sentence) * 2
+        breakfast_total = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 2, sub_sentence, -1) * 2
         result.append(breakfast_total)
         breakfast1_percent = 1.0
         result.append(breakfast1_percent)
 
     elif food_time == 2:
-        lunch2 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 2, sub_sentence) * 2
-        lunch3 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 3, 2, sub_sentence) * 2
+        lunch2 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 2, sub_sentence, -1) * 2
+        lunch3 = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 3, 2, sub_sentence, -1) * 2
         lunch_total = lunch2 + lunch3
         result.append(lunch_total)
         lunch2_percent = lunch2 / lunch_total
@@ -79,7 +40,7 @@ def percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt,
         result.append(lunch3_percent)
 
     elif food_time == 3:
-        dinner_total = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 2, sub_sentence) * 2
+        dinner_total = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 2, sub_sentence, -1) * 2
         result.append(dinner_total)
         dinner2_percent = 1.0
         result.append(dinner2_percent)
@@ -111,10 +72,11 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
     print()
     print("\n--------- PLATOS DISPOBIBLES DESAYUNO ---------")
     print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
-    breakfasts_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1)
+    breakfasts_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1, 2)
+    print(breakfasts_rows)
     breakfasts_rows = filter_plates(breakfasts_rows, person_type)
     breakfasts = [Plate(row) for row in breakfasts_rows]
-    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1)
+    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
     drinks_rows = filter_plates(drinks_rows, person_type)
     drinks = [Plate(row) for row in drinks_rows]
     print(f'\nPRINCIPAL:')
@@ -141,17 +103,20 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
                 combined_fat = drink.fat + breakfast.fat
                 combined_price = drink.price + breakfast.price
 
-                if (carbohydrates[0] <= combined_carbs <= carbohydrates[1] and
-                        combined_sugar <= sugar and
-                        energy[0] <= combined_energy <= energy[1] and
-                        protein[0] <= combined_protein <= protein[1] and
-                        combined_salt <= salt and
-                        fat[0] <= combined_fat <= fat[1] and
-                        combined_price <= price):
+                if (carbohydrates[0] * 0.8 <= combined_carbs <= carbohydrates[1] * 1.2 and
+                        combined_sugar <= sugar * 1.2 and
+                        energy[0] * 0.8 <= combined_energy <= energy[1] * 1.2 and
+                        protein[0] * 0.8 <= combined_protein <= protein[1] * 1.2 and
+                        combined_salt <= salt * 1.2 and
+                        fat[0] * 0.8 <= combined_fat <= fat[1] * 1.2 and
+                        combined_price <= price * 1.2):
 
                     valid_combinations.append((breakfast, drink))
 
     if valid_combinations:
+        print(f"\nVALID_BREAKFASTS:")
+        for combi in valid_combinations:
+            print(combi)
         selected_combination = random.choice(valid_combinations)
         return selected_combination
 
@@ -172,7 +137,7 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                           [nutritional_percents[3][0] * protein[0], nutritional_percents[3][0] * protein[1]],
                           nutritional_percents[4][0] * salt,
                           [nutritional_percents[5][0] * fat[0], nutritional_percents[5][0] * fat[1]],
-                          nutritional_percents[6][0] * price, 2, 1, -1)
+                          nutritional_percents[6][0] * price, 2, 1, -1, 2)
     mains_rows = filter_plates(mains_rows, person_type)
     mains = [Plate(row) for row in mains_rows]
 
@@ -182,11 +147,11 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                           [nutritional_percents[3][1] * protein[0], nutritional_percents[3][1] * protein[1]],
                           nutritional_percents[4][1] * salt,
                           [nutritional_percents[5][1] * fat[0], nutritional_percents[5][1] * fat[1]],
-                          nutritional_percents[6][1] * price, 3, 1, -1)
+                          nutritional_percents[6][1] * price, 3, 1, -1,2 )
     sides_rows = filter_plates(sides_rows, person_type)
     sides = [Plate(row) for row in sides_rows]
 
-    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1)
+    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
     drinks_rows = filter_plates(drinks_rows, person_type)
     drinks = [Plate(row) for row in drinks_rows]
 
@@ -219,17 +184,20 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                     combined_fat = drink.fat + side.fat + main.fat
                     combined_price = drink.price + side.price + main.price
 
-                    if (carbohydrates[0] <= combined_carbs <= carbohydrates[1] and
-                            combined_sugar <= sugar and
-                            energy[0] <= combined_energy <= energy[1] and
-                            protein[0] <= combined_protein <= protein[1] and
-                            combined_salt <= salt and
-                            fat[0] <= combined_fat <= fat[1] and
-                            combined_price <= price):
+                    if (carbohydrates[0] * 0.8 <= combined_carbs <= carbohydrates[1] * 1.2 and
+                            combined_sugar <= sugar * 1.2 and
+                            energy[0] * 0.8 <= combined_energy <= energy[1] * 1.2 and
+                            protein[0] * 0.8 <= combined_protein <= protein[1] * 1.2 and
+                            combined_salt <= salt * 1.2 and
+                            fat[0] * 0.8 <= combined_fat <= fat[1] * 1.2 and
+                            combined_price <= price * 1.2):
 
                         valid_combinations.append((main, side, drink))
 
     if valid_combinations:
+        print(f"\nVALID_LUNCHES:")
+        for combi in valid_combinations:
+            print(combi)
         selected_combination = random.choice(valid_combinations)
         return selected_combination
 
@@ -240,11 +208,13 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
     print()
     print("\n--------- PLATOS DISPONIBLES CENA ---------")
     print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
-    mains_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1)
+    mains_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1, 2)
+    mains2_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 3, 1, -1, 2)
+    mains_rows.extend(mains2_rows)
     mains_rows = filter_plates(mains_rows, person_type)
     mains = [Plate(row) for row in mains_rows]
 
-    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1)
+    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
     drinks_rows = filter_plates(drinks_rows, person_type)
     drinks = [Plate(row) for row in drinks_rows]
 
@@ -273,93 +243,130 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
                 combined_fat = drink.fat + main.fat
                 combined_price = drink.price + main.price
 
-                if (carbohydrates[0] <= combined_carbs <= carbohydrates[1] and
-                        combined_sugar <= sugar and
-                        energy[0] <= combined_energy <= energy[1] and
-                        protein[0] <= combined_protein <= protein[1] and
-                        combined_salt <= salt and
-                        fat[0] <= combined_fat <= fat[1] and
-                        combined_price <= price):
+                if (carbohydrates[0] * 0.8 <= combined_carbs <= carbohydrates[1] * 1.2 and
+                        combined_sugar <= sugar * 1.2 and
+                        energy[0] * 0.8 <= combined_energy <= energy[1] * 1.2 and
+                        protein[0] * 0.8 <= combined_protein <= protein[1] * 1.2 and
+                        combined_salt <= salt * 1.2 and
+                        fat[0] * 0.8 <= combined_fat <= fat[1] * 1.2 and
+                        combined_price <= price * 1.2):
 
                     valid_combinations.append((main, drink))
 
     if valid_combinations:
+        print(f"\nVALID_DINNERS:")
+        for combi in valid_combinations:
+            print(combi)
         selected_combination = random.choice(valid_combinations)
         return selected_combination
     return None
 
 
-def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners):
-    db_path = os.path.join('../../FoodDbManagement', 'DietApp.db')
+def validate_full_diet(diet, carbs_range, sugar_max, kcal_range, protein_range, salt_max, fat_range, price_max):
+    total_carbs = total_sugar = total_kcal = total_protein = total_salt = total_fat = total_price = 0
 
+    for meal in diet:
+        for plate in meal:
+            total_carbs += plate.carbohydrates
+            total_sugar += plate.sugar
+            total_kcal += plate.calories
+            total_protein += plate.protein
+            total_salt += plate.salt
+            total_fat += plate.fat
+            total_price += plate.price
+
+    if not (carbs_range[0] * 0.8 <= total_carbs <= carbs_range[1] * 1.2):
+        return False
+    if not (kcal_range[0] * 0.8 <= total_kcal <= kcal_range[1] * 1.2):
+        return False
+    if not (protein_range[0] * 0.8 <= total_protein <= protein_range[1] * 1.2):
+        return False
+    if not (fat_range[0] * 0.8 <= total_fat <= fat_range[1] * 1.2):
+        return False
+    if total_sugar > sugar_max:
+        return False
+    if total_salt > salt_max:
+        return False
+    if total_price > price_max:
+        return False
+    return True
+
+
+def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid):
+    db_path = os.path.join('../../FoodDbManagement', 'DietApp.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     solution = []
 
     print(f"\nValores de entrada resolver_dieta: {carbohydrates, sugar, energy, protein, salt, fat, price}")
 
+    # Distribución calórica por comida (en kcal)
+    kcal_breakfast = (energy[0] * 0.20, energy[1] * 0.20)
+    kcal_lunch = (energy[0] * 0.50, energy[1] * 0.50)
+    kcal_dinner = (energy[0] * 0.30, energy[1] * 0.30)
+
+    # Función para obtener el rango de gramos de un nutriente para una comida según kcal
+    def gram_split(nutrient_range, kcal_meal_range, kcal_total_range):
+        return [nutrient_range[0] * (kcal_meal_range[0] / kcal_total_range[0]),
+                nutrient_range[1] * (kcal_meal_range[1] / kcal_total_range[1])]
+
+    # Reparto de macronutrientes por comida
+    carbs_breakfast = gram_split(carbohydrates, kcal_breakfast, energy)
+    carbs_lunch = gram_split(carbohydrates, kcal_lunch, energy)
+    carbs_dinner = gram_split(carbohydrates, kcal_dinner, energy)
+
+    protein_breakfast = gram_split(protein, kcal_breakfast, energy)
+    protein_lunch = gram_split(protein, kcal_lunch, energy)
+    protein_dinner = gram_split(protein, kcal_dinner, energy)
+
+    fat_breakfast = gram_split(fat, kcal_breakfast, energy)
+    fat_lunch = gram_split(fat, kcal_lunch, energy)
+    fat_dinner = gram_split(fat, kcal_dinner, energy)
+
+    # Distribución de azúcar y sal (fija o proporcional)
+    sugar_limit = sugar
+    salt_limit = salt
+
+    # --- Obtener comidas ---
     breakfast = obtain_breakfast(cursor, selected_breakfasts,
-                                 [carbohydrates[0] * 0.050, carbohydrates[1] * 0.30],
-                                 sugar * 0.55,
-                                 [energy[0] * 0.05, energy[1] * 0.50],
-                                 [protein[0] * 0.075, protein[1] * 0.30],
-                                 salt * 0.25,
-                                 [fat[0] * 0.10, fat[1] * 0.45],
+                                 carbs_breakfast,
+                                 sugar_limit * 0.5,
+                                 kcal_breakfast,
+                                 protein_breakfast,
+                                 salt_limit * 0.25,
+                                 fat_breakfast,
                                  price / 4, person_type)
 
     lunch = obtain_lunch(cursor, selected_lunches,
-                                 [carbohydrates[0] * 0.10, carbohydrates[1] * 0.65],
-                                 sugar * 0.45,
-                                 [energy[0] * 0.35, energy[1] * 0.85],
-                                 [protein[0] * 0.20, protein[1] * 0.60],
-                                 salt * 0.60,
-                                 [fat[0] * 0.15, fat[1] * 0.60],
-                                 price / 2, person_type)
+                         carbs_lunch,
+                         sugar_limit * 0.35,
+                         kcal_lunch,
+                         protein_lunch,
+                         salt_limit * 0.5,
+                         fat_lunch,
+                         price / 2, person_type)
 
     dinner = obtain_dinner(cursor, selected_dinners,
-                                 [carbohydrates[0] * 0.10, carbohydrates[1] * 0.40],
-                                 sugar * 0.20,
-                                 [energy[0] * 0.20, energy[1] * 0.60],
-                                 [protein[0] * 0.10, protein[1] * 0.40],
-                                 salt * 0.35,
-                                 [fat[0] * 0.30, fat[1] * 0.35],
-                                 price / 4, person_type)
+                           carbs_dinner,
+                           sugar_limit * 0.15,
+                           kcal_dinner,
+                           protein_dinner,
+                           salt_limit * 0.25,
+                           fat_dinner,
+                           price / 4, person_type)
 
     if breakfast is None or lunch is None or dinner is None:
+        conn.close()
         return None
 
-    solution.append(breakfast)
-    solution.append(lunch)
-    solution.append(dinner)
+    solution.extend([breakfast, lunch, dinner])
+
+    if not validate_full_diet(solution, carbohydrates, sugar, energy, protein, salt, fat, price):
+        print("La dieta generada no cumple con los requisitos totales.")
+        if solution in not_valid:
+            return None
+        not_valid.append(solution)
+        return diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid)
 
     conn.close()
     return solution
-
-
-def print_solution(solution):
-    if solution:
-        print("\n--- SOLUCIÓN ---")
-        # Nombres de los atributos nutricionales y el precio
-        requirements = ["name", "energy", "carbohydrates", "sugar", "protein", "fat", "salt", "price"]
-        print(f"\nDesayuno: {solution[0][0]} y {solution[0][1]}")
-        print(f"Almuerzo: {solution[1][0]}, {solution[1][1]} y {solution[1][2]}")
-        print(f"Cena: {solution[2][0]} y {solution[2][1]}")
-
-        """
-        # Inicializa una lista con ceros para acumular las cualidades de la dieta (carbohidratos, azúcar, etc.)
-        diet_qualities = [0] * 8  # Excluye "name", que es texto
-
-        print("\n--------- VALORES NUTRICIONALES ---------\n")
-
-        print(f"DESAYUNO:\nMAIN: \nName: {solution[0][0].name} \nCarbohydrates: {solution[0][0].carbohydrates}")
-
-        # Imprime el total acumulado de las cualidades de la dieta
-        print()
-        print("\n--------- TOTALES DE LA DIETA ---------\n")
-        for i in range(1, 8):
-            print(f"{requirements[i]} total: {diet_qualities[i - 1]}")
-        """
-        return 0
-    else:
-        print("No se encontró una solución válida.")
-        return -1

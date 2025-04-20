@@ -68,8 +68,7 @@ budget = 50
 
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
 # print("Dieta Estándar")
-solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 1)
-print("SOLUTION:", solution)
+solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 3)
 image = barplot_generator(solution)
 # solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
 end_time = time.time() - start_time
