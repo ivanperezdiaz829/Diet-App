@@ -86,7 +86,10 @@ class MainActivity : ComponentActivity() {
             //HomePageFrame()
             //ToolBox()
             //SettingsScreen()
-            ChangePasswordScreen();
+            //FoodViewScreen(onNavigateBack = { finish() })
+            AddNewFoodScreen(onNavigateBack = { finish() }, onNext = {})
+            //FoodTypeSelectionScreen(onNavigateBack = { finish() }, onNext = {})
+            //NewFoodSummaryScreen(onNavigateBack = { finish() }, onNext = {})
         }
     }
 }
@@ -117,7 +120,6 @@ class MainViewModel : ViewModel() {
         }
     }
 }
-
 
 @Composable
 fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: MainViewModel) {

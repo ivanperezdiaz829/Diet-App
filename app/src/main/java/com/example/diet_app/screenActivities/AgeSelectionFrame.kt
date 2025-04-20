@@ -72,7 +72,7 @@ fun AgeSelectionScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            TitleSection("What is your", "age?")
+            TitleSection("What is your", "age?","We will use this data to give you a better diet type for you")
 
             Spacer(modifier = Modifier.height(40.dp))
 
