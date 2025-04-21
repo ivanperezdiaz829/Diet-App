@@ -75,6 +75,13 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
+            LoginScreen( onLoginSuccess = {
+                // Aquí defines qué hacer después de login exitoso
+                // O si es pantalla única:
+                finish() // Cierra el login y muestra la siguiente pantalla
+            },
+                onNavigateBack = { finish() } // Para manejar el back button si es necesario
+            )
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //CurrentWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //HeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
@@ -87,7 +94,7 @@ class MainActivity : ComponentActivity() {
             //ToolBox()
             //SettingsScreen()
             //FoodViewScreen(onNavigateBack = { finish() })
-            AddNewFoodScreen(onNavigateBack = { finish() }, onNext = {})
+            //AddNewFoodScreen(onNavigateBack = { finish() }, onNext = {})
             //FoodTypeSelectionScreen(onNavigateBack = { finish() }, onNext = {})
             //NewFoodSummaryScreen(onNavigateBack = { finish() }, onNext = {})
         }

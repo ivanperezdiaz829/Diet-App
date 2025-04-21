@@ -29,8 +29,9 @@ import androidx.navigation.NavController
 
 @Composable
 fun LoginScreen(
-    navController: NavController,
-    context: Context = LocalContext.current // por si no lo pasas explícitamente
+    onLoginSuccess: () -> Unit,  // Cambiado para usar callback simple
+    onNavigateBack: () -> Unit = {},  // Opcional: para manejar back
+    context: Context = LocalContext.current
 ) {
     Box(
         modifier = Modifier
@@ -41,9 +42,7 @@ fun LoginScreen(
     ) {
         LoginCard(context = context) { success ->
             if (success) {
-                navController.navigate("welcome") {
-                    popUpTo("login") { inclusive = true } // evita volver con back
-                }
+                onLoginSuccess()  // Simplemente llama al callback
             }
         }
     }
