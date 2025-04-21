@@ -37,21 +37,5 @@ def barplot_generator(diet):
 
 app = Flask(__name__)
 
-@app.route("/barplot", methods=["GET"])
-def barplot():
-    df = pd.DataFrame({
-        'categoría': ['A', 'B', 'C', 'D'],
-        'valor': [23, 17, 35, 29]
-    })
 
-    plt.figure(figsize=(6,4))
-    sns.barplot(data=df, x='categoría', y='valor')
-    plt.title('Barplot con Seaborn')
-
-    img_bytes = BytesIO()
-    plt.savefig(img_bytes, format='png')
-    plt.close()
-    img_bytes.seek(0)
-
-    return send_file(img_bytes, mimetype='image/png')
 

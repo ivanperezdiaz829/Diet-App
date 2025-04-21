@@ -27,3 +27,19 @@ class Plate:
             "salt": self.salt,
             "price": self.price
         }
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "calories": self.calories,
+            "carbohydrates": self.carbohydrates,
+            "protein": self.protein,
+            "fat": self.fat,
+            "sugar": self.sugar,
+            "salt": self.salt,
+            "price": self.price,
+            "food_type": self.food_type,
+            "vegan": self.vegan,
+            "vegetarian": self.vegetarian,
+            "celiac": self.celiac
+        }
