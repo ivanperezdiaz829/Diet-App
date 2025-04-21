@@ -1,5 +1,3 @@
-from enum import nonmember
-
 from Plates import *
 from SQLsentences import *
 

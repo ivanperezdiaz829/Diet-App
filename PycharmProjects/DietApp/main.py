@@ -5,7 +5,6 @@ import time
 
 start_time = time.time()
 
-
 def obtain_restrictions():
     carbohydrates, sugar, energy, protein, salt, fat = [], [], [], [], [], []
 

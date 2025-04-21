@@ -1,5 +1,4 @@
 from GenerarDieta import *
-from Plates import *
 
 
 def total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days):
