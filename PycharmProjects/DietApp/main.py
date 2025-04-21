@@ -1,10 +1,108 @@
-from Graphs import *
+from flask import Flask, request, jsonify, send_file
+from Graphs import barplot_generator
 from ObtainTotals import *
 import time
-
+import ast
+from io import BytesIO
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
 
 start_time = time.time()
 
+app = Flask(__name__)
+
+@app.route('/calculate', methods=['POST'])
+def calculate_diet():
+    data = request.get_json()
+
+    if "values" not in data:
+        return jsonify({"error": "No values provided"}), 400
+
+    try:
+        values_str = data["values"]
+        print(f"Valor recibido como string: {values_str}")
+        values_list = ast.literal_eval(values_str)
+
+        if not isinstance(values_list, list):
+            raise ValueError("El valor recibido no es una lista válida.")
+
+        values = []
+        for i in values_list:
+            print(f"Valor recibido: {i}, Tipo: {type(i)}")
+            values.append(float(i))
+
+    except (ValueError, TypeError) as e:
+        print(f"Error al convertir: {e}")
+        return jsonify({"error": "All values must be numbers"}), 400
+
+    carbohydrates = [values[0], values[1]]
+    sugar = values[2]
+    energy = [values[3], values[4]]
+    protein = [values[5], values[6]]
+    salt = values[7]
+    fat = [values[8], values[9]]
+    price = values[10]
+    person_type = 1
+    person_preferences = 1
+    total_days = 1
+
+    try:
+        solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
+
+        if not solution or len(solution) < 3:
+            return jsonify({"error": "No valid diet found"}), 404
+
+        response = {
+            "breakfast": solution[0]["name"],
+            "lunch": solution[1]["name"],
+            "dinner": solution[2]["name"]
+        }
+        print(f"Solución enviada: {response}")
+        return jsonify(response)
+
+    except Exception as e:
+        print(f"Error al generar la dieta: {e}")
+        return jsonify({"error": f"Internal server error: {e}"}), 500
+
+@app.route("/barplot", methods=["POST"])
+def barplot():
+    data = request.get_json()
+    if not data or 'dieta' not in data:
+        return jsonify({'error': 'Falta el parámetro "dieta"'}), 400
+
+    dieta = data['dieta']
+    res = nutritional_values_day(dieta)
+
+    df = pd.DataFrame({
+        'Valores Nutricionales': ["Carbohidratos", "Proteina", "Grasas", "Azúcares", "Sales", "Precio"],
+        'Cantidades': [res[1], res[2], res[3], res[4], res[5], res[6]],
+    })
+
+    plt.figure(figsize=(6, 4))
+    colores = sns.color_palette("blend:#b2e2b2,#40B93C", n_colors=len(df))
+    ax = sns.barplot(data=df, x='Valores Nutricionales', y='Cantidades', hue="Valores Nutricionales",
+                     palette=colores, width=0.6, legend=False)
+    ax.set_xlabel("")
+    ax.set_ylabel(" Cantidades (gr.)")
+    for patch in ax.patches:
+        patch.set_edgecolor('black')
+        patch.set_linewidth(1)
+
+    plt.title("Datos dieta de " + str(res[0]) + " calorías")
+    plt.xticks(fontsize=9)
+    plt.tight_layout()
+
+    img = BytesIO()
+    plt.savefig(img, format='png')
+    plt.close()
+    img.seek(0)
+    return send_file(img, mimetype='image/png')
+
+if __name__ == '__main__':
+    app.run(debug=True, host="0.0.0.0", port=8000)
+
+"""
 def obtain_restrictions():
     carbohydrates, sugar, energy, protein, salt, fat = [], [], [], [], [], []
 
@@ -72,6 +170,7 @@ image = barplot_generator(solution)
 # solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
+"""
 
 """
 print("Dieta Vegetariana")
