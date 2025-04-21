@@ -12,25 +12,27 @@ def total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price
     print("\n")
     for i in range(len(total_diet)):
         print(f"\nDía {i+1}:")
+        day = []
         for comida in total_diet[i]:
-            print(comida)
-            solution.append(comida)
+            print(str(comida))
+            day.append(comida)
+            solution.append(day)
 
     return solution
 
 
 def nutritional_values_day(diet_day):
 
+    print(diet_day)
     calories, carbohydrates, protein, fat, sugar, salt, price = 0, 0, 0, 0, 0, 0, 0
-    for food_group in diet_day:
-        for food in food_group:
-            calories += food.calories
-            carbohydrates += food.carbohydrates
-            protein += food.protein
-            fat += food.fat
-            sugar += food.sugar
-            salt += food.salt
-            price += food.price
+    for food in diet_day:
+        calories += food.calories
+        carbohydrates += food.carbohydrates
+        protein += food.protein
+        fat += food.fat
+        sugar += food.sugar
+        salt += food.salt
+        price += food.price
 
     return calories, carbohydrates, protein, fat, sugar, salt/1000, price
 

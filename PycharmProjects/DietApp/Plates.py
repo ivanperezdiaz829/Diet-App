@@ -17,6 +17,9 @@ class Plate:
     def __repr__(self):
         return self.name
 
+    def __str__(self):
+        return f"{self.name}, {self.calories}, {self.carbohydrates}, {self.protein}, {self.fat}, {self.sugar}, {self.salt}, {self.price}, {self.food_type}, {self.vegan}, {self.vegetarian}, {self.celiac}"
+
     def get_totals(self):
         return {
             "calories": self.calories,
