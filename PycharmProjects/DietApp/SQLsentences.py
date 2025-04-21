@@ -1,26 +1,37 @@
 import sqlite3
 
 
-def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, meal_type, sentence_type, sub_sentence):
+def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, meal_type, sentence_type, sub_sentence, mult):
+
+    """
+    print(f"\n---------- SQL_SENTENCE ---------\n"
+          f"carbos: {carbohydrates[0] / mult, carbohydrates[1] * mult} \n"
+          f"sugar: {sugar * mult} \n"
+          f"energy: {energy[0] / mult, energy[1] * mult} \n"
+          f"protein: {protein[0] / mult, protein[1] * mult} \n"
+          f"salt: {salt * mult} \n"
+          f"fat: {fat[0] / mult, fat[1] * mult} \n"
+          f"price: {price * mult}")
+    """
 
     if sentence_type == 1:
         sql = ("SELECT * FROM plates WHERE type == ? AND "
-               "carbohydrates BETWEEN ? AND ? "
-               "AND sugar BETWEEN ? AND ? "
-               "AND calories BETWEEN ? AND ? "
-               "AND protein BETWEEN ? AND ? "
-               "AND sodium BETWEEN ? AND ? "
-               "AND fats BETWEEN ? AND ? "
-               "AND price <= ?")
+               "carbohydrates * ? BETWEEN ? AND ? "
+               "AND sugar * ? <= ? "
+               "AND calories * ? BETWEEN ? AND ? "
+               "AND protein * ? BETWEEN ? AND ? "
+               "AND sodium * ? <= ? "
+               "AND fats * ? BETWEEN ? AND ? "
+               "AND price * ? <= ?")
 
         cursor.execute(sql, (meal_type,
-                             carbohydrates[0], carbohydrates[1],
-                             sugar[0], sugar[1],
-                             energy[0], energy[1],
-                             protein[0], protein[1],
-                             salt[0], salt[1],
-                             fat[0], fat[1],
-                             price))
+                             mult, carbohydrates[0] / mult, carbohydrates[1] * mult,
+                             mult, sugar * mult,
+                             mult, energy[0] / mult, energy[1] * mult,
+                             mult, protein[0] / mult, protein[1] * mult,
+                             mult, salt * mult,
+                             mult, fat[0] / mult, fat[1] * mult,
+                             mult, price * mult))
         return cursor.fetchall()
 
     if sentence_type == 2:
