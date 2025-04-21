@@ -16,7 +16,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="intento de DatabaseManager para SQL" />
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="intento de DatabaseManager para SQL">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/.idea/DietApp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/.idea/DietApp.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/.idea/misc.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -268,12 +273,12 @@
       <map>
         <entry key="com.example.diet_app">
           <value>
-            <CheckInfo lastCheckTimestamp="1743437872434" />
+            <CheckInfo lastCheckTimestamp="1744138057791" />
           </value>
         </entry>
         <entry key="com.example.diet_app.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1743437872433" />
+            <CheckInfo lastCheckTimestamp="1744138057791" />
           </value>
         </entry>
       </map>
