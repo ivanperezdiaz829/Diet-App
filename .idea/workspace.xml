@@ -17,11 +17,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="Commit de pycharm para rehacer calculadoras">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/ObtainTotals.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/ObtainTotals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/SQLsentences.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/SQLsentences.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +32,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Portatil\.android\avd\Pixel_3a_API_34_extension_level_7_x86_64.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />

@@ -4,22 +4,16 @@ def total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price
 
     selected_breakfasts, selected_lunches, selected_dinners, not_valid = set(), set(), set(), []
     total_diet = []
-    solution = []
 
     for i in range(total_days):
         daily_meals = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid)
         total_diet.append(daily_meals)
 
-        for comida in daily_meals:
-            if isinstance(comida, (list, tuple)):  # lista o tupla
-                solution.extend(comida)
-            else:
-                solution.append(comida)
 
-    for plate in solution:
+    for plate in total_diet:
         print(f"Tipo: {type(plate)}, Valor: {plate}")
 
-    return [plate.to_dict() for plate in solution]
+    return total_diet
 
 
 def nutritional_values_day(diet_day):
