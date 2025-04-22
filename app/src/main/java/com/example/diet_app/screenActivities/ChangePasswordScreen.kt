@@ -1,0 +1,50 @@
+package com.example.diet_app.screenActivities
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.ui.components.*
+
+@Composable
+fun ChangePasswordScreen(username: String = "gloton") {
+    var newPassword by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(48.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(32.dp)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                TitleSection()
+            }
+
+            UsernameText(username)
+            ChangePasswordTitle()
+            PasswordRequirementText()
+            PasswordField(
+                label = "New Password",
+                password = newPassword,
+                onValueChange = { newPassword = it }
+            )
+            PasswordField(
+                label = "Enter again your new password",
+                password = confirmPassword,
+                onValueChange = { confirmPassword = it }
+            )
+            ForgotPasswordLink { }
+            ChangePasswordButton { }
+        }
+    }
+}
