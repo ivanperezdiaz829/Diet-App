@@ -1,5 +1,3 @@
-from enum import nonmember
-
 from Plates import *
 from SQLsentences import *
 
@@ -214,6 +212,7 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
     mains_rows = filter_plates(mains_rows, person_type)
     mains = [Plate(row) for row in mains_rows]
 
+    print(mains_rows)
     drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
     drinks_rows = filter_plates(drinks_rows, person_type)
     drinks = [Plate(row) for row in drinks_rows]
@@ -275,21 +274,15 @@ def validate_full_diet(diet, carbs_range, sugar_max, kcal_range, protein_range, 
             total_fat += plate.fat
             total_price += plate.price
 
-    if not (carbs_range[0] * 0.8 <= total_carbs <= carbs_range[1] * 1.2):
-        return False
-    if not (kcal_range[0] * 0.8 <= total_kcal <= kcal_range[1] * 1.2):
-        return False
-    if not (protein_range[0] * 0.8 <= total_protein <= protein_range[1] * 1.2):
-        return False
-    if not (fat_range[0] * 0.8 <= total_fat <= fat_range[1] * 1.2):
-        return False
-    if total_sugar > sugar_max:
-        return False
-    if total_salt > salt_max:
-        return False
-    if total_price > price_max:
-        return False
-    return True
+    return (
+            carbs_range[0] * 0.8 <= total_carbs <= carbs_range[1] * 1.2 and
+            kcal_range[0] * 0.8 <= total_kcal <= kcal_range[1] * 1.2 and
+            protein_range[0] * 0.8 <= total_protein <= protein_range[1] * 1.2 and
+            fat_range[0] * 0.8 <= total_fat <= fat_range[1] * 1.2 and
+            total_sugar <= sugar_max and
+            total_salt <= salt_max and
+            total_price <= price_max
+    )
 
 
 def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid):
@@ -307,6 +300,8 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
 
     # Función para obtener el rango de gramos de un nutriente para una comida según kcal
     def gram_split(nutrient_range, kcal_meal_range, kcal_total_range):
+        if kcal_total_range[0] == 0 or kcal_total_range[1] == 0:
+            return None
         return [nutrient_range[0] * (kcal_meal_range[0] / kcal_total_range[0]),
                 nutrient_range[1] * (kcal_meal_range[1] / kcal_total_range[1])]
 
