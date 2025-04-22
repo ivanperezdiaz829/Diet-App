@@ -26,6 +26,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +37,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModel
@@ -49,7 +52,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.screenActivities.*
-import com.example.diet_app.screenActivities.components.ToolBox
 
 class MainActivity : ComponentActivity() {
 
@@ -65,6 +67,7 @@ class MainActivity : ComponentActivity() {
         // Forzar íconos oscuros en la barra de estado
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         dbManager = DatabaseManager(this)
+        var viewModel = MainViewModel()
 
         // Prueba abriendo la base de datos
         try {
@@ -75,13 +78,16 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
+            DietApp(dbManager, LocalContext.current, viewModel)
+            /*
             LoginScreen( onLoginSuccess = {
                 // Aquí defines qué hacer después de login exitoso
                 // O si es pantalla única:
                 finish() // Cierra el login y muestra la siguiente pantalla
             },
                 onNavigateBack = { finish() } // Para manejar el back button si es necesario
-            )
+            )*/
+            //ChangePasswordScreen()
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //CurrentWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //HeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
@@ -90,7 +96,7 @@ class MainActivity : ComponentActivity() {
             //GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
             //InputDesign()
             //DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
-            //HomePageFrame()
+            //HomePageFrame(navController)
             //ToolBox()
             //SettingsScreen()
             //FoodViewScreen(onNavigateBack = { finish() })
@@ -134,7 +140,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = "auth") {
+    NavHost(navController = navController, startDestination = Screen.Goal.route) {
 
         composable("auth") {
             AuthScreen(
@@ -162,6 +168,41 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
                 }
             )
         }
+
+        composable(
+            route = Screen.Home.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {HomePageFrame(navController)}
+        
+        composable(route = Screen.Goal.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {GoalSelectionScreen(
+            onSkip = { navController.navigate("welcome") },
+            onNext = { navController.navigate(Screen.Home.route) },
+            onNavigateBack = { navController.popBackStack() }
+        )}
 
         composable("welcome") {
             WelcomeScreen(navController, viewModel)  // Pantalla de bienvenida

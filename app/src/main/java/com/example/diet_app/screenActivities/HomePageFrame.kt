@@ -10,13 +10,14 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.diet_app.screenActivities.components.OptionGrid
 import com.example.diet_app.screenActivities.components.ToolBox
 import com.example.diet_app.ui.theme.PrimaryGreen
 import com.example.diet_app.ui.theme.Typography
 
 @Composable
-fun HomePageFrame() {
+fun HomePageFrame(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
