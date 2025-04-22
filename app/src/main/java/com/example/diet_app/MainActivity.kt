@@ -200,9 +200,72 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
             }
         ) {GoalSelectionScreen(
             onSkip = { navController.navigate("welcome") },
-            onNext = { navController.navigate(Screen.Home.route) },
+            onNext = { navController.navigate(Screen.Sex.route) },
             onNavigateBack = { navController.popBackStack() }
         )}
+
+        composable(route = Screen.Sex.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            SexSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = { navController.navigate(Screen.Age.route) }
+            )
+        }
+
+        composable(route = Screen.Age.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            AgeSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = { navController.navigate(Screen.Height.route) } // O la siguiente pantalla que corresponda
+            )
+        }
+
+        composable(route = Screen.Height.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            HeightSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = { navController.navigate(Screen.Home.route) } // O la siguiente pantalla que corresponda
+            )
+        }
 
         composable("welcome") {
             WelcomeScreen(navController, viewModel)  // Pantalla de bienvenida

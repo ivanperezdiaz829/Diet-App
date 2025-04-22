@@ -9,4 +9,7 @@ sealed class Screen(val route: String) {
         fun createRoute(itemId: Int) = "details/$itemId"
     }
     object Goal : Screen("goal")
+    object Sex : Screen("sex")
+    object Age : Screen("age")
+    object Height : Screen("height")
 }
