@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, send_file
-from Graphs import barplot_generator
+from Graphs import *
 from ObtainTotals import *
 import time
 import ast
@@ -167,7 +167,9 @@ budget = 50
 # print("Dieta Estándar")
 solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 3)
 print(solution)
-image = barplot_generator(solution)
+barplot_total_generator(solution)
+for day in solution:
+    barplot_day_generator(day)
 # solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
