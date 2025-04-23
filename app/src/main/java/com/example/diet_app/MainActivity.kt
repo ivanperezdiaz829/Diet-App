@@ -530,50 +530,47 @@ fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) 
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            onResult("Error: ${e.message}")
+            onResult("❌ Error: ${e.message}")
         }
 
         override fun onResponse(call: Call, response: Response) {
             response.body?.string()?.let { responseBody ->
                 Log.d("DietForm", "Respuesta del servidor: $responseBody")
                 try {
-                    val jsonResponse = JSONObject(responseBody)
-                    if (jsonResponse.has("error")) {
-                        onResult("Error: ${jsonResponse.getString("error")}")
-                    } else {
-                        val breakfast = jsonResponse.getString("breakfast")
-                        val lunch = jsonResponse.getJSONArray("lunch")
-                        val dinner = jsonResponse.getJSONArray("dinner")
+                    val jsonArray = JSONArray(responseBody)
+                    val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+                    val editor = prefs.edit()
+                    val dias = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+                    val stringBuilder = StringBuilder()
 
-                        // Convierte JSONArray a String
-                        val lunchList = (0 until lunch.length()).map { lunch.getString(it) }
-                        val dinnerList = (0 until dinner.length()).map { dinner.getString(it) }
+                    for (i in 0 until jsonArray.length()) {
+                        val dayData = jsonArray.getJSONObject(i)
+                        val breakfast = dayData.getString("breakfast")
+                        val lunch = dayData.getString("lunch")
+                        val dinner = dayData.getString("dinner")
 
-                        val resultString = """
-                            🍳 **Desayuno:** $breakfast
-                            
-                            🥗 **Almuerzo:** 
-                            - ${lunchList.joinToString("\n- ")}
-                            
-                            🍽 **Cena:** 
-                            - ${dinnerList.joinToString("\n- ")}
-                        """.trimIndent()
+                        val dayName = dias.getOrElse(i) { "Día ${i + 1}" }
 
-                        // 🔒 Guardar en SharedPreferences para el lunes
-                        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
-                        val editor = prefs.edit()
+                        stringBuilder.append("📅 *$dayName*\n")
+                        stringBuilder.append("🍳 **Desayuno:** $breakfast\n")
+                        stringBuilder.append("🥗 **Almuerzo:** $lunch\n")
+                        stringBuilder.append("🍽 **Cena:** $dinner\n\n")
+
+                        // Guardar en SharedPreferences por día
                         val dietData = JSONObject().apply {
                             put("breakfast", breakfast)
-                            put("lunch", JSONArray(lunchList))
-                            put("dinner", JSONArray(dinnerList))
+                            put("lunch", lunch)
+                            put("dinner", dinner)
                         }
-                        editor.putString("lunes_diet", dietData.toString())
-                        editor.apply()
-
-                        onResult(resultString)
+                        editor.putString("${dayName.lowercase()}_diet", dietData.toString())
                     }
+
+                    editor.apply()
+                    onResult(stringBuilder.toString().trim())
+
                 } catch (e: Exception) {
-                    onResult("Error al procesar la respuesta")
+                    Log.e("DietForm", "Error al procesar JSON: ${e.message}")
+                    onResult("⚠️ Error al procesar la respuesta del servidor")
                 }
             }
         }

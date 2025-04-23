@@ -46,7 +46,7 @@ def calculate_diet():
     price = values[10]
     person_type = 1
     person_preferences = 1
-    total_days = 1
+    total_days = 3
 
     try:
         solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
@@ -54,13 +54,18 @@ def calculate_diet():
         if not solution or len(solution) < 3:
             return jsonify({"error": "No valid diet found"}), 404
 
-        response = {
-            "breakfast": solution[0]["name"],
-            "lunch": solution[1]["name"],
-            "dinner": solution[2]["name"]
-        }
-        print(f"Solución enviada: {response}")
-        return jsonify(response)
+        result = []
+
+        for i in range(total_days):
+            response = {
+                "breakfast": solution[i][0][0].name + ", " + solution[i][0][1].name,
+                "lunch": solution[i][1][0].name + ", " + solution[i][1][1].name + ", " + solution[i][1][2].name,
+                "dinner": solution[i][2][0].name + ", " + solution[i][2][1].name
+            }
+            result.append(response)
+
+        print(f"Solución enviada: {result}")
+        return jsonify(result)
 
     except Exception as e:
         print(f"Error al generar la dieta: {e}")
