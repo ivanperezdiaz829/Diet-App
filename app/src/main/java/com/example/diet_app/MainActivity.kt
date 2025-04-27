@@ -49,6 +49,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
+import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
 
 class MainActivity : ComponentActivity() {
@@ -82,13 +83,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewModel: UserViewModel) {
     // Usamos NavController para manejar la navegación
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Sex.route) {
+    NavHost(navController = navController, startDestination = Screen.Welcome.route) {
 
         composable("auth") {
         }
@@ -127,7 +129,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
             onNext = {
                 userViewModel.updateUser(goal = it.toString())
                 navController.navigate(Screen.Home.route)
-                printInfo(userViewModel)
+                printUserInfo(userViewModel)
             },
         )}
 
@@ -203,7 +205,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                     navController.navigate(Screen.CurrentWeight.route)
                     Log.d("SexSelectionScreen", "Selected height: $it")
                     userViewModel.updateUser(height = it)
-                    printInfo(userViewModel)
+                    printUserInfo(userViewModel)
                 } // O la siguiente pantalla que corresponda
             )
         }
@@ -228,7 +230,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 onNext = {
                     userViewModel.updateUser(currentWeight = it)
                     navController.navigate(Screen.TargetWeight.route)
-                    printInfo(userViewModel)
+                    printUserInfo(userViewModel)
                 } // O la siguiente pantalla que corresponda
             )
         }
@@ -253,18 +255,41 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 onNext = {
                     userViewModel.updateUser(targetWeight = it)
                     navController.navigate(Screen.Goal.route)
-                    printInfo(userViewModel)
+                    printUserInfo(userViewModel)
                 } // O la siguiente pantalla que corresponda
             )
         }
 
-        composable(route = Screen.Login.route) {
+        composable(route = Screen.Welcome.route,
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            InputDesign(
+                onNext = { navController.navigate(Screen.Login.route) }
+            )
+        }
+
+        composable(route = Screen.Login.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+            ) {
             LoginScreen(onLoginSuccess = {navController.navigate("home")}, onNavigateBack = { navController.popBackStack() })
         }
 
-        composable("welcome") {
-            WelcomeScreen(navController, userViewModel)  // Pantalla de bienvenida
-        }
     }
 }
 
@@ -617,14 +642,31 @@ fun fetchAllUsers() {
     }
 }
 
-fun printInfo(userViewModel: UserViewModel) {
+fun printUserInfo(userViewModel: UserViewModel) {
     Log.d("Resumen: ",
         "Nombre: ${userViewModel.getUser().name},\n" +
-                " Edad: ${userViewModel.getUser().age},\n" +
-                " Sexo: ${userViewModel.getUser().sex},\n" +
-                " Altura: ${userViewModel.getUser().height}\n" +
-                " Peso: ${userViewModel.getUser().currentWeight}\n" +
-                " Peso objetivo: ${userViewModel.getUser().targetWeight}\n" +
-                " Objetivo de dieta: ${userViewModel.getUser().goal}"
+        " Edad: ${userViewModel.getUser().age},\n" +
+        " Sexo: ${userViewModel.getUser().sex},\n" +
+        " Altura: ${userViewModel.getUser().height}\n" +
+        " Peso: ${userViewModel.getUser().currentWeight}\n" +
+        " Peso objetivo: ${userViewModel.getUser().targetWeight}\n" +
+        " Objetivo de dieta: ${userViewModel.getUser().goal}"
+    )
+}
+
+fun printFoodInfo(foodViewModel: FoodViewModel) {
+    Log.d("Resumen: ",
+        "Nombre: ${foodViewModel.getFood().name},\n" +
+        "Protein: ${foodViewModel.getFood().protein}, \n" +
+        "Fats: ${foodViewModel.getFood().fats}, \n" +
+        "Sugar: ${foodViewModel.getFood().sugar}, \n" +
+        "Salt: ${foodViewModel.getFood().salt}, \n" +
+        "Carbohydrates: ${foodViewModel.getFood().carbohydrates}, \n" +
+        "Calories: ${foodViewModel.getFood().calories}, \n" +
+        "Price: ${foodViewModel.getFood().price}, \n" +
+        "Vegetarian: ${foodViewModel.getFood().vegetarian}, \n" +
+        "Vegan: ${foodViewModel.getFood().vegan}, \n" +
+        "Celiac: ${foodViewModel.getFood().celiac}, \n" +
+        "Halal: ${foodViewModel.getFood().halal}, \n"
     )
 }

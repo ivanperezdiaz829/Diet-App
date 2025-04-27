@@ -31,22 +31,4 @@ class UserViewModel : ViewModel() {
 
     // Métodos para acceder y modificar propiedades individuales
     fun getUser(): UserModel = currentUser
-
-    fun setName(newName: String) {
-        currentUser.name = newName
-    }
-
-    fun setEmail(newEmail: String) {
-        currentUser.email = newEmail
-    }
-
-    // Puedes añadir más setters según necesites
-
-    fun updateWeight(newWeight: Double) {
-        currentUser.currentWeight = newWeight
-    }
-
-    fun updateTargetWeight(newTarget: Int) {
-        currentUser.targetWeight = newTarget
-    }
 }

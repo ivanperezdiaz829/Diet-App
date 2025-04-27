@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 // import androidx.compose.material.Surface
@@ -28,13 +29,16 @@ import com.example.diet_app.R
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun InputDesign() {
+fun InputDesign(
+    onNext: () -> Unit
+) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
 
     Column(
         modifier = Modifier
+            .clickable { onNext()}
             .fillMaxSize()
             .background(Color.White)
     ) {

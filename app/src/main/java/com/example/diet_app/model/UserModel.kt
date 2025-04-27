@@ -1,7 +1,5 @@
 package com.example.diet_app.model
 
-import androidx.lifecycle.ViewModel
-
 class UserModel(
     var name: String = "",
     var email: String = "",
