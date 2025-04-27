@@ -93,8 +93,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
         composable("auth") {
         }
 
-        composable(
-            route = Screen.Home.route,
+        composable(route = Screen.Home.route,
             enterTransition = {
                 slideInHorizontally(initialOffsetX = { it })
             },
@@ -107,7 +106,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
             popExitTransition = {
                 slideOutHorizontally(targetOffsetX = { it })
             }
-        ) {HomePageFrame(navController)}
+        ) {HomePageFrame(navController, userViewModel)}
 
         composable(route = Screen.Goal.route,
             enterTransition = {
@@ -124,8 +123,12 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
             }
         ) {GoalSelectionScreen(
             onSkip = { navController.navigate("welcome") },
-            onNext = { navController.navigate(Screen.Sex.route) },
-            onNavigateBack = { navController.popBackStack() }
+            onNavigateBack = { navController.popBackStack() },
+            onNext = {
+                userViewModel.updateUser(goal = it.toString())
+                navController.navigate(Screen.Home.route)
+                printInfo(userViewModel)
+            },
         )}
 
         composable(route = Screen.Sex.route,
@@ -197,8 +200,60 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 onSkip = { navController.navigate("welcome") },
                 onNext = {
                     // userViewModel.updateUser(height = it)
-                    navController.navigate(Screen.Height.route)
+                    navController.navigate(Screen.CurrentWeight.route)
                     Log.d("SexSelectionScreen", "Selected height: $it")
+                    userViewModel.updateUser(height = it)
+                    printInfo(userViewModel)
+                } // O la siguiente pantalla que corresponda
+            )
+        }
+
+        composable(route = Screen.CurrentWeight.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            CurrentWeightSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = {
+                    userViewModel.updateUser(currentWeight = it)
+                    navController.navigate(Screen.TargetWeight.route)
+                    printInfo(userViewModel)
+                } // O la siguiente pantalla que corresponda
+            )
+        }
+
+        composable(route = Screen.TargetWeight.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            TargetWeightSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = {
+                    userViewModel.updateUser(targetWeight = it)
+                    navController.navigate(Screen.Goal.route)
+                    printInfo(userViewModel)
                 } // O la siguiente pantalla que corresponda
             )
         }
@@ -209,15 +264,6 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
 
         composable("welcome") {
             WelcomeScreen(navController, userViewModel)  // Pantalla de bienvenida
-        }
-        composable("diet_form") {
-            DietForm(userViewModel)  // Pantalla del formulario de la dieta
-        }
-        composable("basal_metabolism") {
-            BasalMetabolismScreen(userViewModel)
-        }
-        composable("maintenance_calories") {
-            MaintenanceCaloriesScreen(userViewModel)
         }
     }
 }
@@ -569,4 +615,16 @@ fun fetchAllUsers() {
     } catch (e: Exception){
         Log.e("MyAppTag", "General exception", e) //Log general exception
     }
+}
+
+fun printInfo(userViewModel: UserViewModel) {
+    Log.d("Resumen: ",
+        "Nombre: ${userViewModel.getUser().name},\n" +
+                " Edad: ${userViewModel.getUser().age},\n" +
+                " Sexo: ${userViewModel.getUser().sex},\n" +
+                " Altura: ${userViewModel.getUser().height}\n" +
+                " Peso: ${userViewModel.getUser().currentWeight}\n" +
+                " Peso objetivo: ${userViewModel.getUser().targetWeight}\n" +
+                " Objetivo de dieta: ${userViewModel.getUser().goal}"
+    )
 }

@@ -8,10 +8,10 @@ class UserModel(
     var password: String = "",
     var age: Int = 0,
     var sex: String = "",
-    var height: Double = 0.0,
+    var height: Int = 0,
     var currentWeight: Double = 0.0,
     var goal: String = "",
-    var targetWeight: Double = 0.0
+    var targetWeight: Int = 0
 ) {
     // Todas las propiedades son mutables (var) y tienen valores por defecto
     // Kotlin genera automáticamente getters y setters

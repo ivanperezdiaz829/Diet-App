@@ -40,11 +40,11 @@ import com.example.diet_app.ui.theme.LightGray
 fun CurrentWeightSelectionScreen(
     onNavigateBack: () -> Unit,
     onSkip: () -> Unit,
-    onNext: () -> Unit
+    onNext: (Double) -> Unit
 ) {
-    val context = LocalContext.current
-    var selectedDate by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") } // Edad inicial
+    var currentWeight1 by remember { mutableStateOf("") } // Valor del primer TextField
+    var currentWeight2 by remember { mutableStateOf("") } // Valor del segundo TextField
+    var lastFocusedField by remember { mutableStateOf("") } // Último campo en el que escribiste
 
     Column(
         modifier = Modifier
@@ -68,9 +68,6 @@ fun CurrentWeightSelectionScreen(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            var currentWeight1 by remember { mutableStateOf("") } // Valor del primer TextField
-            var currentWeight2 by remember { mutableStateOf("") } // Valor del segundo TextField
-            var lastFocusedField by remember { mutableStateOf("") } // Último campo en el que escribiste
             Row(
                 modifier = Modifier
                     .padding(24.dp),
@@ -154,8 +151,8 @@ fun CurrentWeightSelectionScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                enabled = currentWeight1.isNotEmpty() && currentWeight2.isNotEmpty(),
-                onClick = { }
+                enabled = currentWeight1.isNotEmpty() && currentWeight2.isNotEmpty() && currentWeight1.toInt() <= currentWeight2.toInt() && currentWeight1.toInt()>=30 && currentWeight2.toInt()<=300,
+                onClick = { onNext((currentWeight1.toDouble() + currentWeight2.toDouble()) / 2) }
             )
         }
     }

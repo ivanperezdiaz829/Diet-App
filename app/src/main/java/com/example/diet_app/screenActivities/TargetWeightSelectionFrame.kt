@@ -40,11 +40,11 @@ import com.example.diet_app.ui.theme.LightGray
 fun TargetWeightSelectionScreen(
     onNavigateBack: () -> Unit,
     onSkip: () -> Unit,
-    onNext: () -> Unit
+    onNext: (Int) -> Unit
 ) {
-    val context = LocalContext.current
-    var selectedDate by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") } // Edad inicial
+
+    var targetWeight by remember { mutableStateOf("") } // Valor del primer TextField
+    var lastFocusedField by remember { mutableStateOf("") } // Último campo en el que escribiste
 
     Column(
         modifier = Modifier
@@ -68,8 +68,6 @@ fun TargetWeightSelectionScreen(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            var targetWeight by remember { mutableStateOf("") } // Valor del primer TextField
-            var lastFocusedField by remember { mutableStateOf("") } // Último campo en el que escribiste
             Row(
                 modifier = Modifier
                     .padding(24.dp),
@@ -117,8 +115,8 @@ fun TargetWeightSelectionScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                enabled = targetWeight.isNotEmpty(),
-                onClick = { }
+                enabled = targetWeight.isNotEmpty() && targetWeight.toInt() >= 30 && targetWeight.toInt() <= 300,
+                onClick = { onNext(targetWeight.toInt()) }
             )
         }
     }

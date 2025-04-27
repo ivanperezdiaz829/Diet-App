@@ -11,10 +11,10 @@ class UserViewModel : ViewModel() {
         password: String = currentUser.password,
         age: Int = currentUser.age,
         sex: String = currentUser.sex,
-        height: Double = currentUser.height,
+        height: Int = currentUser.height,
         currentWeight: Double = currentUser.currentWeight,
         goal: String = currentUser.goal,
-        targetWeight: Double = currentUser.targetWeight
+        targetWeight: Int = currentUser.targetWeight
     ) {
         currentUser = UserModel(
             name = name,
@@ -46,7 +46,7 @@ class UserViewModel : ViewModel() {
         currentUser.currentWeight = newWeight
     }
 
-    fun updateTargetWeight(newTarget: Double) {
+    fun updateTargetWeight(newTarget: Int) {
         currentUser.targetWeight = newTarget
     }
 }

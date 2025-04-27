@@ -15,9 +15,10 @@ import com.example.diet_app.screenActivities.components.OptionGrid
 import com.example.diet_app.screenActivities.components.ToolBox
 import com.example.diet_app.ui.theme.PrimaryGreen
 import com.example.diet_app.ui.theme.Typography
+import com.example.diet_app.viewModel.UserViewModel
 
 @Composable
-fun HomePageFrame(navController: NavHostController) {
+fun HomePageFrame(navController: NavHostController, userViewModel: UserViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()

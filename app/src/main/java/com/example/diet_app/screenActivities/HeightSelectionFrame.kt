@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,9 +45,9 @@ import kotlin.math.max
 fun HeightSelectionScreen(
     onNavigateBack: () -> Unit,
     onSkip: () -> Unit,
-    onNext: () -> Unit
+    onNext: (Int) -> Unit
 ) {
-    var height by remember { mutableStateOf("") } // Edad inicial
+    var height by remember { mutableIntStateOf(150) } // Edad inicial
 
     Column(
         modifier = Modifier
@@ -129,6 +130,7 @@ fun HeightSelectionScreen(
                     value = sliderPosition,
                     onValueChange = { newValue ->
                         sliderPosition = newValue // Actualiza la posición del slider
+                        height = newValue.toInt() // Actualiza la altura
                     },
                     valueRange = 0f..250f,
                     modifier = Modifier.fillMaxWidth(0.8f)
@@ -137,7 +139,9 @@ fun HeightSelectionScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            NextButton(enabled = true, onClick = onNext)
+            NextButton(enabled = true,
+                onClick = { onNext(height) }
+            )
         }
     }
 }
