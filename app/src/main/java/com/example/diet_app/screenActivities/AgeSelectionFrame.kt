@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,11 +49,11 @@ import com.example.diet_app.screenActivities.components.TitleSection
 fun AgeSelectionScreen(
     onNavigateBack: () -> Unit,
     onSkip: () -> Unit,
-    onNext: () -> Unit
+    onNext: (Int) -> Unit
 ) {
     val context = LocalContext.current
     var selectedDate by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") } // Edad inicial
+    var age: Int by remember { mutableIntStateOf(0) } // Edad inicial
 
     Column(
         modifier = Modifier
@@ -93,7 +94,7 @@ fun AgeSelectionScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = age, // Edad dinámica
+                        text = age.toString(), // Edad dinámica
                         style = TextStyle(
                             fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
                             fontSize = 44.sp,
@@ -134,7 +135,7 @@ fun AgeSelectionScreen(
                             .clickable {
                                 showDatePicker(context) { date, calculatedAge ->
                                     selectedDate = date // Actualiza la fecha
-                                    age = calculatedAge.toString() // Actualiza la edad
+                                    age = calculatedAge // Actualiza la edad
                                 }
                             }
                     )
@@ -144,8 +145,8 @@ fun AgeSelectionScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                enabled = selectedDate.isNotEmpty() && age.isNotEmpty(),
-                onClick = { }
+                enabled = selectedDate.isNotEmpty() && age >= 18,
+                onClick = { onNext(age) }
             )
 
         }

@@ -16,7 +16,17 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="FoodTypeSelectionFrame completo" />
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="UserModel">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/model/UserModel.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/viewModel/UserViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/NavigationRoutes.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/model/NavigationRoutes.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/login.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/LoginFrame.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/AgeSelectionFrame.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/AgeSelectionFrame.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/Header.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/Header.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/model/UserModel.kt" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -73,8 +83,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="resourceFile" />
-        <option value="Kotlin Class" />
         <option value="Kotlin File" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -158,6 +168,8 @@
       <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\java" />
     </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.example.diet_app.model" />
+      <recent name="com.example.diet_app.screenActivities" />
       <recent name="com.example.diet_app.ScreenActivities" />
       <recent name="com.example.diet_app" />
     </key>
@@ -449,7 +461,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745311919801</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="UserModel">
+      <option name="closed" value="true" />
+      <created>1745770876796</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1745770876796</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -495,7 +515,8 @@
     <MESSAGE value="FoodViewFrame semicompletada" />
     <MESSAGE value="Refactor y AddNewFoodFrame" />
     <MESSAGE value="FoodTypeSelectionFrame completo" />
-    <option name="LAST_COMMIT_MESSAGE" value="FoodTypeSelectionFrame completo" />
+    <MESSAGE value="UserModel" />
+    <option name="LAST_COMMIT_MESSAGE" value="UserModel" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

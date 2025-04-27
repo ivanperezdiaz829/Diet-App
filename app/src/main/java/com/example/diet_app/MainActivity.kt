@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Button
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.slideInHorizontally
@@ -31,16 +30,13 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -51,13 +47,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
+import com.example.diet_app.viewModel.UserViewModel
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var dbManager: DatabaseManager
 
-    private val viewModel: MainViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +65,7 @@ class MainActivity : ComponentActivity() {
         // Forzar íconos oscuros en la barra de estado
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         dbManager = DatabaseManager(this)
-        var viewModel = MainViewModel()
+        var userViewModel = UserViewModel()
 
         // Prueba abriendo la base de datos
         try {
@@ -78,95 +76,21 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            DietApp(dbManager, LocalContext.current, viewModel)
-            /*
-            LoginScreen( onLoginSuccess = {
-                // Aquí defines qué hacer después de login exitoso
-                // O si es pantalla única:
-                finish() // Cierra el login y muestra la siguiente pantalla
-            },
-                onNavigateBack = { finish() } // Para manejar el back button si es necesario
-            )*/
-            //ChangePasswordScreen()
+            DietApp(dbManager, LocalContext.current, userViewModel)
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
-            //CurrentWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
-            //HeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
-            //AgeSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {finish()})
-            //SexSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
-            //GoalSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
-            //InputDesign()
-            //DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
-            //HomePageFrame(navController)
-            //ToolBox()
-            //SettingsScreen()
-            //FoodViewScreen(onNavigateBack = { finish() })
-            //AddNewFoodScreen(onNavigateBack = { finish() }, onNext = {})
-            //FoodTypeSelectionScreen(onNavigateBack = { finish() }, onNext = {})
-            //NewFoodSummaryScreen(onNavigateBack = { finish() }, onNext = {})
-        }
-    }
-}
-
-class MainViewModel : ViewModel() {
-    internal lateinit var currentUser: String
-    internal lateinit var currentEmail: String
-    internal lateinit var basalMetabolism: String
-    internal lateinit var maintenanceCalories: String
-
-    fun updateUser(
-        currentUser: String = "",
-        currentEmail: String = "",
-        basalMetabolism: String = "",
-        maintenanceCalories: String = ""
-    ) {
-        if (currentUser.isNotEmpty()) {
-            this.currentUser = currentUser
-        }
-        if (currentEmail.isNotEmpty()) {
-            this.currentEmail = currentEmail
-        }
-        if (basalMetabolism.isNotEmpty()) {
-            this.basalMetabolism = basalMetabolism
-        }
-        if (maintenanceCalories.isNotEmpty()) {
-            this.maintenanceCalories = maintenanceCalories
         }
     }
 }
 
 @Composable
-fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: MainViewModel) {
+fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewModel: UserViewModel) {
     // Usamos NavController para manejar la navegación
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Goal.route) {
+    NavHost(navController = navController, startDestination = Screen.Sex.route) {
 
         composable("auth") {
-            AuthScreen(
-                onAuthenticate = { email, password ->
-                    val isAuthenticated = dbManager.authenticateUser(email, password)
-                    if (isAuthenticated) {
-                        Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                        viewModel.updateUser(currentEmail = email)
-                        viewModel.updateUser(currentUser = dbManager.getName(email).toString())
-                        navController.navigate("welcome")
-                    } else {
-                        Toast.makeText(applicationContext, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
-                    }
-                },
-                onRegister = { name, email, password ->
-                    val isRegistered = dbManager.registerUser(name, email, password)
-                    if (isRegistered) {
-                        Toast.makeText(applicationContext, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                        viewModel.updateUser(currentEmail = email)
-                        viewModel.updateUser(currentUser = dbManager.getName(email).toString())
-                        navController.navigate("welcome")
-                    } else {
-                        Toast.makeText(applicationContext, "Error al registrar el usuario", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            )
         }
 
         composable(
@@ -184,7 +108,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {HomePageFrame(navController)}
-        
+
         composable(route = Screen.Goal.route,
             enterTransition = {
                 slideInHorizontally(initialOffsetX = { it })
@@ -221,7 +145,11 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
             SexSelectionScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onSkip = { navController.navigate("welcome") },
-                onNext = { navController.navigate(Screen.Age.route) }
+                onNext = {
+                    userViewModel.updateUser(sex = it.toString())
+                    navController.navigate(Screen.Age.route)
+                    Log.d("SexSelectionScreen", "Selected sex: $it")
+                }
             )
         }
 
@@ -242,7 +170,11 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
             AgeSelectionScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onSkip = { navController.navigate("welcome") },
-                onNext = { navController.navigate(Screen.Height.route) } // O la siguiente pantalla que corresponda
+                onNext = {
+                    userViewModel.updateUser(age = it)
+                    navController.navigate(Screen.Height.route)
+                    Log.d("SexSelectionScreen", "Selected age: $it")
+                } // O la siguiente pantalla que corresponda
             )
         }
 
@@ -263,27 +195,35 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
             HeightSelectionScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onSkip = { navController.navigate("welcome") },
-                onNext = { navController.navigate(Screen.Home.route) } // O la siguiente pantalla que corresponda
+                onNext = {
+                    // userViewModel.updateUser(height = it)
+                    navController.navigate(Screen.Height.route)
+                    Log.d("SexSelectionScreen", "Selected height: $it")
+                } // O la siguiente pantalla que corresponda
             )
         }
 
+        composable(route = Screen.Login.route) {
+            LoginScreen(onLoginSuccess = {navController.navigate("home")}, onNavigateBack = { navController.popBackStack() })
+        }
+
         composable("welcome") {
-            WelcomeScreen(navController, viewModel)  // Pantalla de bienvenida
+            WelcomeScreen(navController, userViewModel)  // Pantalla de bienvenida
         }
         composable("diet_form") {
-            DietForm(viewModel)  // Pantalla del formulario de la dieta
+            DietForm(userViewModel)  // Pantalla del formulario de la dieta
         }
         composable("basal_metabolism") {
-            BasalMetabolismScreen(viewModel)
+            BasalMetabolismScreen(userViewModel)
         }
         composable("maintenance_calories") {
-            MaintenanceCaloriesScreen(viewModel)
+            MaintenanceCaloriesScreen(userViewModel)
         }
     }
 }
 
 @Composable
-fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
+fun WelcomeScreen(navController: NavController, userViewModel: UserViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -296,8 +236,9 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
             verticalArrangement = Arrangement.Center
         ) {
             // Si el usuario está autenticado (currentUser no está vacío)
-            var currentUser = viewModel.currentUser
-            if (currentUser.isNotEmpty()) {
+            var currentUser = userViewModel.getUser().name
+            /*
+            if (currentUser) {
                 // Símbolo en la esquina superior izquierda y mensaje de bienvenida
                 Box(
                     modifier = Modifier
@@ -331,7 +272,7 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
                     style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
                     modifier = Modifier.padding(16.dp)
                 )
-            }
+            }*/
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = {
@@ -355,7 +296,7 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
 }
 
 @Composable
-fun DietForm(viewModel: MainViewModel) {
+fun DietForm(userViewModel: UserViewModel) {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxCarbohydrates by remember { mutableStateOf("") }
     var minSugar by remember { mutableStateOf("") }
@@ -418,7 +359,7 @@ fun DietForm(viewModel: MainViewModel) {
 }
 
 @Composable
-fun BasalMetabolismScreen(viewModel: MainViewModel) {
+fun BasalMetabolismScreen(userViewModel: UserViewModel) {
     var weight by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -446,7 +387,7 @@ fun BasalMetabolismScreen(viewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = result)
     }
-    viewModel.updateUser(basalMetabolism = result)
+    // viewModel.updateUser(basalMetabolism = result)
 }
 
 fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gender: String): String {
@@ -466,7 +407,7 @@ fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gen
 }
 
 @Composable
-fun MaintenanceCaloriesScreen(viewModel: MainViewModel) {
+fun MaintenanceCaloriesScreen(userViewModel: UserViewModel) {
     var weight by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -495,7 +436,7 @@ fun MaintenanceCaloriesScreen(viewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = result)
     }
-    viewModel.updateUser(maintenanceCalories = result)
+    //viewModel.updateUser(maintenanceCalories = result)
 }
 
 fun calculateMaintenanceCalories(weight: String, height: String, age: String, gender: String, physicalActivityLevel: String): String {

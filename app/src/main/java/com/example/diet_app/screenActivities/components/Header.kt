@@ -32,7 +32,7 @@ fun Header(onNavigateBack: () -> Unit, onSkip: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         BackButton(onNavigateBack)
-        SkipButton(onSkip)
+        //SkipButton(onSkip)
     }
 }
 

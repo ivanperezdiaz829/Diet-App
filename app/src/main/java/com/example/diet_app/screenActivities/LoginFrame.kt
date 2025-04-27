@@ -1,6 +1,7 @@
-package com.example.diet_app
+package com.example.diet_app.screenActivities
 
 import android.content.Context
+import android.util.Patterns
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,11 +21,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.example.diet_app.DatabaseManager
+import com.example.diet_app.R
 
 
 @Composable
@@ -200,7 +200,7 @@ private fun LoginCard(
                             if (username.isEmpty() || password.isEmpty() || (!login && name.isEmpty())) {
                                 errorMessage = "All fields are required"
                                 showError = true
-                            } else if (!isLogin && !android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
+                            } else if (!isLogin && !Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
                                 errorMessage = "Please enter a valid email address"
                                 showError = true
                             } else if (login) {
