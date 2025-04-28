@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, send_file
-from Graphs import barplot_generator
+from Graphs import *
 from ObtainTotals import *
 import time
 import ast
@@ -10,6 +10,7 @@ import pandas as pd
 
 start_time = time.time()
 
+"""
 app = Flask(__name__)
 
 @app.route('/calculate', methods=['POST'])
@@ -162,7 +163,6 @@ def calculate_maintenance_calories():
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8000)
-
 """
 def obtain_restrictions():
     carbohydrates, sugar, energy, protein, salt, fat = [], [], [], [], [], []
@@ -227,11 +227,13 @@ budget = 50
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
 # print("Dieta Estándar")
 solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 3)
-image = barplot_generator(solution)
+print(solution)
+barplot_total_generator(solution)
+for day in solution:
+    barplot_day_generator(day)
 # solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
-"""
 
 """
 print("Dieta Vegetariana")

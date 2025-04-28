@@ -286,7 +286,8 @@ def validate_full_diet(diet, carbs_range, sugar_max, kcal_range, protein_range, 
 
 
 def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid):
-    db_path = os.path.join('../../FoodDbManagement', 'DietApp.db')
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, '../../FoodDbManagement', 'DietApp.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     solution = []

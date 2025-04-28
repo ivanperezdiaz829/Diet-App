@@ -16,12 +16,18 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="FoodTypeSelectionFrame completo">
       <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/ApiPython.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
+=======
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="Commit de pycharm para rehacer calculadoras">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" afterDir="false" />
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +37,6 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Portatil\.android\avd\Pixel_3a_API_34_extension_level_7_x86_64.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -100,8 +105,13 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
+<<<<<<< HEAD
     &quot;url&quot;: &quot;https://github.com/ivanperezdiaz829/Diet-App&quot;,
     &quot;accountId&quot;: &quot;2c27a258-e3ca-43f3-8cd3-e526e4b9ca1e&quot;
+=======
+    &quot;url&quot;: &quot;https://github.com/ivanperezdiaz829/Diet-App.git&quot;,
+    &quot;accountId&quot;: &quot;384c35c2-44b2-40ae-9be8-a276fd12a71f&quot;
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
   },
   &quot;recentNewPullRequestHead&quot;: {
     &quot;server&quot;: {
@@ -129,9 +139,18 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+<<<<<<< HEAD
     &quot;Android App.AuthActivity.executor&quot;: &quot;Run&quot;,
     &quot;Android App.app.executor&quot;: &quot;Run&quot;,
     &quot;Android App.diet-app.app.executor&quot;: &quot;Run&quot;,
+=======
+    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.GenerarDieta.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Graphs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ObtainTotals.executor&quot;: &quot;Run&quot;,
+    &quot;Python.SQLsentences.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
@@ -139,6 +158,7 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+<<<<<<< HEAD
     &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/main/java/com/example/diet_app/screenActivities&quot;,
@@ -146,6 +166,22 @@
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;memory.settings&quot;
+=======
+    &quot;git-widget-placeholder&quot;: &quot;#1 on develop&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/assets&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
   }
 }</component>
   <component name="PsdUISettings">
@@ -240,6 +276,7 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
+<<<<<<< HEAD
     <configuration name="diet-app.app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="diet-app.app" />
       <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
@@ -315,6 +352,16 @@
       <item itemvalue="Android App.diet-app.app" />
       <item itemvalue="Android App.app" />
     </list>
+=======
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-PY-251.23774.444" />
+        <option value="bundled-python-sdk-890ed5b35930-d9c5bdb153f4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.23774.444" />
+      </set>
+    </attachedChunks>
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -324,6 +371,14 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1741630755006</updated>
+<<<<<<< HEAD
+=======
+      <workItem from="1744798333495" duration="4397000" />
+      <workItem from="1744837216401" duration="54000" />
+      <workItem from="1745167607716" duration="9248000" />
+      <workItem from="1745345622577" duration="3055000" />
+      <workItem from="1745420790230" duration="325000" />
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
     </task>
     <task id="LOCAL-00001" summary="intento de DatabaseManager para SQL">
       <option name="closed" value="true" />
@@ -483,6 +538,7 @@
     <MESSAGE value="Base de datos conectada" />
     <MESSAGE value="develop con src" />
     <MESSAGE value="intento de DatabaseManager para SQL" />
+<<<<<<< HEAD
     <MESSAGE value="aparente conexion a SQL" />
     <MESSAGE value="base de datos interna funciona" />
     <MESSAGE value="conexion a base de datos sql local" />
@@ -500,6 +556,16 @@
     <MESSAGE value="Refactor y AddNewFoodFrame" />
     <MESSAGE value="FoodTypeSelectionFrame completo" />
     <option name="LAST_COMMIT_MESSAGE" value="FoodTypeSelectionFrame completo" />
+=======
+    <MESSAGE value="Commit de pycharm para rehacer calculadoras" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commit de pycharm para rehacer calculadoras" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Diet_App$GenerarDieta.coverage" NAME="GenerarDieta Coverage Results" MODIFIED="1745253799718" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PycharmProjects/DietApp" />
+    <SUITE FILE_PATH="coverage/Diet_App$ObtainTotals.coverage" NAME="ObtainTotals Coverage Results" MODIFIED="1745176013158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PycharmProjects/DietApp" />
+    <SUITE FILE_PATH="coverage/Diet_App$Graphs.coverage" NAME="Graphs Coverage Results" MODIFIED="1745421401698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PycharmProjects/DietApp" />
+    <SUITE FILE_PATH="coverage/Diet_App$main.coverage" NAME="main Coverage Results" MODIFIED="1745421414665" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PycharmProjects/DietApp" />
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
