@@ -48,20 +48,21 @@ def calculate_diet():
     total_days = 3
 
     try:
-        solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
+        dieta = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
 
-        if not solution or len(solution) < 3:
+        if not dieta or len(dieta) < 3:
             return jsonify({"error": "No valid diet found"}), 404
 
         result = []
 
         for i in range(total_days):
             response = {
-                "breakfast": solution[i][0][0].name + ", " + solution[i][0][1].name,
-                "lunch": solution[i][1][0].name + ", " + solution[i][1][1].name + ", " + solution[i][1][2].name,
-                "dinner": solution[i][2][0].name + ", " + solution[i][2][1].name
+                "breakfast": dieta[i][0][0].name + ", " + dieta[i][0][1].name,
+                "lunch": dieta[i][1][0].name + ", " + dieta[i][1][1].name + ", " + dieta[i][1][2].name,
+                "dinner": dieta[i][2][0].name + ", " + dieta[i][2][1].name
             }
             result.append(response)
+
 
         print(f"Solución enviada: {result}")
         return jsonify(result)
@@ -103,6 +104,61 @@ def barplot():
     plt.close()
     img.seek(0)
     return send_file(img, mimetype='image/png')
+
+@app.route("/basal", methods=["POST"])
+def calculate_basal_metabolic_rate():
+    data = request.get_json()
+    weight = data.get("weight")
+    height = data.get("height")
+    age = data.get("age")
+    gender = data.get("gender")
+
+    try:
+        w = float(weight)
+        h = float(height)
+        a = float(age)
+    except (ValueError, TypeError):
+        return jsonify({"result": -1})
+
+    if gender.lower() == "m":
+        result = 88.362 + (13.397 * w) + (4.799 * h) - (5.677 * a)
+    elif gender.lower() == "f":
+        result = 447.593 + (9.247 * w) + (3.098 * h) - (4.330 * a)
+    else:
+        result = 0
+
+    return jsonify({"result": result})
+
+@app.route("/maintenance", methods=["POST"])
+def calculate_maintenance_calories():
+    data = request.get_json()
+    weight = data.get("weight")
+    height = data.get("height")
+    age = data.get("age")
+    gender = data.get("gender")
+    physical_activity_level = data.get("physical_activity_level")
+
+    try:
+        w = float(weight)
+        h = float(height)
+        a = float(age)
+        pal = int(physical_activity_level)
+    except (ValueError, TypeError):
+        return jsonify({"result": -1})
+
+    physical_activity_coefficients = [1.2, 1.375, 1.55, 1.725, 1.9]
+
+    if 0 <= pal < len(physical_activity_coefficients):
+        if gender.lower() == "m":
+            result = physical_activity_coefficients[pal] * (66 + (13.7 * w) + (5 * h) - (6.8 * a))
+        elif gender.lower() == "f":
+            result = physical_activity_coefficients[pal] * (665 + (9.6 * w) + (1.8 * h) - (4.7 * a))
+        else:
+            result = 0
+    else:
+        result = 0
+
+    return jsonify({"result": result})
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8000)

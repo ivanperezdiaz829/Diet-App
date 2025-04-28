@@ -355,6 +355,11 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
         return None
 
     solution.extend([breakfast, lunch, dinner])
+    for i in solution:
+        print(f"Tipo del solution: {type(i[0])}, valor: {i[0]}")
+        print(f"Tipo del solution: {type(i[0].calories)}, valor: {i[0].calories}")
+        print(i[0])
+        #print(f"Tipo del solution: {type(solution[i][1])}, valor: {solution[i][1]}")
 
     if not validate_full_diet(solution, carbohydrates, sugar, energy, protein, salt, fat, price):
         print("La dieta generada no cumple con los requisitos totales.")
