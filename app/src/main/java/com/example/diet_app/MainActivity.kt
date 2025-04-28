@@ -412,6 +412,8 @@ fun BasalMetabolismScreen(viewModel: MainViewModel) {
     var gender by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -425,16 +427,37 @@ fun BasalMetabolismScreen(viewModel: MainViewModel) {
         InputField("Género (M/F)", gender) { gender = it }
 
         Spacer(modifier = Modifier.height(16.dp))
+
         Button(onClick = {
-            result = calculateBasalMetabolicRate(weight, height, age, gender)
+            // Aquí conviertes los valores a los tipos correctos
+            val weightValue = weight.toDoubleOrNull()
+            val heightValue = height.toDoubleOrNull()
+            val ageValue = age.toIntOrNull()
+
+            if (weightValue != null && heightValue != null && ageValue != null && gender.isNotEmpty()) {
+                calculateBasalRate(
+                    weight = weightValue,
+                    height = heightValue,
+                    age = ageValue,
+                    gender = gender,
+                    context = context
+                ) { response ->
+                    result = response
+                    viewModel.updateUser(basalMetabolism = result)
+                }
+            } else {
+                result = "❗ Por favor ingresa todos los valores correctamente."
+            }
         }) {
             Text("Calcular")
         }
+
         Spacer(modifier = Modifier.height(16.dp))
+
         Text(text = result)
     }
-    viewModel.updateUser(basalMetabolism = result)
 }
+
 
 fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gender: String): String {
     val w = weight.toDoubleOrNull() ?: return "Peso no válido"
