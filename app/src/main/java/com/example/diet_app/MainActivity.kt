@@ -287,7 +287,13 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 slideOutHorizontally(targetOffsetX = { it })
             }
             ) {
-            LoginScreen(onLoginSuccess = {navController.navigate("home")}, onNavigateBack = { navController.popBackStack() })
+            LoginScreen(onLoginSuccess = {
+                navController.navigate(Screen.Home.route)  // Navega a Home tras login
+                },
+                onRegisterSuccess = {
+                    navController.navigate(Screen.Sex.route)  // Navega a Height tras registro
+                }
+            )
         }
 
     }

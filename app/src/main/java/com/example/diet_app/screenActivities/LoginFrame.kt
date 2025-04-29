@@ -30,6 +30,7 @@ import com.example.diet_app.R
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,  // Cambiado para usar callback simple
+    onRegisterSuccess: () -> Unit,       // Nuevo callback para registro exitoso
     onNavigateBack: () -> Unit = {},  // Opcional: para manejar back
     context: Context = LocalContext.current
 ) {
@@ -40,11 +41,13 @@ fun LoginScreen(
             .padding(top = 82.dp, start = 8.dp, end = 8.dp),
         contentAlignment = Alignment.TopCenter
     ) {
-        LoginCard(context = context) { success ->
-            if (success) {
-                onLoginSuccess()  // Simplemente llama al callback
+        LoginCard(context = context, onLoginResult = { isRegistration  ->
+            if (isRegistration) {
+                onRegisterSuccess()  // Navega a flujo de registro
+            } else {
+                onLoginSuccess()     // Navega a Home
             }
-        }
+        })
     }
 }
 
@@ -209,7 +212,7 @@ private fun LoginCard(
                                 if (userExists) {
                                     errorMessage = ""
                                     showError = false
-                                    onLoginResult(true)
+                                    onLoginResult(false)
                                 } else {
                                     errorMessage = "User not found"
                                     showError = true
