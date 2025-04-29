@@ -177,6 +177,224 @@ fun calculateMaintenanceCalories(
     })
 }
 
+fun createUser(
+    email: String,
+    password: String,
+    physicalActivity: Int,
+    sex: String,
+    birthday: String,
+    height: Double,
+    weight: Double,
+    targetWeight: Double,
+    context: Context,
+    onResult: (String) -> Unit
+) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/create_user"
+
+    val json = JSONObject().apply {
+        put("email", email)
+        put("password", password)
+        put("physical_activity", physicalActivity)
+        put("sex", sex)
+        put("birthday", birthday) // formato: "YYYY-MM-DD"
+        put("height", height)
+        put("weight", weight)
+        put("target_weight", targetWeight)
+    }
+
+    Log.d("CreateUser", "Enviando datos: $json")
+
+    val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("CreateUser", "Fallo en la conexión: ${e.message}")
+            onResult("Error al conectar con el servidor: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                Log.d("CreateUser", "Respuesta del servidor: $responseBody")
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+                    if (response.isSuccessful) {
+                        val message = jsonResponse.optString("message", "✅ Usuario creado con éxito")
+                        onResult(message)
+                    } else {
+                        val error = jsonResponse.optString("error", "❗ Error desconocido")
+                        onResult("Error: $error")
+                    }
+                } catch (e: Exception) {
+                    Log.e("CreateUser", "Error procesando JSON: ${e.message}")
+                    onResult("Error al procesar la respuesta del servidor")
+                }
+            }
+        }
+    })
+}
+
+fun getUserByEmail(
+    email: String,
+    context: Context,
+    onResult: (String) -> Unit
+) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/get_user/${email}"
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("GetUser", "Fallo en la conexión: ${e.message}")
+            onResult("Error al conectar con el servidor: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                Log.d("GetUser", "Respuesta del servidor: $responseBody")
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+                    if (response.isSuccessful) {
+                        val user = jsonResponse.getJSONObject("user")
+                        val message = jsonResponse.getString("message")
+                        val userInfo = buildString {
+                            append("Email: ${user.getString("email")}\n")
+                            append("Peso: ${user.getDouble("weight")} kg\n")
+                            append("Altura: ${user.getDouble("height")} cm\n")
+                            append("Peso objetivo: ${user.getDouble("target_weight")} kg\n")
+                            append("Sexo: ${user.getString("sex")}\n")
+                            append("Fecha de nacimiento: ${user.getString("birthday")}\n")
+                            append("Nivel de actividad: ${user.getInt("physical_activity")}")
+                        }
+                        onResult("$message\n\n$userInfo")
+                    } else {
+                        val error = jsonResponse.optString("error", "❗ Error desconocido")
+                        onResult("Error: $error")
+                    }
+                } catch (e: Exception) {
+                    Log.e("GetUser", "Error procesando JSON: ${e.message}")
+                    onResult("Error al procesar la respuesta del servidor")
+                }
+            }
+        }
+    })
+}
+
+fun deleteUserByEmail(
+    email: String,
+    context: Context,
+    onResult: (String) -> Unit
+) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/delete_user/${email}"
+
+    val request = Request.Builder()
+        .url(url)
+        .delete()
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("DeleteUser", "Fallo en la conexión: ${e.message}")
+            onResult("Error al conectar con el servidor: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                Log.d("DeleteUser", "Respuesta del servidor: $responseBody")
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+                    if (response.isSuccessful) {
+                        val message = jsonResponse.getString("message")
+                        val deletedUser = jsonResponse.getJSONObject("user")
+                        val userInfo = buildString {
+                            append("Email: ${deletedUser.getString("email")}\n")
+                            append("Sexo: ${deletedUser.getString("sex")}\n")
+                            append("Fecha de nacimiento: ${deletedUser.getString("birthday")}")
+                        }
+                        onResult("$message\n\n$userInfo")
+                    } else {
+                        val error = jsonResponse.optString("error", "❗ Error desconocido")
+                        onResult("Error: $error")
+                    }
+                } catch (e: Exception) {
+                    Log.e("DeleteUser", "Error procesando JSON: ${e.message}")
+                    onResult("Error al procesar la respuesta del servidor")
+                }
+            }
+        }
+    })
+}
+
+fun updateUserByEmail(
+    email: String,
+    updatedFields: Map<String, Any>,
+    context: Context,
+    onResult: (String) -> Unit
+) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/update_user/$email"
+
+    val json = JSONObject()
+    for ((key, value) in updatedFields) {
+        json.put(key, value)
+    }
+
+    Log.d("UpdateUser", "Datos actualizados enviados: $json")
+
+    val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url(url)
+        .patch(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("UpdateUser", "Fallo en la conexión: ${e.message}")
+            onResult("Error al conectar con el servidor: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                Log.d("UpdateUser", "Respuesta del servidor: $responseBody")
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+                    if (response.isSuccessful) {
+                        val message = jsonResponse.getString("message")
+                        val user = jsonResponse.getJSONObject("user")
+                        val userInfo = buildString {
+                            append("Email: ${user.getString("email")}\n")
+                            append("⚖Peso: ${user.getDouble("weight")} kg\n")
+                            append("Peso objetivo: ${user.getDouble("target_weight")} kg\n")
+                            append("Altura: ${user.getDouble("height")} cm\n")
+                            append("Sexo: ${user.getString("sex")}\n")
+                            append("Nacimiento: ${user.getString("birthday")}\n")
+                            append("Actividad: ${user.getInt("physical_activity")}")
+                        }
+                        onResult("$message\n\n$userInfo")
+                    } else {
+                        val error = jsonResponse.optString("error", "❗ Error desconocido")
+                        onResult("Error: $error")
+                    }
+                } catch (e: Exception) {
+                    Log.e("UpdateUser", "Error procesando JSON: ${e.message}")
+                    onResult("Error al procesar la respuesta del servidor")
+                }
+            }
+        }
+    })
+}
+
 fun ImageView.loadBarplotImage(context: Context, dietJson: String) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/generate_barplot"
