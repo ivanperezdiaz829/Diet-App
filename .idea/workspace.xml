@@ -16,12 +16,18 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="calculo de calorias de mantenimiento">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
+<<<<<<< HEAD
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="FoodTypeSelectionFrame completo">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/ApiPython.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/AuthActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/AuthActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/DatabaseManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/DatabaseManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
+=======
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="Commit de pycharm para rehacer calculadoras">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" beforeDir="false" afterPath="$PROJECT_DIR$/PycharmProjects/DietApp/GenerarDieta.py" afterDir="false" />
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +37,6 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Asus\.android\avd\Medium_Phone_API_35.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -80,13 +85,14 @@
       <list>
         <option value="resourceFile" />
         <option value="Kotlin Class" />
+        <option value="Kotlin File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Gab-branch" />
+        <entry key="$PROJECT_DIR$" value="ui_branch" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -99,8 +105,13 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
+<<<<<<< HEAD
     &quot;url&quot;: &quot;https://github.com/ivanperezdiaz829/Diet-App&quot;,
-    &quot;accountId&quot;: &quot;e3078dab-b2be-4b46-a5df-6683d17757c3&quot;
+    &quot;accountId&quot;: &quot;2c27a258-e3ca-43f3-8cd3-e526e4b9ca1e&quot;
+=======
+    &quot;url&quot;: &quot;https://github.com/ivanperezdiaz829/Diet-App.git&quot;,
+    &quot;accountId&quot;: &quot;384c35c2-44b2-40ae-9be8-a276fd12a71f&quot;
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
   },
   &quot;recentNewPullRequestHead&quot;: {
     &quot;server&quot;: {
@@ -111,7 +122,8 @@
     },
     &quot;owner&quot;: &quot;ivanperezdiaz829&quot;,
     &quot;repository&quot;: &quot;Diet-App&quot;
-  }
+  },
+  &quot;editorReviewEnabled&quot;: false
 }</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
@@ -127,8 +139,18 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+<<<<<<< HEAD
     &quot;Android App.AuthActivity.executor&quot;: &quot;Run&quot;,
     &quot;Android App.app.executor&quot;: &quot;Run&quot;,
+    &quot;Android App.diet-app.app.executor&quot;: &quot;Run&quot;,
+=======
+    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.GenerarDieta.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Graphs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ObtainTotals.executor&quot;: &quot;Run&quot;,
+    &quot;Python.SQLsentences.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
@@ -136,13 +158,30 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#1 on develop&quot;,
+<<<<<<< HEAD
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/main/assets&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/main/java/com/example/diet_app/screenActivities&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;memory.settings&quot;
+=======
+    &quot;git-widget-placeholder&quot;: &quot;#1 on develop&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Asus/AndroidStudioProjects/Diet-App/app/src/assets&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
   }
 }</component>
   <component name="PsdUISettings">
@@ -150,19 +189,23 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\java\com\example\diet_app\screenActivities" />
+      <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\res\drawable" />
       <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\assets" />
       <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\assets" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\res\drawable" />
       <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main" />
       <recent name="C:\Users\Asus\AndroidStudioProjects\Diet-App\app\src\main\java" />
     </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.example.diet_app.ScreenActivities" />
       <recent name="com.example.diet_app" />
     </key>
   </component>
   <component name="RunManager" selected="Android App.app">
-    <configuration name="AuthActivity" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false" temporary="true">
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="diet-app.app" />
       <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
       <option name="DEPLOY" value="true" />
@@ -176,10 +219,9 @@
       <option name="CLEAR_APP_STORAGE" value="false" />
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
-      <option name="MODE" value="specific_activity" />
+      <option name="MODE" value="default_activity" />
       <option name="RESTORE_ENABLED" value="false" />
       <option name="RESTORE_FILE" value="" />
-      <option name="RESTORE_FRESH_INSTALL_ONLY" value="false" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -227,14 +269,15 @@
       </Profilers>
       <option name="DEEP_LINK" value="" />
       <option name="ACTIVITY" value="" />
-      <option name="ACTIVITY_CLASS" value="com.example.diet_app.AuthActivity" />
+      <option name="ACTIVITY_CLASS" value="" />
       <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
       <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
       <method v="2">
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+<<<<<<< HEAD
+    <configuration name="diet-app.app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="diet-app.app" />
       <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
       <option name="DEPLOY" value="true" />
@@ -251,7 +294,6 @@
       <option name="MODE" value="default_activity" />
       <option name="RESTORE_ENABLED" value="false" />
       <option name="RESTORE_FILE" value="" />
-      <option name="RESTORE_FRESH_INSTALL_ONLY" value="false" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -307,14 +349,19 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Android App.diet-app.app" />
       <item itemvalue="Android App.app" />
-      <item itemvalue="Android App.AuthActivity" />
     </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Android App.AuthActivity" />
-      </list>
-    </recent_temporary>
+=======
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-PY-251.23774.444" />
+        <option value="bundled-python-sdk-890ed5b35930-d9c5bdb153f4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.23774.444" />
+      </set>
+    </attachedChunks>
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -324,6 +371,14 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1741630755006</updated>
+<<<<<<< HEAD
+=======
+      <workItem from="1744798333495" duration="4397000" />
+      <workItem from="1744837216401" duration="54000" />
+      <workItem from="1745167607716" duration="9248000" />
+      <workItem from="1745345622577" duration="3055000" />
+      <workItem from="1745420790230" duration="325000" />
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
     </task>
     <task id="LOCAL-00001" summary="intento de DatabaseManager para SQL">
       <option name="closed" value="true" />
@@ -365,7 +420,95 @@
       <option name="project" value="LOCAL" />
       <updated>1743008412603</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Pantalla de carga y paso1">
+      <option name="closed" value="true" />
+      <created>1743615234762</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1743615234762</updated>
+    </task>
+    <task id="LOCAL-00007" summary="paso2 y statusbar corregida">
+      <option name="closed" value="true" />
+      <created>1743699305751</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1743699305751</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Paso3 iniciado a falta de calendario">
+      <option name="closed" value="true" />
+      <created>1743710798014</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1743710798014</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Paso4 y paso5">
+      <option name="closed" value="true" />
+      <created>1744134429928</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1744134429928</updated>
+    </task>
+    <task id="LOCAL-00010" summary="paso6 (igual que paso5)">
+      <option name="closed" value="true" />
+      <created>1744134885130</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1744134885130</updated>
+    </task>
+    <task id="LOCAL-00011" summary="ToolBox solo visual">
+      <option name="closed" value="true" />
+      <created>1744479506206</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1744479506206</updated>
+    </task>
+    <task id="LOCAL-00012" summary="HomePageFrame completada, a falta de navegación">
+      <option name="closed" value="true" />
+      <created>1744485918597</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1744485918597</updated>
+    </task>
+    <task id="LOCAL-00013" summary="FoodViewFrame semicompletada">
+      <option name="closed" value="true" />
+      <created>1744634141907</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1744634141907</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Refactor y AddNewFoodFrame">
+      <option name="closed" value="true" />
+      <created>1744645788258</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1744645788258</updated>
+    </task>
+    <task id="LOCAL-00015" summary="FoodTypeSelectionFrame completo">
+      <option name="closed" value="true" />
+      <created>1744666217599</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1744666217599</updated>
+    </task>
+    <task id="LOCAL-00016" summary="FoodTypeSelectionFrame completo">
+      <option name="closed" value="true" />
+      <created>1745311919801</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1745311919801</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -379,7 +522,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/develop" />
+                        <option value="origin/ui_branch" />
                       </list>
                     </value>
                   </entry>
@@ -395,28 +538,46 @@
     <MESSAGE value="Base de datos conectada" />
     <MESSAGE value="develop con src" />
     <MESSAGE value="intento de DatabaseManager para SQL" />
+<<<<<<< HEAD
     <MESSAGE value="aparente conexion a SQL" />
     <MESSAGE value="base de datos interna funciona" />
     <MESSAGE value="conexion a base de datos sql local" />
     <MESSAGE value="calculo de calorias de mantenimiento" />
-    <option name="LAST_COMMIT_MESSAGE" value="calculo de calorias de mantenimiento" />
+    <MESSAGE value="Pantalla de carga y paso1" />
+    <MESSAGE value="paso2 y statusbar corregida" />
+    <MESSAGE value="Paso3 iniciado a falta de calendario" />
+    <MESSAGE value="Paso4 y paso5" />
+    <MESSAGE value="paso6 (igual que paso5)" />
+    <MESSAGE value="ToolBox solo visual" />
+    <MESSAGE value="components a comps" />
+    <MESSAGE value="components" />
+    <MESSAGE value="HomePageFrame completada, a falta de navegación" />
+    <MESSAGE value="FoodViewFrame semicompletada" />
+    <MESSAGE value="Refactor y AddNewFoodFrame" />
+    <MESSAGE value="FoodTypeSelectionFrame completo" />
+    <option name="LAST_COMMIT_MESSAGE" value="FoodTypeSelectionFrame completo" />
+=======
+    <MESSAGE value="Commit de pycharm para rehacer calculadoras" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commit de pycharm para rehacer calculadoras" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Diet_App$GenerarDieta.coverage" NAME="GenerarDieta Coverage Results" MODIFIED="1745253799718" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PycharmProjects/DietApp" />
+    <SUITE FILE_PATH="coverage/Diet_App$ObtainTotals.coverage" NAME="ObtainTotals Coverage Results" MODIFIED="1745176013158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PycharmProjects/DietApp" />
+    <SUITE FILE_PATH="coverage/Diet_App$Graphs.coverage" NAME="Graphs Coverage Results" MODIFIED="1745421401698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PycharmProjects/DietApp" />
+    <SUITE FILE_PATH="coverage/Diet_App$main.coverage" NAME="main Coverage Results" MODIFIED="1745421414665" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PycharmProjects/DietApp" />
+>>>>>>> 9da7956f2ef5180f7e0dba2ad2c1c53699356a22
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
       <map>
         <entry key="com.example.diet_app">
           <value>
-            <CheckInfo lastCheckTimestamp="1742234991578" />
+            <CheckInfo lastCheckTimestamp="1743703919276" />
           </value>
         </entry>
         <entry key="com.example.diet_app.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1742235052972" />
-          </value>
-        </entry>
-        <entry key="com.example.diet_app.test">
-          <value>
-            <CheckInfo lastCheckTimestamp="1742235052972" />
+            <CheckInfo lastCheckTimestamp="1743703919276" />
           </value>
         </entry>
       </map>

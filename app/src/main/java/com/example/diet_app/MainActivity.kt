@@ -1,6 +1,8 @@
 package com.example.diet_app
 
+import android.app.Activity
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,8 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Button
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,8 +51,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 
 class MainActivity : ComponentActivity() {
@@ -161,6 +170,10 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: 
             val dayIndex = backStackEntry.arguments?.getString("dayIndex")?.toInt() ?: 0
             EditMealScreen(navController, dayIndex, viewModel)  // Pantalla de edición de comidas
         }
+
+        composable("graph") {
+            Graph(viewModel) // Pasar el navController aquí
+        }
     }
 }
 
@@ -240,6 +253,93 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
             Button(onClick = { navController.navigate("main_screen") }) {
                 Text("Ver Pantalla Principal")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { navController.navigate("graph") }) {
+                Text("Gráfico")
+            }
+        }
+    }
+}
+
+@Composable
+fun Graph(viewModel: MainViewModel) {
+    val context = LocalContext.current
+    var imageBitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Cargar la imagen al iniciar
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            try {
+                val prefs = context.getSharedPreferences("WeeklyDiet", android.content.Context.MODE_PRIVATE)
+                val dietJsonString = prefs.getString("lunes_diet", null)
+
+                if (dietJsonString != null) {
+                    val jsonObject = JSONObject(dietJsonString)
+                    val breakfast = jsonObject.getString("breakfast")
+                    val lunch = jsonObject.getJSONArray("lunch")
+                    val dinner = jsonObject.getJSONArray("dinner")
+
+                    val dietList = listOf(
+                        breakfast,
+                        (0 until lunch.length()).map { i -> lunch.getString(i) },
+                        (0 until dinner.length()).map { i -> dinner.getString(i) }
+                    )
+
+                    val jsonToSend = JSONObject().apply {
+                        put("diet", JSONArray(dietList))
+                    }
+
+                    val client = OkHttpClient()
+                    val requestBody = jsonToSend.toString()
+                        .toRequestBody("application/json; charset=utf-8".toMediaType())
+                    val request = Request.Builder()
+                        .url("http://10.0.2.2:8000/barplot") // tu endpoint
+                        .post(requestBody)
+                        .build()
+
+                    client.newCall(request).execute().use { response ->
+                        if (response.isSuccessful) {
+                            val bytes = response.body?.bytes()
+                            if (bytes != null) {
+                                imageBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                            } else {
+                                errorMessage = "Imagen vacía recibida"
+                            }
+                        } else {
+                            errorMessage = "Error del servidor: ${response.code}"
+                        }
+                    }
+                } else {
+                    errorMessage = "No se encontró la dieta guardada"
+                }
+            } catch (e: Exception) {
+                errorMessage = "Error al cargar la gráfica: ${e.message}"
+                Log.e("GraphScreen", e.toString())
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    // Interfaz
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        when {
+            isLoading -> CircularProgressIndicator()
+            imageBitmap != null -> Image(
+                bitmap = imageBitmap!!.asImageBitmap(),
+                contentDescription = "Gráfica de dieta",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+            )
+            errorMessage != null -> Text(text = errorMessage ?: "Error desconocido")
         }
     }
 }
@@ -312,6 +412,8 @@ fun BasalMetabolismScreen(viewModel: MainViewModel) {
     var gender by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -325,16 +427,37 @@ fun BasalMetabolismScreen(viewModel: MainViewModel) {
         InputField("Género (M/F)", gender) { gender = it }
 
         Spacer(modifier = Modifier.height(16.dp))
+
         Button(onClick = {
-            result = calculateBasalMetabolicRate(weight, height, age, gender)
+            // Aquí conviertes los valores a los tipos correctos
+            val weightValue = weight.toDoubleOrNull()
+            val heightValue = height.toDoubleOrNull()
+            val ageValue = age.toIntOrNull()
+
+            if (weightValue != null && heightValue != null && ageValue != null && gender.isNotEmpty()) {
+                calculateBasalRate(
+                    weight = weightValue,
+                    height = heightValue,
+                    age = ageValue,
+                    gender = gender,
+                    context = context
+                ) { response ->
+                    result = response
+                    viewModel.updateUser(basalMetabolism = result)
+                }
+            } else {
+                result = "❗ Por favor ingresa todos los valores correctamente."
+            }
         }) {
             Text("Calcular")
         }
+
         Spacer(modifier = Modifier.height(16.dp))
+
         Text(text = result)
     }
-    viewModel.updateUser(basalMetabolism = result)
 }
+
 
 fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gender: String): String {
     val w = weight.toDoubleOrNull() ?: return "Peso no válido"
@@ -430,51 +553,78 @@ fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) 
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            onResult("Error: ${e.message}")
+            onResult("❌ Error: ${e.message}")
         }
 
         override fun onResponse(call: Call, response: Response) {
             response.body?.string()?.let { responseBody ->
                 Log.d("DietForm", "Respuesta del servidor: $responseBody")
                 try {
-                    val jsonResponse = JSONObject(responseBody)
-                    if (jsonResponse.has("error")) {
-                        onResult("Error: ${jsonResponse.getString("error")}")
-                    } else {
-                        val breakfast = jsonResponse.getString("breakfast")
-                        val lunch = jsonResponse.getJSONArray("lunch")
-                        val dinner = jsonResponse.getJSONArray("dinner")
+                    val jsonArray = JSONArray(responseBody)
+                    val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+                    val editor = prefs.edit()
+                    val dias = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+                    val stringBuilder = StringBuilder()
 
-                        // Convierte JSONArray a String
-                        val lunchList = (0 until lunch.length()).map { lunch.getString(it) }
-                        val dinnerList = (0 until dinner.length()).map { dinner.getString(it) }
+                    for (i in 0 until jsonArray.length()) {
+                        val dayData = jsonArray.getJSONObject(i)
+                        val breakfast = dayData.getString("breakfast")
+                        val lunch = dayData.getString("lunch")
+                        val dinner = dayData.getString("dinner")
 
-                        val resultString = """
-                            🍳 **Desayuno:** $breakfast
-                            
-                            🥗 **Almuerzo:** 
-                            - ${lunchList.joinToString("\n- ")}
-                            
-                            🍽 **Cena:** 
-                            - ${dinnerList.joinToString("\n- ")}
-                        """.trimIndent()
+                        val dayName = dias.getOrElse(i) { "Día ${i + 1}" }
 
-                        // 🔒 Guardar en SharedPreferences para el lunes
-                        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
-                        val editor = prefs.edit()
+                        stringBuilder.append("📅 *$dayName*\n")
+                        stringBuilder.append("🍳 **Desayuno:** $breakfast\n")
+                        stringBuilder.append("🥗 **Almuerzo:** $lunch\n")
+                        stringBuilder.append("🍽 **Cena:** $dinner\n\n")
+
+                        // Guardar en SharedPreferences por día
                         val dietData = JSONObject().apply {
                             put("breakfast", breakfast)
-                            put("lunch", JSONArray(lunchList))
-                            put("dinner", JSONArray(dinnerList))
+                            put("lunch", lunch)
+                            put("dinner", dinner)
                         }
-                        editor.putString("lunes_diet", dietData.toString())
-                        editor.apply()
-
-                        onResult(resultString)
+                        editor.putString("${dayName.lowercase()}_diet", dietData.toString())
                     }
+
+                    editor.apply()
+                    onResult(stringBuilder.toString().trim())
+
                 } catch (e: Exception) {
-                    onResult("Error al procesar la respuesta")
+                    Log.e("DietForm", "Error al procesar JSON: ${e.message}")
+                    onResult("⚠️ Error al procesar la respuesta del servidor")
                 }
+            }
+        }
+    })
+}
+
+fun loadBarplotImage(context: Context, imageView: ImageView, dietJson: String) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/generate_barplot"
+
+    val requestBody = dietJson.toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("Graph", "Error al obtener gráfica: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            if (response.isSuccessful) {
+                val inputStream = response.body?.byteStream()
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                (context as Activity).runOnUiThread {
+                    imageView.setImageBitmap(bitmap)
+                }
+            } else {
+                Log.e("Graph", "Error en la respuesta del servidor")
             }
         }
     })
