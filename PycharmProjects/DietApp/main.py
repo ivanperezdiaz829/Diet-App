@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, send_file
-from Graphs import barplot_generator
+from Graphs import *
 from ObtainTotals import *
 import time
 import ast
@@ -10,6 +10,7 @@ import pandas as pd
 
 start_time = time.time()
 
+"""
 app = Flask(__name__)
 
 @app.route('/calculate', methods=['POST'])
@@ -45,21 +46,27 @@ def calculate_diet():
     price = values[10]
     person_type = 1
     person_preferences = 1
-    total_days = 1
+    total_days = 3
 
     try:
-        solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
+        dieta = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
 
-        if not solution or len(solution) < 3:
+        if not dieta or len(dieta) < 3:
             return jsonify({"error": "No valid diet found"}), 404
 
-        response = {
-            "breakfast": solution[0]["name"],
-            "lunch": solution[1]["name"],
-            "dinner": solution[2]["name"]
-        }
-        print(f"Solución enviada: {response}")
-        return jsonify(response)
+        result = []
+
+        for i in range(total_days):
+            response = {
+                "breakfast": dieta[i][0][0].name + ", " + dieta[i][0][1].name,
+                "lunch": dieta[i][1][0].name + ", " + dieta[i][1][1].name + ", " + dieta[i][1][2].name,
+                "dinner": dieta[i][2][0].name + ", " + dieta[i][2][1].name
+            }
+            result.append(response)
+
+
+        print(f"Solución enviada: {result}")
+        return jsonify(result)
 
     except Exception as e:
         print(f"Error al generar la dieta: {e}")
@@ -99,9 +106,63 @@ def barplot():
     img.seek(0)
     return send_file(img, mimetype='image/png')
 
+@app.route("/basal", methods=["POST"])
+def calculate_basal_metabolic_rate():
+    data = request.get_json()
+    weight = data.get("weight")
+    height = data.get("height")
+    age = data.get("age")
+    gender = data.get("gender")
+
+    try:
+        w = float(weight)
+        h = float(height)
+        a = float(age)
+    except (ValueError, TypeError):
+        return jsonify({"result": -1})
+
+    if gender.lower() == "m":
+        result = 88.362 + (13.397 * w) + (4.799 * h) - (5.677 * a)
+    elif gender.lower() == "f":
+        result = 447.593 + (9.247 * w) + (3.098 * h) - (4.330 * a)
+    else:
+        result = 0
+
+    return jsonify({"result": result})
+
+@app.route("/maintenance", methods=["POST"])
+def calculate_maintenance_calories():
+    data = request.get_json()
+    weight = data.get("weight")
+    height = data.get("height")
+    age = data.get("age")
+    gender = data.get("gender")
+    physical_activity_level = data.get("physical_activity_level")
+
+    try:
+        w = float(weight)
+        h = float(height)
+        a = float(age)
+        pal = int(physical_activity_level)
+    except (ValueError, TypeError):
+        return jsonify({"result": -1})
+
+    physical_activity_coefficients = [1.2, 1.375, 1.55, 1.725, 1.9]
+
+    if 0 <= pal < len(physical_activity_coefficients):
+        if gender.lower() == "m":
+            result = physical_activity_coefficients[pal] * (66 + (13.7 * w) + (5 * h) - (6.8 * a))
+        elif gender.lower() == "f":
+            result = physical_activity_coefficients[pal] * (665 + (9.6 * w) + (1.8 * h) - (4.7 * a))
+        else:
+            result = 0
+    else:
+        result = 0
+
+    return jsonify({"result": result})
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8000)
-
 """
 def obtain_restrictions():
     carbohydrates, sugar, energy, protein, salt, fat = [], [], [], [], [], []
@@ -166,11 +227,13 @@ budget = 50
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
 # print("Dieta Estándar")
 solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 3)
-image = barplot_generator(solution)
+print(solution)
+barplot_total_generator(solution)
+for day in solution:
+    barplot_day_generator(day)
 # solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
-"""
 
 """
 print("Dieta Vegetariana")

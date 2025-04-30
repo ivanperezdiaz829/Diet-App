@@ -286,7 +286,8 @@ def validate_full_diet(diet, carbs_range, sugar_max, kcal_range, protein_range, 
 
 
 def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid):
-    db_path = os.path.join('../../FoodDbManagement', 'DietApp.db')
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, '../../FoodDbManagement', 'DietApp.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     solution = []
@@ -355,6 +356,11 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
         return None
 
     solution.extend([breakfast, lunch, dinner])
+    for i in solution:
+        print(f"Tipo del solution: {type(i[0])}, valor: {i[0]}")
+        print(f"Tipo del solution: {type(i[0].calories)}, valor: {i[0].calories}")
+        print(i[0])
+        #print(f"Tipo del solution: {type(solution[i][1])}, valor: {solution[i][1]}")
 
     if not validate_full_diet(solution, carbohydrates, sugar, energy, protein, salt, fat, price):
         print("La dieta generada no cumple con los requisitos totales.")
