@@ -23,12 +23,15 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.diet_app.R
+import com.example.diet_app.model.Screen
 
 
 @Composable
 fun ToolBox(
-    // navController: NavController,
+    navController: NavController,
     // currentScreen: String,
     // onScreenSelected: (String) -> Unit,
 ) {
@@ -58,25 +61,29 @@ fun ToolBox(
         ) {
                 ToolBoxItem(
                     painterResource(id = R.drawable.home_symbol),
-                    "Home"
+                    "Home",
+                    onClick = {navController.navigateSingleInStack(Screen.Home.route)}
                     //currentScreen,
                     // onScreenSelected,
                 )
                 ToolBoxItem(
                     painterResource(id = R.drawable.meals_symbol),
-                    "Home"
+                    "Meals",
+                    onClick = {navController.navigateSingleInStack(Screen.Meals.route)}
                     //currentScreen,
                     // onScreenSelected,
                 )
                 ToolBoxItem(
                     painterResource(id = R.drawable.book_symbol),
-                    "Home"
+                    "Activities",
+                    onClick = {navController.navigateSingleInStack(Screen.Home.route)}
                     //currentScreen,
                     // onScreenSelected,
                 )
                 ToolBoxItem(
                     painterResource(id = R.drawable.user_symbol),
-                    "Home"
+                    "Settings",
+                    onClick = {navController.navigateSingleInStack(Screen.Settings.route)}
                     //currentScreen,
                     // onScreenSelected,
                 )
@@ -89,6 +96,7 @@ fun ToolBox(
 fun ToolBoxItem(
     painter: Painter,
     screen: String,
+    onClick: () -> Unit
     //currentScreen: String,
     // navController: NavController,
     // onScreenSelected: (String) -> Unit,
@@ -102,11 +110,40 @@ fun ToolBoxItem(
         modifier = Modifier
             .padding(horizontal = 20.dp)
             .size(40.dp)
-            .clickable {
-                //onScreenSelected(screen)
-                // navController.navigate(screen)
-            },
+            .clickable(onClick = onClick),
         colorFilter = colorFilter
     )
+}
+
+/**
+ * Navega a una pantalla con gestión estricta del stack:
+ * 1. Elimina todas las pantallas anteriores (si las hay)
+ * 2. No permite navegar a la pantalla actual
+ * 3. Mantiene siempre exactamente 1 instancia en el stack
+ */
+fun NavController.navigateSingleInStack(route: String) {
+    val currentRoute = currentBackStackEntry?.destination?.route
+
+    when {
+        // Caso 1: No hay pantalla actual (navegación inicial)
+        currentRoute == null -> {
+            navigate(route)
+        }
+
+        // Caso 2: La ruta destino es diferente a la actual
+        currentRoute != route -> {
+            navigate(route) {
+                // Elimina todas las pantallas excepto la actual antes de navegar
+                popUpTo(currentRoute) { inclusive = true }
+                // Evita múltiples instancias
+                launchSingleTop = true
+                // Restaura el estado si ya existe
+                restoreState = true
+            }
+        }
+
+        // Caso 3: Ya está en la pantalla destino (no hacer nada)
+        else -> return
+    }
 }
 

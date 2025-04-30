@@ -17,4 +17,5 @@ sealed class Screen(val route: String) {
     object CurrentWeight: Screen("currentWeight")
     object TargetWeight : Screen("targetWeight")
     object Welcome : Screen("welcome")
+    object Meals : Screen("meals")
 }

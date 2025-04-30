@@ -22,12 +22,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.diet_app.R
 import com.example.diet_app.screenActivities.components.SettingsOption
+import com.example.diet_app.screenActivities.components.ToolBox
 
 // Pantalla de configuración del usuario con botón de logout funcional
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,5 +91,6 @@ fun SettingsScreen() {
         ) {
             Text("Log out", color = Color.White, fontSize = 16.sp)
         }
+        ToolBox(navController)
     }
 }
