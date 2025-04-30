@@ -77,8 +77,13 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            DietApp(dbManager, LocalContext.current, userViewModel)
+            //DietApp(dbManager, LocalContext.current, userViewModel)
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //DietSelectionScreen()
+            /*GenerateMealPlanScreen(
+                "More muscle", "Male", 25, 150, 50
+            )*/
+            //DietDurationScreen()
         }
     }
 }
@@ -468,7 +473,7 @@ fun BasalMetabolismScreen(userViewModel: UserViewModel) {
 }
 
 fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gender: String): String {
-    val w = weight.toDoubleOrNull() ?: return "Peso no válido"
+    /*val w = weight.toDoubleOrNull() ?: return "Peso no válido"
     val h = height.toDoubleOrNull() ?: return "Altura no válida"
     val a = age.toDoubleOrNull() ?: return "Edad no válida"
 
@@ -480,7 +485,9 @@ fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gen
         "Gasto Energético Basal: ${String.format("%.2f", bmr)} kcal/día"
     } else {
         "Género no válido"
-    }
+    }*/
+    // DEBE TRAERSE LA OPERACIÓN DE PYTHON
+    return "0"
 }
 
 @Composable
@@ -517,7 +524,7 @@ fun MaintenanceCaloriesScreen(userViewModel: UserViewModel) {
 }
 
 fun calculateMaintenanceCalories(weight: String, height: String, age: String, gender: String, physicalActivityLevel: String): String {
-    val w = weight.toDoubleOrNull() ?: return "Peso no válido"
+    /*val w = weight.toDoubleOrNull() ?: return "Peso no válido"
     val h = height.toDoubleOrNull() ?: return "Altura no válida"
     val a = age.toDoubleOrNull() ?: return "Edad no válida"
     val pal = physicalActivityLevel.toDoubleOrNull() ?: return "Nivel de actividad física no válido"
@@ -530,7 +537,9 @@ fun calculateMaintenanceCalories(weight: String, height: String, age: String, ge
         "Calorías de mantenimiento: ${String.format("%.2f", mc)} kcal/día"
     } else {
         "Género no válido"
-    }
+    }*/
+    // DEBE TRAERSE LA OPERACIÓN DE PYTHON
+    return "0"
 }
 
 @Composable
