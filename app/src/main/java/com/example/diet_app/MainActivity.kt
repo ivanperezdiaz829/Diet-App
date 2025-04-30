@@ -50,6 +50,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
+import com.example.diet_app.screenActivities.components.DietViewScreen
+import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
 
@@ -68,6 +70,10 @@ class MainActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         dbManager = DatabaseManager(this)
         var userViewModel = UserViewModel()
+        var foodViewModel = FoodViewModel()
+        var dietViewModel = DietViewModel()
+
+        dietViewModel.updateDiet(name = "Dieta 1", duration = 2)
 
         // Prueba abriendo la base de datos
         try {
@@ -78,13 +84,10 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            //DietApp(dbManager, LocalContext.current, userViewModel)
+            //DietViewScreen(onClick = {}, diet = dietViewModel, image = R.drawable.healthy_icon)
+            //MealPlanScreen(navController = rememberNavController())
+            DietApp(dbManager, LocalContext.current, userViewModel)
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
-            //DietSelectionScreen()
-            /*GenerateMealPlanScreen(
-                "More muscle", "Male", 25, 150, 50
-            )*/
-            //DietDurationScreen()
         }
     }
 }
@@ -121,7 +124,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
             onSkip = { navController.navigate("welcome") },
             onNavigateBack = { navController.popBackStack() },
             onNext = {
-                userViewModel.updateUser(goal = it.toString())
+                userViewModel.updateUser(goal = it)
                 navController.navigate(Screen.Home.route)
                 printUserInfo(userViewModel)
             },
@@ -145,7 +148,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 onNavigateBack = { navController.popBackStack() },
                 onSkip = { navController.navigate("welcome") },
                 onNext = {
-                    userViewModel.updateUser(sex = it.toString())
+                    userViewModel.updateUser(sex = it)
                     navController.navigate(Screen.Age.route)
                     Log.d("SexSelectionScreen", "Selected sex: $it")
                 }
@@ -472,7 +475,7 @@ fun BasalMetabolismScreen(userViewModel: UserViewModel) {
 }
 
 fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gender: String): String {
-    /*val w = weight.toDoubleOrNull() ?: return "Peso no válido"
+    val w = weight.toDoubleOrNull() ?: return "Peso no válido"
     val h = height.toDoubleOrNull() ?: return "Altura no válida"
     val a = age.toDoubleOrNull() ?: return "Edad no válida"
 
@@ -484,9 +487,7 @@ fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gen
         "Gasto Energético Basal: ${String.format("%.2f", bmr)} kcal/día"
     } else {
         "Género no válido"
-    }*/
-    // DEBE TRAERSE LA OPERACIÓN DE PYTHON
-    return "0"
+    }
 }
 
 @Composable
@@ -523,7 +524,7 @@ fun MaintenanceCaloriesScreen(userViewModel: UserViewModel) {
 }
 
 fun calculateMaintenanceCalories(weight: String, height: String, age: String, gender: String, physicalActivityLevel: String): String {
-    /*val w = weight.toDoubleOrNull() ?: return "Peso no válido"
+    val w = weight.toDoubleOrNull() ?: return "Peso no válido"
     val h = height.toDoubleOrNull() ?: return "Altura no válida"
     val a = age.toDoubleOrNull() ?: return "Edad no válida"
     val pal = physicalActivityLevel.toDoubleOrNull() ?: return "Nivel de actividad física no válido"
@@ -536,9 +537,7 @@ fun calculateMaintenanceCalories(weight: String, height: String, age: String, ge
         "Calorías de mantenimiento: ${String.format("%.2f", mc)} kcal/día"
     } else {
         "Género no válido"
-    }*/
-    // DEBE TRAERSE LA OPERACIÓN DE PYTHON
-    return "0"
+    }
 }
 
 @Composable

@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun GenerateMealPlanScreen(
-    goal: String,
-    sex: String,
+    goal: Goal,
+    sex: Sex,
     age: Int,
     height: Int,
     weight: Int,
@@ -69,8 +69,8 @@ fun GenerateMealPlanScreen(
                 .padding(horizontal = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            UserDataItem(label = "Goal:", value = goal)
-            UserDataItem(label = "Sex:", value = sex)
+            UserDataItem(label = "Goal:", value = goal.toString())
+            UserDataItem(label = "Sex:", value = sex.toString())
             UserDataItem(label = "Age:", value = age.toString())
             UserDataItem(label = "Height:", value = "$height cm")
             UserDataItem(label = "Current weight:", value = "$weight kg")
