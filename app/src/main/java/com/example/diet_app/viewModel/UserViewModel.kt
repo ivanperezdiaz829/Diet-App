@@ -1,6 +1,8 @@
 package com.example.diet_app.viewModel
 import androidx.lifecycle.ViewModel
 import com.example.diet_app.model.UserModel
+import com.example.diet_app.screenActivities.Goal
+import com.example.diet_app.screenActivities.Sex
 
 class UserViewModel : ViewModel() {
     private var currentUser: UserModel = UserModel() // Inicialización por defecto
@@ -10,10 +12,10 @@ class UserViewModel : ViewModel() {
         email: String = currentUser.email,
         password: String = currentUser.password,
         age: Int = currentUser.age,
-        sex: String = currentUser.sex,
+        sex: Sex = currentUser.sex,
         height: Int = currentUser.height,
         currentWeight: Double = currentUser.currentWeight,
-        goal: String = currentUser.goal,
+        goal: Goal = currentUser.goal,
         targetWeight: Int = currentUser.targetWeight
     ) {
         currentUser = UserModel(

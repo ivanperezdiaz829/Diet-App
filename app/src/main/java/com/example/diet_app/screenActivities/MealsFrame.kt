@@ -35,9 +35,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.diet_app.R
+import com.example.diet_app.screenActivities.components.DietViewScreen
 import com.example.diet_app.screenActivities.components.ToolBox
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.PrimaryGreen
+import com.example.diet_app.viewModel.DietViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,7 +107,7 @@ fun MealPlanScreen(navController: NavController) {
                     // Contenido dinámico
                     when (selectedTab) {
                         0 -> CurrentMealPlanContent()
-                        1 -> OtherMealPlanContent()
+                        1 -> OtherMealPlanContent(navController)
                     }
                 }
         ToolBox(navController)
@@ -154,14 +157,17 @@ fun CurrentMealPlanContent() {
 }
 
 @Composable
-fun OtherMealPlanContent() {
+fun OtherMealPlanContent(
+    navController: NavController,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        /*
         Icon(
             Icons.Filled.Info,
             contentDescription = "Info",
@@ -172,5 +178,7 @@ fun OtherMealPlanContent() {
             text = "Other meal plans will appear here",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
+            */
+        DietViewScreen(onClick = { navController.navigate("diet") }, diet = DietViewModel(), image = R.drawable.healthy_icon)
     }
 }
