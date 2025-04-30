@@ -7,6 +7,8 @@ import os
 
 
 def filter_plates(plates, person_type):
+    if not all(isinstance(plate, Plate) for plate in plates):
+        raise TypeError("All elements in plates must be Plates")
     if person_type == 1:
         return plates
     elif person_type == 2:
@@ -15,8 +17,8 @@ def filter_plates(plates, person_type):
         return [plate for plate in plates if plate.vegan == 1]
     elif person_type == 4:
         return [plate for plate in plates if plate.celiac == 1]
-    return plates
 
+    return plates
 
 def percents_generator_food(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, food_time, sub_sentence):
 
@@ -71,12 +73,11 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
     print("\n--------- PLATOS DISPOBIBLES DESAYUNO ---------")
     print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
     breakfasts_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1, 2)
-    print(breakfasts_rows)
-    breakfasts_rows = filter_plates(breakfasts_rows, person_type)
-    breakfasts = [Plate(row) for row in breakfasts_rows]
+    breakfasts_convert = [Plate(row) for row in breakfasts_rows]
+    breakfasts = filter_plates(breakfasts_convert, person_type)
     drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
-    drinks_rows = filter_plates(drinks_rows, person_type)
-    drinks = [Plate(row) for row in drinks_rows]
+    drinks_convert = [Plate(row) for row in drinks_rows]
+    drinks = filter_plates(drinks_convert, person_type)
     print(f'\nPRINCIPAL:')
     for i in range(len(breakfasts)):
         print(f"breakfast: {breakfasts[i]}")
@@ -116,6 +117,7 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
         for combi in valid_combinations:
             print(combi)
         selected_combination = random.choice(valid_combinations)
+        selected_breakfasts.add(selected_combination)
         return selected_combination
 
     return None
@@ -136,8 +138,8 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                           nutritional_percents[4][0] * salt,
                           [nutritional_percents[5][0] * fat[0], nutritional_percents[5][0] * fat[1]],
                           nutritional_percents[6][0] * price, 2, 1, -1, 2)
-    mains_rows = filter_plates(mains_rows, person_type)
-    mains = [Plate(row) for row in mains_rows]
+    mains_convert = [Plate(row) for row in mains_rows]
+    mains = filter_plates(mains_convert, person_type)
 
     sides_rows = sql_sentences(cursor, [nutritional_percents[0][1] * carbohydrates[0], nutritional_percents[0][1] * carbohydrates[1]],
                           nutritional_percents[1][1] * sugar,
@@ -146,12 +148,12 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                           nutritional_percents[4][1] * salt,
                           [nutritional_percents[5][1] * fat[0], nutritional_percents[5][1] * fat[1]],
                           nutritional_percents[6][1] * price, 3, 1, -1,2 )
-    sides_rows = filter_plates(sides_rows, person_type)
-    sides = [Plate(row) for row in sides_rows]
+    sides_convert = [Plate(row) for row in sides_rows]
+    sides = filter_plates(sides_convert, person_type)
 
     drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
-    drinks_rows = filter_plates(drinks_rows, person_type)
-    drinks = [Plate(row) for row in drinks_rows]
+    drinks_convert = [Plate(row) for row in drinks_rows]
+    drinks = filter_plates(drinks_convert, person_type)
 
     print(f'\nPRINCIPAL:')
     for i in range(len(mains)):
@@ -197,6 +199,7 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
         for combi in valid_combinations:
             print(combi)
         selected_combination = random.choice(valid_combinations)
+        selected_lunches.add(selected_combination)
         return selected_combination
 
     return None
@@ -209,13 +212,11 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
     mains_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1, 2)
     mains2_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 3, 1, -1, 2)
     mains_rows.extend(mains2_rows)
-    mains_rows = filter_plates(mains_rows, person_type)
-    mains = [Plate(row) for row in mains_rows]
-
-    print(mains_rows)
+    mains_convert = [Plate(row) for row in mains_rows]
+    mains = filter_plates(mains_convert, person_type)
     drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
-    drinks_rows = filter_plates(drinks_rows, person_type)
-    drinks = [Plate(row) for row in drinks_rows]
+    drinks_convert = [Plate(row) for row in drinks_rows]
+    drinks = filter_plates(drinks_convert, person_type)
 
     print(f'\nPRINCIPAL:')
     for i in range(len(mains)):
@@ -257,6 +258,7 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
         for combi in valid_combinations:
             print(combi)
         selected_combination = random.choice(valid_combinations)
+        selected_dinners.add(selected_combination)
         return selected_combination
     return None
 
@@ -356,11 +358,6 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
         return None
 
     solution.extend([breakfast, lunch, dinner])
-    for i in solution:
-        print(f"Tipo del solution: {type(i[0])}, valor: {i[0]}")
-        print(f"Tipo del solution: {type(i[0].calories)}, valor: {i[0].calories}")
-        print(i[0])
-        #print(f"Tipo del solution: {type(solution[i][1])}, valor: {solution[i][1]}")
 
     if not validate_full_diet(solution, carbohydrates, sugar, energy, protein, salt, fat, price):
         print("La dieta generada no cumple con los requisitos totales.")
