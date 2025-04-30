@@ -95,14 +95,6 @@ fun FoodViewScreen(onNavigateBack: () -> Unit) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
-            Text(
-                text = "Food Variants",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = DarkGray,
-                modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
-            )
-
             FoodVariants("Vegetarian", "Vegan", "Celiac", "Halal")
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -124,6 +116,15 @@ fun FoodViewScreen(onNavigateBack: () -> Unit) {
 
 @Composable
 fun FoodVariants(vararg variants: String){
+
+    Text(
+        text = "Food Variants",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = DarkGray,
+        modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
+    )
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
