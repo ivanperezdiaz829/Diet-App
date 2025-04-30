@@ -16,10 +16,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="falta login navegación">
+    <list default="true" id="5709e2f8-2e74-485d-9867-66023e79fb33" name="Changes" comment="Navegacion del Login que depende de si loguea o registra">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/GraphicFrame.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/DiaryMenu.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/ListOptionsIcon.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/components/NutrInfoComponent.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/optionsbars.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/LoginFrame.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/diet_app/screenActivities/LoginFrame.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,8 +80,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="resourceFile" />
-        <option value="Kotlin File" />
         <option value="Kotlin Class" />
+        <option value="Kotlin File" />
       </list>
     </option>
   </component>
@@ -482,7 +485,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745781947106</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Navegacion del Login que depende de si loguea o registra">
+      <option name="closed" value="true" />
+      <created>1745952518187</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1745952518187</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -531,7 +542,8 @@
     <MESSAGE value="UserModel" />
     <MESSAGE value="completando navegación y actualizar modelo" />
     <MESSAGE value="falta login navegación" />
-    <option name="LAST_COMMIT_MESSAGE" value="falta login navegación" />
+    <MESSAGE value="Navegacion del Login que depende de si loguea o registra" />
+    <option name="LAST_COMMIT_MESSAGE" value="Navegacion del Login que depende de si loguea o registra" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
