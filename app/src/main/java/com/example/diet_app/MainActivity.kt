@@ -1,5 +1,6 @@
 package com.example.diet_app
 
+import MealPlanScreen
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -95,24 +96,12 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Welcome.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable("auth") {
         }
 
-        composable(route = Screen.Home.route,
-            enterTransition = {
-                slideInHorizontally(initialOffsetX = { it })
-            },
-            exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -it })
-            },
-            popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -it })
-            },
-            popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { it })
-            }
+        composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
 
         composable(route = Screen.Goal.route,
@@ -265,6 +254,11 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
             )
         }
 
+        composable(route = Screen.Meals.route
+        ) {
+            MealPlanScreen(navController)
+        }
+
         composable(route = Screen.Welcome.route,
             exitTransition = {
                 slideOutHorizontally(targetOffsetX = { -it })
@@ -299,6 +293,11 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                     navController.navigate(Screen.Sex.route)  // Navega a Height tras registro
                 }
             )
+        }
+
+        composable(route = Screen.Settings.route
+        ) {
+            SettingsScreen(navController)
         }
 
     }
