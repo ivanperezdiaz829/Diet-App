@@ -26,12 +26,7 @@ import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.R
-
-enum class FoodType {
-    Breakfast,
-    Lunch,
-    Dinner
-}
+import com.example.diet_app.model.FoodType
 
 @Composable
 fun FoodTypeSelectionScreen(
@@ -96,27 +91,27 @@ private fun FoodOptions(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         FoodOption(
-            foodType = FoodType.Breakfast,
-            text = "Breakfast",
+            foodType = FoodType.BREAKFAST,
+            text = "BREAKFAST",
             imageId = R.drawable.sun_day_morning,
-            isSelected = selectedFoodTypes.contains(FoodType.Breakfast),
-            onClick = { onFoodTypeSelected(FoodType.Breakfast) }
+            isSelected = selectedFoodTypes.contains(FoodType.BREAKFAST),
+            onClick = { onFoodTypeSelected(FoodType.BREAKFAST) }
         )
 
         FoodOption(
-            foodType = FoodType.Lunch,
-            text = "Lunch",
+            foodType = FoodType.LUNCH,
+            text = "LUNCH",
             imageId = R.drawable.sun_day_midday,
-            isSelected = selectedFoodTypes.contains(FoodType.Lunch),
-            onClick = { onFoodTypeSelected(FoodType.Lunch) }
+            isSelected = selectedFoodTypes.contains(FoodType.LUNCH),
+            onClick = { onFoodTypeSelected(FoodType.LUNCH) }
         )
 
         FoodOption(
-            foodType = FoodType.Dinner,
-            text = "Dinner",
+            foodType = FoodType.DINNER,
+            text = "DINNER",
             imageId = R.drawable.sun_day_afternoon,
-            isSelected = selectedFoodTypes.contains(FoodType.Dinner),
-            onClick = { onFoodTypeSelected(FoodType.Dinner) }
+            isSelected = selectedFoodTypes.contains(FoodType.DINNER),
+            onClick = { onFoodTypeSelected(FoodType.DINNER) }
         )
     }
 }

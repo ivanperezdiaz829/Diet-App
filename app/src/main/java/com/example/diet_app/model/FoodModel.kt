@@ -1,12 +1,5 @@
 package com.example.diet_app.model
 
-enum class FoodType {
-    BREAKFAST,
-    LUNCH,
-    DINNER,
-    SNACK
-}
-
 class FoodModel(
     var name: String = "",
     var protein: Double = 0.0,
@@ -20,7 +13,7 @@ class FoodModel(
     var vegan: Boolean = false,
     var celiac: Boolean = false,
     var halal: Boolean = false,
-    var type: FoodType = FoodType.BREAKFAST
+    var foodTypes: Set<FoodType> = emptySet(),
 ) {
 
 }

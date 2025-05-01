@@ -19,7 +19,7 @@ class FoodViewModel : ViewModel() {
         vegan: Boolean = food.vegan,
         celiac: Boolean = food.celiac,
         halal: Boolean = food.halal,
-        type: FoodType = food.type
+        foodTypes: Set<FoodType> = food.foodTypes
     ) {
         food = FoodModel(
             name = name,
@@ -34,7 +34,7 @@ class FoodViewModel : ViewModel() {
             vegan = vegan,
             celiac = celiac,
             halal = halal,
-            type = type
+            foodTypes = foodTypes
         )
     }
 
