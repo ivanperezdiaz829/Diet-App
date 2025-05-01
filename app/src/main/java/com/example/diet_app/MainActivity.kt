@@ -35,22 +35,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.google.firebase.firestore.FirebaseFirestore
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
-import java.io.IOException
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
-import com.example.diet_app.screenActivities.components.DietViewScreen
+import com.example.diet_app.screenActivities.components.FoodViewScreen
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
@@ -71,6 +66,9 @@ class MainActivity : ComponentActivity() {
         dbManager = DatabaseManager(this)
         var userViewModel = UserViewModel()
         var foodViewModel = FoodViewModel()
+        foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))
+        Log.d(foodViewModel.getFood().foodTypes.toString(), "foodTypes")
+
         var dietViewModel = DietViewModel()
 
         dietViewModel.updateDiet(name = "Dieta 1", duration = 2)
@@ -86,7 +84,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             //DietForm(userViewModel, LocalContext.current)
             //DietViewScreen(onClick = {}, diet = dietViewModel, image = R.drawable.healthy_icon)
-            DietApp(dbManager, LocalContext.current, userViewModel)
+            //DietApp(dbManager, LocalContext.current, userViewModel)
+            FoodViewScreen(onClick = {}, food = foodViewModel)
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
