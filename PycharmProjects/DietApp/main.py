@@ -10,7 +10,7 @@ import pandas as pd
 
 start_time = time.time()
 
-"""
+
 app = Flask(__name__)
 
 @app.route('/calculate', methods=['POST'])
@@ -163,7 +163,7 @@ def calculate_maintenance_calories():
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8000)
-"""
+
 def obtain_restrictions():
     carbohydrates, sugar, energy, protein, salt, fat = [], [], [], [], [], []
 
@@ -226,10 +226,11 @@ budget = 50
 
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
 # print("Dieta Estándar")
-"""
+
 solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 3)
 for food in solution:
     print(food)
+"""
 barplot_total_generator(solution)
 for day in solution:
     barplot_day_generator(day)
@@ -248,9 +249,9 @@ print("\n------------------- DIETA VEGANA ----------------------\n")
 solution_vegan = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 3, 1, 3)
 for food in solution_vegan:
     print(food)
-"""
+
 print("\n------------------- DIETA CELIACA ----------------------\n")
 solution_celiac = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 4, 1, 3)
 for food in solution_celiac:
     print(food)
-
+"""

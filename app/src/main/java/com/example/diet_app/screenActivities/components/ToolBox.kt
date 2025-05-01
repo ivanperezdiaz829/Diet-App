@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,9 +33,17 @@ import com.example.diet_app.model.Screen
 @Composable
 fun ToolBox(
     navController: NavController,
-    // currentScreen: String,
-    // onScreenSelected: (String) -> Unit,
 ) {
+
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val currentScreen = when (currentRoute) {
+        Screen.Home.route -> "Home"
+        Screen.Meals.route -> "Meals"
+        Screen.Home.route -> "Activities"
+        Screen.Settings.route -> "Settings"
+        else -> ""
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -61,30 +70,30 @@ fun ToolBox(
         ) {
                 ToolBoxItem(
                     painterResource(id = R.drawable.home_symbol),
-                    "Home",
+                    screen = "Home",
+                    currentScreen,
                     onClick = {navController.navigateSingleInStack(Screen.Home.route)}
-                    //currentScreen,
                     // onScreenSelected,
                 )
                 ToolBoxItem(
                     painterResource(id = R.drawable.meals_symbol),
-                    "Meals",
+                    screen = "Meals",
+                    currentScreen,
                     onClick = {navController.navigateSingleInStack(Screen.Meals.route)}
-                    //currentScreen,
                     // onScreenSelected,
                 )
                 ToolBoxItem(
                     painterResource(id = R.drawable.book_symbol),
-                    "Activities",
+                    screen = "Activities",
+                    currentScreen,
                     onClick = {navController.navigateSingleInStack(Screen.Home.route)}
-                    //currentScreen,
                     // onScreenSelected,
                 )
                 ToolBoxItem(
                     painterResource(id = R.drawable.user_symbol),
-                    "Settings",
+                    screen = "Settings",
+                    currentScreen,
                     onClick = {navController.navigateSingleInStack(Screen.Settings.route)}
-                    //currentScreen,
                     // onScreenSelected,
                 )
             }
@@ -96,22 +105,21 @@ fun ToolBox(
 fun ToolBoxItem(
     painter: Painter,
     screen: String,
-    onClick: () -> Unit
-    //currentScreen: String,
-    // navController: NavController,
-    // onScreenSelected: (String) -> Unit,
+    currentScreen: String,
+    onClick: () -> Unit,
 ) {
-    val isSelected = true
-    val colorFilter = if (isSelected) ColorFilter.tint(Color.Black) else ColorFilter.tint(Color.Gray)
+    val isSelected = screen == currentScreen
+    val color = if (isSelected) Color.Black else Color.Gray
+    //val colorFilter = if (isSelected) ColorFilter.tint(Color.Black) else ColorFilter.tint(Color.Gray)
 
-    Image(
+    Icon(
         painter = painter,
         contentDescription = screen,
         modifier = Modifier
             .padding(horizontal = 20.dp)
             .size(40.dp)
             .clickable(onClick = onClick),
-        colorFilter = colorFilter
+        tint = color
     )
 }
 

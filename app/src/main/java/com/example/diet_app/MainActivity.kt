@@ -84,8 +84,8 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
+            //DietForm(userViewModel, LocalContext.current)
             //DietViewScreen(onClick = {}, diet = dietViewModel, image = R.drawable.healthy_icon)
-            //MealPlanScreen(navController = rememberNavController())
             DietApp(dbManager, LocalContext.current, userViewModel)
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
@@ -298,6 +298,23 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
             )
         }
 
+        composable(route = Screen.Password.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            ChangePasswordScreen(navController)
+        }
+
         composable(route = Screen.Settings.route
         ) {
             SettingsScreen(navController)
@@ -380,7 +397,7 @@ fun WelcomeScreen(navController: NavController, userViewModel: UserViewModel) {
 }
 
 @Composable
-fun DietForm(userViewModel: UserViewModel) {
+fun DietForm(userViewModel: UserViewModel, context: Context) {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxCarbohydrates by remember { mutableStateOf("") }
     var minSugar by remember { mutableStateOf("") }
@@ -428,7 +445,7 @@ fun DietForm(userViewModel: UserViewModel) {
             Log.d("DietForm", "Valores convertidos a Double: $numericValues")
 
             if (numericValues.size == 13) { // Asegurar que todos los valores sean numéricos
-                sendDataToServer(numericValues) { response ->
+                sendDataToServer(numericValues, context) { response ->
                     result = response
                 }
             } else {
@@ -550,9 +567,10 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
     )
 }
 
+/*
 fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.193.223.36:8000/calculate"
+    val url = "http://10.0.2.16:8000/calculate"
 
     val json = JSONObject()
     json.put("values", values)
@@ -606,6 +624,7 @@ fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
         }
     })
 }
+*/
 
 fun checkDatabaseConnection() {
     val db = FirebaseFirestore.getInstance()

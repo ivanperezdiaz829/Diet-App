@@ -67,7 +67,6 @@ fun DietViewScreen(
                 painter = painterResource(id = image),
                 contentDescription = null,
                 modifier = Modifier.size(70.dp),
-                contentScale = ContentScale.Crop // Cambia según el efecto deseado
             )
         }
     }
