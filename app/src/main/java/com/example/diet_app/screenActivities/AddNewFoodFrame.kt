@@ -17,7 +17,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.NextButton
@@ -32,8 +34,8 @@ import com.example.diet_app.ui.theme.PrimaryGreen
 
 @Composable
 fun AddNewFoodScreen(
+    navController: NavController,
     onNavigateBack: () -> Unit,
-    onNext: (Goal) -> Unit
 ) {
 
     // Estados para los valores nutricionales
@@ -145,7 +147,7 @@ fun AddNewFoodScreen(
 
             NextButton(
                 enabled = protein.isNotEmpty() && fats.isNotEmpty() && sugar.isNotEmpty() && salt.isNotEmpty() && carbohydrates.isNotEmpty() && calories.isNotEmpty() && price.isNotEmpty(),
-                onClick = {}
+                onClick = {navController.navigate(Screen.NewFoodType.route)}
             )
         }
     }

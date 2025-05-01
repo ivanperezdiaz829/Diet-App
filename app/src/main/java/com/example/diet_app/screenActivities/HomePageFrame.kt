@@ -40,7 +40,7 @@ fun HomePageFrame(navController: NavController, userViewModel: UserViewModel) {
                 textAlign = TextAlign.Center
             )
 
-            OptionGrid() // Llamamos a OptionGrid sin navegación por ahora
+            OptionGrid(navController) // Llamamos a OptionGrid sin navegación por ahora
         }
     }
     ToolBox(navController)

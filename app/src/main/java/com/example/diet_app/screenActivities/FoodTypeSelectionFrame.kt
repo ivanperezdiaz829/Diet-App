@@ -1,6 +1,5 @@
 package com.example.diet_app.screenActivities
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,13 +10,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import androidx.navigation.NavHostController
 import com.example.diet_app.screenActivities.components.BackButton
-import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
 import com.example.diet_app.ui.theme.Typography
@@ -30,8 +27,9 @@ import com.example.diet_app.model.FoodType
 
 @Composable
 fun FoodTypeSelectionScreen(
+    navController: NavHostController,
     onNavigateBack: () -> Unit,
-    onNext: (Set<FoodType>) -> Unit // Cambiado para aceptar múltiples selecciones
+    onNext: (Set<FoodType>) -> Unit // Cambiado para aceptar múltiples selecciones){}
 ) {
     var selectedFoodTypes by remember { mutableStateOf<Set<FoodType>>(setOf()) } // Usamos un Set para almacenar múltiples selecciones
 

@@ -35,6 +35,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.google.firebase.firestore.FirebaseFirestore
@@ -81,14 +82,7 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            //DietForm(userViewModel, LocalContext.current)
-            //DietViewScreen(onClick = {}, diet = dietViewModel, image = R.drawable.healthy_icon)
-            //DietApp(dbManager, LocalContext.current, userViewModel)
-            FoodListViewScreen(
-                foods = listOf(foodViewModel, foodViewModel, foodViewModel),
-                onFoodClick = {},
-                navController = rememberNavController()
-            )
+            DietApp(dbManager, LocalContext.current, userViewModel)
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
@@ -315,6 +309,62 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
             }
         ) {
             ChangePasswordScreen(navController)
+        }
+
+        composable(route = Screen.FoodList.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            var foodViewModel = FoodViewModel()
+            foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))
+            FoodListViewScreen(navController, listOf(foodViewModel))
+        }
+
+        composable(route = Screen.AddFood.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            AddNewFoodScreen(navController, onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(route = Screen.NewFoodType.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            FoodTypeSelectionScreen(navController, onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    navController.navigate(Screen.Home.route)
+                })
         }
 
         composable(route = Screen.Settings.route

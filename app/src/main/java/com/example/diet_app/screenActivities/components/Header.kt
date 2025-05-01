@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
@@ -84,10 +85,9 @@ fun SkipButton(onSkip: () -> Unit) {
 fun BackButtonLeft(onNavigateBack: () -> Unit) {
     Box(Modifier
         .fillMaxWidth()
-        .wrapContentHeight()
+        .statusBarsPadding()
         .background(Color.Transparent)
-        .padding(vertical = 32.dp)
-        .padding(horizontal = 20.dp),
+        .padding(vertical = 20.dp)
     ) {
         BackButton(onNavigateBack)
     }
