@@ -216,35 +216,41 @@ def obtain_restrictions():
 
 # Obtener las restricciones de dieta
 # carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
-carbohydrates = [250, 300]  # Aproximadamente 50-60% de las calorías totales
+carbohydrates = [0, 300]#[250, 300]  # Aproximadamente 50-60% de las calorías totales
 energy = [1800, 2200]  # Rango recomendado de calorías diarias
 sugar = 50  # Menos de 50g de azúcar añadido por día
-protein = [50, 75]  # 50-75 g de proteína por día
+protein = [50, 10000]  # 50-75 g de proteína por día
 salt = 5000.0  # 5g de sal (límite recomendado)
-fat = [70, 90]  # Aproximadamente 25-35% de las calorías totales de grasa
+fat = [0, 90]#[70, 90]  # Aproximadamente 25-35% de las calorías totales de grasa
 budget = 50
 
 # Llamar a la función resolver_dieta pasando la conexión a la base de datos
 # print("Dieta Estándar")
+"""
 solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 3)
-print(solution)
+for food in solution:
+    print(food)
 barplot_total_generator(solution)
 for day in solution:
     barplot_day_generator(day)
 # solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
-
 """
-print("Dieta Vegetariana")
-solution_vegetarian = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 3, set(), set(), set())
-print_solution(solution_vegetarian)
-
-print("Dieta Veganana")
-solution_vegan = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 2, set(), set(), set())
-print_solution(solution_vegan)
-
-print("Dieta Glucémica")
-solution_glucemic = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 4, set(), set(), set())
-print_solution(solution_glucemic)
 """
+print("\n------------------- DIETA VEGETARIANA ----------------------\n")
+solution_vegetarian = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 2, 1, 3)
+for food in solution_vegetarian:
+    print(food)
+"""
+"""
+print("\n------------------- DIETA VEGANA ----------------------\n")
+solution_vegan = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 3, 1, 3)
+for food in solution_vegan:
+    print(food)
+"""
+print("\n------------------- DIETA CELIACA ----------------------\n")
+solution_celiac = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 4, 1, 3)
+for food in solution_celiac:
+    print(food)
+

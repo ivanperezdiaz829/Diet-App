@@ -20,6 +20,17 @@ class Plate:
     def __str__(self):
         return f"{self.name}, {self.calories}, {self.carbohydrates}, {self.protein}, {self.fat}, {self.sugar}, {self.salt}, {self.price}, {self.food_type}, {self.vegan}, {self.vegetarian}, {self.celiac}"
 
+    def __eq__(self, other):
+        if not isinstance(other, Plate):
+            return NotImplemented
+        return self.to_dict() == other.to_dict()
+
+    def __hash__(self):
+        return hash((
+            self.name, self.calories, self.carbohydrates, self.protein,
+            self.fat, self.sugar, self.salt, self.price, self.food_type,
+            self.vegan, self.vegetarian, self.celiac))
+
     def to_dict(self):
         return {
             "name": self.name,
@@ -35,3 +46,15 @@ class Plate:
             "vegetarian": self.vegetarian,
             "celiac": self.celiac
         }
+
+    @property
+    def is_vegan(self):
+        return self.vegan
+
+    @property
+    def is_vegetarian(self):
+        return self.vegetarian
+
+    @property
+    def is_celiac(self):
+        return self.celiac
