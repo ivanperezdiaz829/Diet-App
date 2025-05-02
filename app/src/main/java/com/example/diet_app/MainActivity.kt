@@ -67,10 +67,7 @@ class MainActivity : ComponentActivity() {
         var userViewModel = UserViewModel()
         var foodViewModel = FoodViewModel()
         foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))
-        Log.d(foodViewModel.getFood().foodTypes.toString(), "foodTypes")
-
         var dietViewModel = DietViewModel()
-
         dietViewModel.updateDiet(name = "Dieta 1", duration = 2)
 
         // Prueba abriendo la base de datos
@@ -82,7 +79,7 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            DietApp(dbManager, LocalContext.current, userViewModel)
+            DietApp(LocalContext.current, userViewModel, foodViewModel)
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
@@ -90,15 +87,12 @@ class MainActivity : ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewModel: UserViewModel) {
+fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: FoodViewModel) {
     // Usamos NavController para manejar la navegación
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
     NavHost(navController = navController, startDestination = Screen.Home.route) {
-
-        composable("auth") {
-        }
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -146,7 +140,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 onNext = {
                     userViewModel.updateUser(sex = it)
                     navController.navigate(Screen.Age.route)
-                    Log.d("SexSelectionScreen", "Selected sex: $it")
+                    printUserInfo(userViewModel)
                 }
             )
         }
@@ -171,7 +165,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 onNext = {
                     userViewModel.updateUser(age = it)
                     navController.navigate(Screen.Height.route)
-                    Log.d("SexSelectionScreen", "Selected age: $it")
+                    printUserInfo(userViewModel)
                 } // O la siguiente pantalla que corresponda
             )
         }
@@ -196,7 +190,6 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 onNext = {
                     // userViewModel.updateUser(height = it)
                     navController.navigate(Screen.CurrentWeight.route)
-                    Log.d("SexSelectionScreen", "Selected height: $it")
                     userViewModel.updateUser(height = it)
                     printUserInfo(userViewModel)
                 } // O la siguiente pantalla que corresponda
@@ -332,9 +325,22 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
-            AddNewFoodScreen(navController, onNavigateBack = { navController.popBackStack() }, onNext = {
-                var foodViewModel = it
-                printFoodInfo(foodViewModel)
+            AddNewFoodScreen(navController, onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                newFood.updateFood(
+                    protein = it.getFood().protein,
+                    fats = it.getFood().fats,
+                    sugar = it.getFood().sugar,
+                    salt = it.getFood().salt,
+                    carbohydrates = it.getFood().carbohydrates,
+                    calories = it.getFood().calories,
+                    price = it.getFood().price,
+                    vegetarian = it.getFood().vegetarian,
+                    vegan = it.getFood().vegan,
+                    celiac = it.getFood().celiac,
+                    halal = it.getFood().halal
+                )
+                printFoodInfo(newFood)
                 navController.navigate(Screen.NewFoodType.route)
             })
         }
@@ -353,10 +359,14 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
-            FoodTypeSelectionScreen(navController, onNavigateBack = { navController.popBackStack() },
+            FoodTypeSelectionScreen(navController,
+                onNavigateBack = { navController.popBackStack() },
                 onNext = {
+                    newFood.updateFood(foodTypes = it)
+                    printFoodInfo(newFood)
                     navController.navigate(Screen.Home.route)
-                })
+                }
+            )
         }
 
         composable(route = Screen.Settings.route
@@ -743,6 +753,7 @@ fun printFoodInfo(foodViewModel: FoodViewModel) {
         "Vegetarian: ${foodViewModel.getFood().vegetarian}, \n" +
         "Vegan: ${foodViewModel.getFood().vegan}, \n" +
         "Celiac: ${foodViewModel.getFood().celiac}, \n" +
-        "Halal: ${foodViewModel.getFood().halal}, \n"
+        "Halal: ${foodViewModel.getFood().halal}, \n" +
+        "Food Types: ${foodViewModel.getFood().foodTypes}"
     )
 }

@@ -1,5 +1,6 @@
 package com.example.diet_app.screenActivities
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,12 +25,14 @@ import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.R
 import com.example.diet_app.model.FoodType
+import com.example.diet_app.printFoodInfo
+import com.example.diet_app.viewModel.FoodViewModel
 
 @Composable
 fun FoodTypeSelectionScreen(
     navController: NavHostController,
     onNavigateBack: () -> Unit,
-    onNext: (Set<FoodType>) -> Unit // Cambiado para aceptar múltiples selecciones){}
+    onNext: (Set<FoodType>) -> Unit
 ) {
     var selectedFoodTypes by remember { mutableStateOf<Set<FoodType>>(setOf()) } // Usamos un Set para almacenar múltiples selecciones
 
@@ -129,12 +132,6 @@ private fun FoodOption(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(10.dp),
         color = if (isSelected) DarkOverlay else LightGray,
-        /*
-        border = if (isSelected) {
-            BorderStroke(width = 2.dp, color = DarkGreen)
-        } else {
-            null
-        }*/
     ) {
         Row(
             modifier = Modifier
@@ -154,7 +151,6 @@ private fun FoodOption(
                 painter = painterResource(id = imageId),
                 contentDescription = null,
                 modifier = Modifier.size(70.dp),
-                // contentScale = ContentScale.Crop
             )
         }
     }

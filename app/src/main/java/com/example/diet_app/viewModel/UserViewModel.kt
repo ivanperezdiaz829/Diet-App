@@ -1,5 +1,6 @@
 package com.example.diet_app.viewModel
 import androidx.lifecycle.ViewModel
+import com.example.diet_app.model.FoodModel
 import com.example.diet_app.model.UserModel
 import com.example.diet_app.screenActivities.Goal
 import com.example.diet_app.screenActivities.Sex
@@ -16,7 +17,8 @@ class UserViewModel : ViewModel() {
         height: Int = currentUser.height,
         currentWeight: Double = currentUser.currentWeight,
         goal: Goal = currentUser.goal,
-        targetWeight: Int = currentUser.targetWeight
+        targetWeight: Int = currentUser.targetWeight,
+        foodList: List<FoodViewModel> = currentUser.foodList
     ) {
         currentUser = UserModel(
             name = name,
@@ -27,7 +29,8 @@ class UserViewModel : ViewModel() {
             height = height,
             currentWeight = currentWeight,
             goal = goal,
-            targetWeight = targetWeight
+            targetWeight = targetWeight,
+            foodList = foodList
         )
     }
 
