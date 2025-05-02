@@ -6,7 +6,7 @@ from configuration.config import DB_PATH
 from configuration.config import PHYSICAL_ACTIVITY_LEVELS, SEX_VALUES
 from database.database_utils import create_database
 
-"""
+
 if not os.path.exists(DB_PATH):
     raise Exception("Database is not available, must be created through create_database.py")
 
@@ -26,10 +26,10 @@ def create_user():
 
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
-            cursor.execute(
+            cursor.execute("""
             INSERT INTO users(email, password, physical_activity, sex, birthday, height, weight)
             VALUES (?, ?, ?, ?, ?, ?, ?)
-            , user.get_values())
+            """, user.get_values())
             conn.commit()
         return jsonify({"message": "Usuario creado exitosamente",
                         "user": user.to_dict()}), 201
@@ -113,7 +113,6 @@ def update_user(email):
         return jsonify({"error": str(e)}), 400
     except sqlite3.DatabaseError as e:
         return jsonify({'error': str(e)}), 500
-"""
 
 def select_user(email: str):
     # Returns a User if exists in database. Otherwise, returns None or throws Exception
@@ -132,5 +131,5 @@ def select_user(email: str):
 
 
 if __name__ == "__main__":
-    #app.run(debug=True, port=8000)
-    create_database()
+    app.run(debug=True, port=8000)
+
