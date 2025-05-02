@@ -1,11 +1,11 @@
 def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, meal_type, sentence_type, sub_sentence, mult):
 
     if sentence_type == 1:
-        sql = ("SELECT * FROM food_data_sprint1 WHERE type == ? AND "
+        sql = ("SELECT * FROM plates WHERE type == ? AND "
                "carbohydrates * ? >= ? "
                "AND sugar * ? <= ? "
                "AND calories * ? BETWEEN ? AND ? "
-               "AND protein * ? >= ? "
+               "AND proteins * ? >= ? "
                "AND sodium * ? <= ? "
                "AND fats * ? <= ? "
                "AND price * ? <= ? ")
