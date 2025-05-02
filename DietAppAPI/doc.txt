@@ -1,0 +1,18 @@
+****DOCUMENTATION FOR USER API****
+
+-How to use it:
+Launch server using main.py and the server Will run in http://localhost:8000 (server URL). To use endpoints in browser or app, use endpoint URL (server URL + / + endpoint). Take note that different endpoints use different HTTP request methods. Postman is a great way to test API functionallities, here is the link to postman workspace: https://app.getpostman.com/join-team?invite_code=d1f7709daab703ff94b39a85c6215bd5c28fbe173bbf7fc23dfc15b01e9d2b15&target_code=2495c086ad078b5d9b8bbae0000e9c12 
+ 
+
+-Endpoints:
+get_user/<email: str> : fetches a user form database if exists	GET
+delete_user/<email: str> : deletes a user from database	DELETE
+update_user/<email: str> : updates user with given email with the data contained in the request body as JSON object	PATCH
+create_user: creates a user with the data contained in the request body as JSON object	POST
+
+-HTTP codes:
+400: Bad API request
+404: Resource not found (email doesn't exist)
+500: Iternal error server (usually a SQL error)
+200: Request completed succesfully (update or get or delete)
+201: Resource created succesfully (create)
