@@ -1,41 +1,32 @@
 package com.example.diet_app.screenActivities
 
-import android.R
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
-import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.components.BackButton
-import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.NextButton
-import com.example.diet_app.screenActivities.components.SkipButton
 import com.example.diet_app.screenActivities.components.TitleSection
-import com.example.diet_app.ui.theme.Typography
-import com.example.diet_app.ui.theme.DarkGreen
-import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.ui.theme.PrimaryGreen
+import com.example.diet_app.viewModel.FoodViewModel
 
 @Composable
 fun AddNewFoodScreen(
     navController: NavController,
     onNavigateBack: () -> Unit,
+    onNext: (FoodViewModel) -> Unit,
 ) {
 
     // Estados para los valores nutricionales
@@ -52,6 +43,8 @@ fun AddNewFoodScreen(
     var isVegan by remember { mutableStateOf(false) }
     var isCeliac by remember { mutableStateOf(false) }
     var isHalal by remember { mutableStateOf(false) }
+
+    var foodViewModel by remember { mutableStateOf(FoodViewModel())}
 
     // Función para manejar cambios en el switch Vegano
     val onVeganChange = { newVeganState: Boolean ->
@@ -93,22 +86,46 @@ fun AddNewFoodScreen(
 
             // Campos de entrada para valores nutricionales
             NutritionTextField(label = "Protein", value = protein, onValueChange = { protein = it })
-            Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = 1.dp,
+                color = Color.LightGray
+            )
 
             NutritionTextField(label = "Fats", value = fats, onValueChange = { fats = it })
-            Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = 1.dp,
+                color = Color.LightGray
+            )
 
             NutritionTextField(label = "Sugar", value = sugar, onValueChange = { sugar = it })
-            Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = 1.dp,
+                color = Color.LightGray
+            )
 
             NutritionTextField(label = "Salt", value = salt, onValueChange = { salt = it })
-            Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = 1.dp,
+                color = Color.LightGray
+            )
 
             NutritionTextField(label = "Carbohydrates", value = carbohydrates, onValueChange = { carbohydrates = it })
-            Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = 1.dp,
+                color = Color.LightGray
+            )
 
             NutritionTextField(label = "Calories", value = calories, onValueChange = { calories = it })
-            Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = 1.dp,
+                color = Color.LightGray
+            )
 
             NutritionTextField(label = "Price", value = price, onValueChange = { price = it })
 
@@ -147,7 +164,10 @@ fun AddNewFoodScreen(
 
             NextButton(
                 enabled = protein.isNotEmpty() && fats.isNotEmpty() && sugar.isNotEmpty() && salt.isNotEmpty() && carbohydrates.isNotEmpty() && calories.isNotEmpty() && price.isNotEmpty(),
-                onClick = {navController.navigate(Screen.NewFoodType.route)}
+                onClick = {
+                    foodViewModel.updateFood(protein = protein.toDouble(), fats = fats.toDouble(), sugar = sugar.toDouble(), salt = salt.toDouble(), carbohydrates = carbohydrates.toDouble(), calories = calories.toDouble(), price = price.toDouble())
+                    onNext(foodViewModel)
+                }
             )
         }
     }
@@ -168,7 +188,11 @@ fun NutritionTextField(
         )
         OutlinedTextField(
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = {  newValue ->
+                if (newValue.all { it.isDigit() }) { // Verifica que solo sean números
+                    onValueChange(newValue)
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )

@@ -332,7 +332,11 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
-            AddNewFoodScreen(navController, onNavigateBack = { navController.popBackStack() })
+            AddNewFoodScreen(navController, onNavigateBack = { navController.popBackStack() }, onNext = {
+                var foodViewModel = it
+                printFoodInfo(foodViewModel)
+                navController.navigate(Screen.NewFoodType.route)
+            })
         }
 
         composable(route = Screen.NewFoodType.route,
