@@ -14,6 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.diet_app.model.Goal
 import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
@@ -22,12 +23,6 @@ import com.example.diet_app.ui.theme.DarkGreen
 import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
-
-enum class Goal {
-    LOSE_WEIGHT,
-    GAIN_WEIGHT,
-    STAY_HEALTHY
-}
 
 @Composable
 fun GoalSelectionScreen(

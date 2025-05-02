@@ -1,6 +1,5 @@
 package com.example.diet_app.screenActivities
 
-import android.content.Context
 import android.util.Patterns
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
@@ -17,13 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.diet_app.DatabaseManager
 import com.example.diet_app.R
 import com.example.diet_app.viewModel.UserViewModel
 
@@ -31,10 +28,8 @@ import com.example.diet_app.viewModel.UserViewModel
 @Composable
 fun LoginScreen(
     userViewModel: UserViewModel,
-    onLoginSuccess: () -> Unit,
-    onRegisterSuccess: () -> Unit,
-    onNavigateBack: () -> Unit = {},
-    context: Context = LocalContext.current
+    onLoginSuccess: (UserViewModel) -> Unit,
+    onRegisterSuccess: (UserViewModel) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -47,9 +42,13 @@ fun LoginScreen(
             userViewModel = userViewModel,
             onLoginResult = { isRegistration ->
                 if (isRegistration) {
-                    onRegisterSuccess()
+                    onRegisterSuccess(
+                        userViewModel
+                    )
                 } else {
-                    onLoginSuccess()
+                    onLoginSuccess(
+                        userViewModel
+                    )
                 }
             }
         )

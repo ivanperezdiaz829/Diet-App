@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.diet_app.R
+import com.example.diet_app.model.Sex
 import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
@@ -37,11 +38,6 @@ import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.ui.theme.Typography
-
-enum class Sex {
-    MALE,
-    FEMALE,
-}
 
 @Composable
 fun SexSelectionScreen(
@@ -99,19 +95,19 @@ private fun SexOptions(
         verticalAlignment = Alignment.CenterVertically
     ) {
         SexOption(
-            sex = Sex.FEMALE,
+            sex = Sex.Female,
             text = "Female",
             imageId = R.drawable.female,
-            isSelected = selectedSex == Sex.FEMALE,
-            onClick = { onSexSelected(Sex.FEMALE) }
+            isSelected = selectedSex == Sex.Female,
+            onClick = { onSexSelected(Sex.Female) }
         )
 
         SexOption(
-            sex = Sex.MALE,
+            sex = Sex.Male,
             text = "Male",
             imageId = R.drawable.male,
-            isSelected = selectedSex == Sex.MALE,
-            onClick = { onSexSelected(Sex.MALE) }
+            isSelected = selectedSex == Sex.Male,
+            onClick = { onSexSelected(Sex.Male) }
         )
     }
 }
