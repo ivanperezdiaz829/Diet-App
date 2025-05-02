@@ -25,13 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.diet_app.DatabaseManager
 import com.example.diet_app.R
+import com.example.diet_app.viewModel.UserViewModel
 
 
 @Composable
 fun LoginScreen(
-    onLoginSuccess: () -> Unit,  // Cambiado para usar callback simple
-    onRegisterSuccess: () -> Unit,       // Nuevo callback para registro exitoso
-    onNavigateBack: () -> Unit = {},  // Opcional: para manejar back
+    userViewModel: UserViewModel,
+    onLoginSuccess: () -> Unit,
+    onRegisterSuccess: () -> Unit,
+    onNavigateBack: () -> Unit = {},
     context: Context = LocalContext.current
 ) {
     Box(
@@ -41,29 +43,30 @@ fun LoginScreen(
             .padding(top = 82.dp, start = 8.dp, end = 8.dp),
         contentAlignment = Alignment.TopCenter
     ) {
-        LoginCard(context = context, onLoginResult = { isRegistration  ->
-            if (isRegistration) {
-                onRegisterSuccess()  // Navega a flujo de registro
-            } else {
-                onLoginSuccess()     // Navega a Home
+        LoginCard(
+            userViewModel = userViewModel,
+            onLoginResult = { isRegistration ->
+                if (isRegistration) {
+                    onRegisterSuccess()
+                } else {
+                    onLoginSuccess()
+                }
             }
-        })
+        )
     }
 }
 
 @Composable
 private fun LoginCard(
-    context: Context,
+    userViewModel: UserViewModel,
     onLoginResult: (Boolean) -> Unit
 ) {
-    var isLogin by remember { mutableStateOf(true) } // Alterna entre login y signup
+    var isLogin by remember { mutableStateOf(true) }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") } // Mensaje de error
+    var errorMessage by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
-
-    val dbManager = remember { DatabaseManager(context) }
 
     Card(
         modifier = Modifier
@@ -95,7 +98,7 @@ private fun LoginCard(
             }
             Spacer(modifier = Modifier.height(30.dp))
 
-            // Botones Log In / Sign Up
+            // Log In / Sign Up buttons
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,7 +110,7 @@ private fun LoginCard(
                 val selectedTextColor = Color.White
                 val unselectedTextColor = Color(0xFF767676)
 
-                // Botón Log In
+                // Log In button
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -136,7 +139,7 @@ private fun LoginCard(
                     }
                 }
 
-                // Botón Sign Up
+                // Sign Up button
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -166,11 +169,10 @@ private fun LoginCard(
                 }
             }
 
-            // Transición animada
+            // Form content
             AnimatedContent(targetState = isLogin, label = "FormSwitch") { login ->
                 Column {
                     if (!login) {
-                        // Campo de nombre solo si es Sign Up
                         CustomTextField(
                             label = "Name",
                             value = name,
@@ -196,44 +198,35 @@ private fun LoginCard(
                         errorMessage = errorMessage
                     )
 
-                    // Botón principal
                     Button(
                         onClick = {
-                            // Validación
                             if (username.isEmpty() || password.isEmpty() || (!login && name.isEmpty())) {
                                 errorMessage = "All fields are required"
                                 showError = true
                             } else if (!isLogin && !Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
                                 errorMessage = "Please enter a valid email address"
                                 showError = true
-                            } else if (login) {
-                                // Validar si el usuario existe
-                                val userExists = dbManager.authenticateUser(username.trim(), password.trim())
-                                if (userExists) {
-                                    errorMessage = ""
-                                    showError = false
-                                    onLoginResult(false)
-                                } else {
-                                    errorMessage = "User not found"
-                                    showError = true
-                                }
+                            } else if (!isLogin && password.length < 6) {
+                                errorMessage = "Password must be at least 6 characters long"
+                                showError = true
                             } else {
-                                // Validar que las contraseñas coinciden (solo Sign Up)
-                                if (password.length < 6) {
-                                    errorMessage = "Password must be at least 6 characters long"
-                                    showError = true
+                                errorMessage = ""
+                                showError = false
+
+                                // Update ViewModel with user data
+                                if (isLogin) {
+                                    // For login, we might just verify credentials later
+                                    userViewModel.updateUser(email = username, password = password)
                                 } else {
-                                    // Llamada para registro
-                                    val success = dbManager.registerUser(name.trim(), username.trim(), password.trim())
-                                    if (success) {
-                                        errorMessage = ""
-                                        showError = false
-                                        onLoginResult(true)
-                                    } else {
-                                        errorMessage = "Registration failed"
-                                        showError = true
-                                    }
+                                    // For registration, set the initial user data
+                                    userViewModel.updateUser(
+                                        name = name,
+                                        email = username,
+                                        password = password
+                                    )
                                 }
+
+                                onLoginResult(!login)
                             }
                         },
                         modifier = Modifier
@@ -265,7 +258,7 @@ private fun LoginCard(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Login con redes sociales
+            // Social login
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -290,22 +283,20 @@ private fun LoginCard(
         }
     }
 }
-
-// Componente para el TextField sin bordes con retroalimentación
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
-    isError: Boolean = false, // Variable para manejar el estado de error
-    errorMessage: String = "" // Mensaje de error
+    isError: Boolean = false,
+    errorMessage: String = ""
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        isError = isError, // Indicador de error
+        isError = isError,
         colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.Transparent,
             focusedIndicatorColor = if (isError) Color.Red else Color(0xFFC4C4C4),
@@ -315,7 +306,6 @@ fun CustomTextField(
         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
     )
 
-    // Mensaje de error si existe
     if (isError && errorMessage.isNotEmpty()) {
         Text(
             text = errorMessage,

@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            DietApp(LocalContext.current, userViewModel, foodViewModel)
+            //DietApp(LocalContext.current, userViewModel, foodViewModel)
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
@@ -264,7 +264,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         }
 
-        composable(route = Screen.Login.route,
+        composable(
+            route = Screen.Login.route,
             enterTransition = {
                 slideInHorizontally(initialOffsetX = { it })
             },
@@ -277,14 +278,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             popExitTransition = {
                 slideOutHorizontally(targetOffsetX = { it })
             }
-            ) {
-            LoginScreen(onLoginSuccess = {
-                navController.navigate(Screen.Home.route)  // Navega a Home tras login
-                },
-                onRegisterSuccess = {
-                    navController.navigate(Screen.Sex.route)  // Navega a Height tras registro
-                }
-            )
+        ) {
+            //LoginScreen por poner
         }
 
         composable(route = Screen.Password.route,
