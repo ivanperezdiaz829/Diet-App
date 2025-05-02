@@ -81,13 +81,13 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             createUser(
-                email = "Janedoe@example",
+                email = "Janedoes@gmail.es",
                 password = "superSeguro.123",
-                physicalActivity = "stay healthy",
-                sex = "female",
+                physicalActivity = "Stay Healthy",
+                sex = "Female",
                 birthday = "1995-06-15",
-                height = 1.68,
-                weight = 60.5,
+                height = 168,
+                weight = 60,
                 context = LocalContext.current,
                 onResult = {}
             )
@@ -104,7 +104,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.Login.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -233,31 +233,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         }
 
-        composable(route = Screen.TargetWeight.route,
-            enterTransition = {
-                slideInHorizontally(initialOffsetX = { it })
-            },
-            exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -it })
-            },
-            popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -it })
-            },
-            popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { it })
-            }
-        ) {
-            TargetWeightSelectionScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onSkip = { navController.navigate("welcome") },
-                onNext = {
-                    userViewModel.updateUser(targetWeight = it)
-                    navController.navigate(Screen.Goal.route)
-                    printUserInfo(userViewModel)
-                } // O la siguiente pantalla que corresponda
-            )
-        }
-
         composable(route = Screen.Meals.route
         ) {
             MealPlanScreen(navController)
@@ -291,7 +266,17 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
-            //LoginScreen por poner
+            LoginScreen(
+                userViewModel,
+                onLoginSuccess = {
+                    userViewModel.updateUser(name = it.getUser().name)
+                    navController.navigate(Screen.Home.route)
+                },
+                onRegisterSuccess = {
+                    userViewModel.updateUser(name = it.getUser().name)
+                    navController.navigate(Screen.Sex.route)
+                },
+            )
         }
 
         composable(route = Screen.Password.route,
@@ -859,7 +844,6 @@ fun printUserInfo(userViewModel: UserViewModel) {
         " Sexo: ${userViewModel.getUser().sex},\n" +
         " Altura: ${userViewModel.getUser().height}\n" +
         " Peso: ${userViewModel.getUser().currentWeight}\n" +
-        " Peso objetivo: ${userViewModel.getUser().targetWeight}\n" +
         " Objetivo de dieta: ${userViewModel.getUser().goal}"
     )
 }

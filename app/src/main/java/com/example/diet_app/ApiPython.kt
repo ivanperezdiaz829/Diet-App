@@ -183,8 +183,8 @@ fun createUser(
     physicalActivity: String,
     sex: String,
     birthday: String,
-    height: Double,
-    weight: Double,
+    height: Int,
+    weight: Int,
     context: Context,
     onResult: (String) -> Unit
 ): String {
