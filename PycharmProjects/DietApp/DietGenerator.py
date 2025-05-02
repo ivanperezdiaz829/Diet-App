@@ -9,6 +9,8 @@ import os
 
 
 def filter_plates(plates, person_type):
+    if not all(isinstance(plate, Plate) for plate in plates):
+        raise TypeError("All elements in plates must be Plates")
     if person_type == 1:
         return plates
     elif person_type == 2:
@@ -29,6 +31,11 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
     print("\n--------- PLATOS DISPOBIBLES DESAYUNO ---------")
     print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
     breakfasts_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1, 2)
+    breakfasts_convert = [Plate(row) for row in breakfasts_rows]
+    breakfasts = filter_plates(breakfasts_convert, person_type)
+    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
+    drinks_convert = [Plate(row) for row in drinks_rows]
+    drinks = filter_plates(drinks_convert, person_type)
     breakfasts = [Plate(row) for row in breakfasts_rows]
     breakfasts = filter_plates(breakfasts, person_type)
     drinks_rows = sql_sentences(cursor, 0, sugar, [0, energy[1]], 0, salt, fat, price, 4, 1, -1, 1)
@@ -65,6 +72,7 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
                         combined_salt <= salt * 1.2 and
                         combined_fat <= fat * 1.2 and
                         combined_price <= price * 1.2):
+
                     valid_combinations.append((breakfast, drink))
 
     if valid_combinations:
@@ -92,24 +100,26 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
     sides = [Plate(row) for row in sides_rows]
     sides = filter_plates(sides, person_type)
 
+    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
+    drinks_convert = [Plate(row) for row in drinks_rows]
+    drinks = filter_plates(drinks_convert, person_type)
     # Consulta directa para bebidas
     drinks_rows = sql_sentences(cursor, 0, sugar, [0, energy[1]], 0, salt, fat, price, 4, 1, -1, 1)
     drinks = [Plate(row) for row in drinks_rows]
     drinks = filter_plates(drinks, person_type)
 
     print(f'\nPRINCIPAL:')
-    for main in mains:
-        print(f"main: {main}")
+    for i in range(len(mains)):
+        print(f"main: {mains[i]}")
     print("\nSECUNDARIO:")
-    for side in sides:
-        print(f"side: {side}")
+    for i in range(len(sides)):
+        print(f"side: {sides[i]}")
     print(f'\nBEBIDA:')
-    for drink in drinks:
-        print(f"drink: {drink}")
+    for i in range(len(drinks)):
+        print(f"drink: {drinks[i]}")
 
     valid_combinations = []
 
-    # Validación de combinaciones
     if mains and sides and drinks:
         for main in mains:
             for side in sides:
@@ -119,7 +129,6 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                     if combination in selected_lunches:
                         continue
 
-                    # Calcular valores combinados
                     combined_carbs = drink.carbohydrates + side.carbohydrates + main.carbohydrates
                     combined_sugar = drink.sugar + side.sugar + main.sugar
                     combined_energy = drink.calories + side.calories + main.calories
@@ -136,6 +145,7 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                             combined_salt <= salt * 1.2 and
                             combined_fat <= fat * 1.2 and
                             combined_price <= price * 1.2):
+
                         valid_combinations.append((main, side, drink))
 
     if valid_combinations:
@@ -152,11 +162,14 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
     print()
     print("\n--------- PLATOS DISPONIBLES CENA ---------")
     print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
-
-
     mains_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1, 2)
     mains2_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 3, 1, -1, 2)
     mains_rows.extend(mains2_rows)
+    mains_convert = [Plate(row) for row in mains_rows]
+    mains = filter_plates(mains_convert, person_type)
+    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
+    drinks_convert = [Plate(row) for row in drinks_rows]
+    drinks = filter_plates(drinks_convert, person_type)
     mains = [Plate(row) for row in mains_rows]
     mains = filter_plates(mains, person_type)
 
@@ -165,11 +178,11 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
     drinks = filter_plates(drinks, person_type)
 
     print(f'\nPRINCIPAL:')
-    for main in mains:
-        print(f"main: {main}")
+    for i in range(len(mains)):
+        print(f"main: {mains[i]}")
     print(f'\nBEBIDA:')
-    for drink in drinks:
-        print(f"drink: {drink}")
+    for i in range(len(drinks)):
+        print(f"drink: {drinks[i]}")
 
     valid_combinations = []
 
@@ -196,6 +209,7 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
                         combined_salt <= salt * 1.2 and
                         combined_fat <= fat * 1.2 and
                         combined_price <= price * 1.2):
+
                     valid_combinations.append((main, drink))
 
     if valid_combinations:
@@ -204,14 +218,12 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
             print(combi)
         selected_combination = random.choice(valid_combinations)
         return selected_combination
-
     return None
 
 
 def validate_full_diet(diet, carbs_min, sugar_max, kcal_range, protein_min, salt_max, fat_max, price_max):
     total_carbs = total_sugar = total_kcal = total_protein = total_salt = total_fat = total_price = 0
 
-    # Calcular los totales de las macros y el precio
     for meal in diet:
         for plate in meal:
             total_carbs += plate.carbohydrates
@@ -250,10 +262,9 @@ def validate_full_diet(diet, carbs_min, sugar_max, kcal_range, protein_min, salt
     return True
 
 
-
-def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max,
-                   person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid):
-    db_path = os.path.join('../../FoodDbManagement', 'DietApp.db')
+def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid):
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, '../../FoodDbManagement', 'DietApp.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     solution = []
@@ -285,6 +296,7 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
     salt_l = nutrient_quantity_kcal_split(salt_max, kcal_lunch[1], energy_range[1])
     salt_d = nutrient_quantity_kcal_split(salt_max, kcal_dinner[1], energy_range[1])
 
+    # --- Obtener comidas ---
     breakfast = obtain_breakfast(cursor, selected_breakfasts,
                                  carbs_b, sugar_b, kcal_breakfast,
                                  protein_b, salt_b, fat_b, price_max / 4, person_type)
@@ -313,4 +325,3 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
 
     conn.close()
     return solution
-

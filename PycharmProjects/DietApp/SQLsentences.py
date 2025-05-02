@@ -1,6 +1,3 @@
-import sqlite3
-
-
 def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, meal_type, sentence_type, sub_sentence, mult):
 
     if sentence_type == 1:
@@ -40,4 +37,4 @@ def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, pric
             cursor.execute(sql, (meal_type,))
             return cursor.fetchone()[0]
 
-        return None
+    return None

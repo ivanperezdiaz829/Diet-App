@@ -1,6 +1,8 @@
 package com.example.diet_app
 
+import MealPlanScreen
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,44 +24,51 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Button
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.ViewModel
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.google.firebase.firestore.FirebaseFirestore
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
-import java.io.IOException
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.sp
-import org.json.JSONArray
+import com.example.diet_app.model.FoodType
+import com.example.diet_app.model.Screen
+import com.example.diet_app.screenActivities.*
+import com.example.diet_app.viewModel.DietViewModel
+import com.example.diet_app.viewModel.FoodViewModel
+import com.example.diet_app.viewModel.UserViewModel
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var dbManager: DatabaseManager
 
-    private val viewModel: MainViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Forzar íconos oscuros en la barra de estado
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         dbManager = DatabaseManager(this)
+        var userViewModel = UserViewModel()
+        var foodViewModel = FoodViewModel()
+        foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))
+        var dietViewModel = DietViewModel()
+        dietViewModel.updateDiet(name = "Dieta 1", duration = 2)
 
         // Prueba abriendo la base de datos
         try {
@@ -70,102 +79,306 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
-            DietApp(dbManager = dbManager, applicationContext = applicationContext, viewModel = viewModel)
+            DietApp(LocalContext.current, userViewModel, foodViewModel)
+            //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
 }
 
-class MainViewModel : ViewModel() {
-    internal lateinit var currentUser: String
-    internal lateinit var currentEmail: String
-    internal lateinit var basalMetabolism: String
-    internal lateinit var maintenanceCalories: String
-
-    fun updateUser(
-        currentUser: String = "",
-        currentEmail: String = "",
-        basalMetabolism: String = "",
-        maintenanceCalories: String = ""
-    ) {
-        if (currentUser.isNotEmpty()) {
-            this.currentUser = currentUser
-        }
-        if (currentEmail.isNotEmpty()) {
-            this.currentEmail = currentEmail
-        }
-        if (basalMetabolism.isNotEmpty()) {
-            this.basalMetabolism = basalMetabolism
-        }
-        if (maintenanceCalories.isNotEmpty()) {
-            this.maintenanceCalories = maintenanceCalories
-        }
-    }
-}
-
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DietApp(dbManager: DatabaseManager, applicationContext: Context, viewModel: MainViewModel) {
+fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: FoodViewModel) {
     // Usamos NavController para manejar la navegación
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = "auth") {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
-        composable("auth") {
-            AuthScreen(
-                onAuthenticate = { email, password ->
-                    val isAuthenticated = dbManager.authenticateUser(email, password)
-                    if (isAuthenticated) {
-                        Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                        viewModel.updateUser(currentEmail = email)
-                        viewModel.updateUser(currentUser = dbManager.getName(email).toString())
-                        navController.navigate("welcome")
-                    } else {
-                        Toast.makeText(applicationContext, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
-                    }
-                },
-                onRegister = { name, email, password ->
-                    val isRegistered = dbManager.registerUser(name, email, password)
-                    if (isRegistered) {
-                        Toast.makeText(applicationContext, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                        viewModel.updateUser(currentEmail = email)
-                        viewModel.updateUser(currentUser = dbManager.getName(email).toString())
-                        navController.navigate("welcome")
-                    } else {
-                        Toast.makeText(applicationContext, "Error al registrar el usuario", Toast.LENGTH_SHORT).show()
-                    }
+        composable(route = Screen.Home.route
+        ) {HomePageFrame(navController, userViewModel)}
+
+        composable(route = Screen.Goal.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {GoalSelectionScreen(
+            onSkip = { navController.navigate("welcome") },
+            onNavigateBack = { navController.popBackStack() },
+            onNext = {
+                userViewModel.updateUser(goal = it)
+                navController.navigate(Screen.Home.route)
+                printUserInfo(userViewModel)
+            },
+        )}
+
+        composable(route = Screen.Sex.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            SexSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = {
+                    userViewModel.updateUser(sex = it)
+                    navController.navigate(Screen.Age.route)
+                    printUserInfo(userViewModel)
                 }
             )
         }
 
-        composable("welcome") {
-            WelcomeScreen(navController, viewModel)  // Pantalla de bienvenida
-        }
-        composable("diet_form") {
-            DietForm(viewModel)  // Pantalla del formulario de la dieta
-        }
-        composable("basal_metabolism") {
-            BasalMetabolismScreen(viewModel)
-        }
-        composable("maintenance_calories") {
-            MaintenanceCaloriesScreen(viewModel)
-        }
-        composable("calendar") {
-            CalendarScreen(navController, viewModel)  // Pantalla de calendario
-        }
-        composable("main_screen") {
-            ButtonGridScreen(navController) // Pasar el navController aquí
+        composable(route = Screen.Age.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            AgeSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = {
+                    userViewModel.updateUser(age = it)
+                    navController.navigate(Screen.Height.route)
+                    printUserInfo(userViewModel)
+                } // O la siguiente pantalla que corresponda
+            )
         }
 
-        composable("edit_meal/{dayIndex}") { backStackEntry ->
-            val dayIndex = backStackEntry.arguments?.getString("dayIndex")?.toInt() ?: 0
-            EditMealScreen(navController, dayIndex, viewModel)  // Pantalla de edición de comidas
+        composable(route = Screen.Height.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            HeightSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = {
+                    // userViewModel.updateUser(height = it)
+                    navController.navigate(Screen.CurrentWeight.route)
+                    userViewModel.updateUser(height = it)
+                    printUserInfo(userViewModel)
+                } // O la siguiente pantalla que corresponda
+            )
         }
+
+        composable(route = Screen.CurrentWeight.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            CurrentWeightSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = {
+                    userViewModel.updateUser(currentWeight = it)
+                    navController.navigate(Screen.TargetWeight.route)
+                    printUserInfo(userViewModel)
+                } // O la siguiente pantalla que corresponda
+            )
+        }
+
+        composable(route = Screen.TargetWeight.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            TargetWeightSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSkip = { navController.navigate("welcome") },
+                onNext = {
+                    userViewModel.updateUser(targetWeight = it)
+                    navController.navigate(Screen.Goal.route)
+                    printUserInfo(userViewModel)
+                } // O la siguiente pantalla que corresponda
+            )
+        }
+
+        composable(route = Screen.Meals.route
+        ) {
+            MealPlanScreen(navController)
+        }
+
+        composable(route = Screen.Welcome.route,
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            InputDesign(
+                onNext = { navController.navigate(Screen.Login.route) }
+            )
+        }
+
+        composable(route = Screen.Login.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+            ) {
+            LoginScreen(onLoginSuccess = {
+                navController.navigate(Screen.Home.route)  // Navega a Home tras login
+                },
+                onRegisterSuccess = {
+                    navController.navigate(Screen.Sex.route)  // Navega a Height tras registro
+                }
+            )
+        }
+
+        composable(route = Screen.Password.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            ChangePasswordScreen(navController)
+        }
+
+        composable(route = Screen.FoodList.route,
+        ) {
+            var foodViewModel = FoodViewModel()
+            foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))
+            FoodListViewScreen(navController, listOf(foodViewModel))
+        }
+
+        composable(route = Screen.AddFood.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            AddNewFoodScreen(navController, onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                newFood.updateFood(
+                    protein = it.getFood().protein,
+                    fats = it.getFood().fats,
+                    sugar = it.getFood().sugar,
+                    salt = it.getFood().salt,
+                    carbohydrates = it.getFood().carbohydrates,
+                    calories = it.getFood().calories,
+                    price = it.getFood().price,
+                    vegetarian = it.getFood().vegetarian,
+                    vegan = it.getFood().vegan,
+                    celiac = it.getFood().celiac,
+                    halal = it.getFood().halal
+                )
+                printFoodInfo(newFood)
+                navController.navigate(Screen.NewFoodType.route)
+            })
+        }
+
+        composable(route = Screen.NewFoodType.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            FoodTypeSelectionScreen(navController,
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    newFood.updateFood(foodTypes = it)
+                    printFoodInfo(newFood)
+                    navController.navigate(Screen.Home.route)
+                }
+            )
+        }
+
+        composable(route = Screen.Settings.route
+        ) {
+            SettingsScreen(navController)
+        }
+
     }
 }
 
 @Composable
-fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
+fun WelcomeScreen(navController: NavController, userViewModel: UserViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -178,8 +391,9 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
             verticalArrangement = Arrangement.Center
         ) {
             // Si el usuario está autenticado (currentUser no está vacío)
-            var currentUser = viewModel.currentUser
-            if (currentUser.isNotEmpty()) {
+            var currentUser = userViewModel.getUser().name
+            /*
+            if (currentUser) {
                 // Símbolo en la esquina superior izquierda y mensaje de bienvenida
                 Box(
                     modifier = Modifier
@@ -213,7 +427,7 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
                     style = MaterialTheme.typography.titleLarge.copy(color = Color.White),
                     modifier = Modifier.padding(16.dp)
                 )
-            }
+            }*/
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = {
@@ -232,33 +446,26 @@ fun WelcomeScreen(navController: NavController, viewModel: MainViewModel) {
             Button(onClick = { navController.navigate("maintenance_calories") }) {
                 Text("Calcular Calorías de Mantenimiento")
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("calendar") }) {
-                Text("Ver Calendario de Comidas")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("main_screen") }) {
-                Text("Ver Pantalla Principal")
-            }
         }
     }
 }
 
 @Composable
-fun DietForm(viewModel: MainViewModel) {
+fun DietForm(userViewModel: UserViewModel, context: Context) {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxCarbohydrates by remember { mutableStateOf("") }
+    var minSugar by remember { mutableStateOf("") }
     var maxSugar by remember { mutableStateOf("") }
     var minEnergy by remember { mutableStateOf("") }
     var maxEnergy by remember { mutableStateOf("") }
     var minProtein by remember { mutableStateOf("") }
     var maxProtein by remember { mutableStateOf("") }
+    var minSalt by remember { mutableStateOf("") }
     var maxSalt by remember { mutableStateOf("") }
     var minFat by remember { mutableStateOf("") }
     var maxFat by remember { mutableStateOf("") }
     var budget by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
-    val context = LocalContext.current
 
     Column(modifier = Modifier
         .padding(16.dp)
@@ -268,11 +475,13 @@ fun DietForm(viewModel: MainViewModel) {
 
         InputField(label = "Carbs mínimas", value = minCarbohydrates) { minCarbohydrates= it }
         InputField(label = "Carbs máximas", value = maxCarbohydrates) { maxCarbohydrates = it }
+        InputField(label = "Azúcar mínimas", value = minSugar) { minSugar = it }
         InputField(label = "Azúcar máximas", value = maxSugar) { maxSugar = it }
         InputField(label = "Energía mínimas", value = minEnergy) { minEnergy = it }
         InputField(label = "Energía máximas", value = maxEnergy) { maxEnergy = it }
         InputField(label = "Proteina mínimas", value = minProtein) { minProtein= it }
         InputField(label = "Proteina máximas", value = maxProtein) { maxProtein= it }
+        InputField(label = "Sal mínima (g)", value = minSalt) { minSalt = it }
         InputField(label = "Sal máxima (g)", value = maxSalt) { maxSalt = it }
         InputField(label = "Grasa mínima (g)", value = minFat) { minFat = it }
         InputField(label = "Grasa máxima (g)", value = maxFat) { maxFat = it }
@@ -282,15 +491,15 @@ fun DietForm(viewModel: MainViewModel) {
 
         Button(onClick = {
             // Convertir todos los valores a Double, ignorando los que no sean válidos
-            val numericValues = listOf(minCarbohydrates, maxCarbohydrates, maxSugar,
-                minEnergy, maxEnergy, minProtein, maxProtein, maxSalt, minFat, maxFat, budget)
+            val numericValues = listOf(minCarbohydrates, maxCarbohydrates, minSugar, maxSugar,
+                minEnergy, maxEnergy, minProtein, maxProtein, minSalt, maxSalt, minFat, maxFat, budget)
                 .map { it.replace(",", ".") }  // Asegura el formato correcto de decimales
                 .mapNotNull { it.toDoubleOrNull() }  // Convierte String a Double si es válido
 
             Log.d("DietForm", "Valores convertidos a Double: $numericValues")
 
-            if (numericValues.size == 11) { // Asegurar que todos los valores sean numéricos
-                sendDataToServer(context, numericValues) { response ->
+            if (numericValues.size == 13) { // Asegurar que todos los valores sean numéricos
+                sendDataToServer(numericValues, context) { response ->
                     result = response
                 }
             } else {
@@ -305,7 +514,7 @@ fun DietForm(viewModel: MainViewModel) {
 }
 
 @Composable
-fun BasalMetabolismScreen(viewModel: MainViewModel) {
+fun BasalMetabolismScreen(userViewModel: UserViewModel) {
     var weight by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -333,7 +542,7 @@ fun BasalMetabolismScreen(viewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = result)
     }
-    viewModel.updateUser(basalMetabolism = result)
+    // viewModel.updateUser(basalMetabolism = result)
 }
 
 fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gender: String): String {
@@ -353,7 +562,7 @@ fun calculateBasalMetabolicRate(weight: String, height: String, age: String, gen
 }
 
 @Composable
-fun MaintenanceCaloriesScreen(viewModel: MainViewModel) {
+fun MaintenanceCaloriesScreen(userViewModel: UserViewModel) {
     var weight by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
@@ -382,7 +591,7 @@ fun MaintenanceCaloriesScreen(viewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = result)
     }
-    viewModel.updateUser(maintenanceCalories = result)
+    //viewModel.updateUser(maintenanceCalories = result)
 }
 
 fun calculateMaintenanceCalories(weight: String, height: String, age: String, gender: String, physicalActivityLevel: String): String {
@@ -412,9 +621,10 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
     )
 }
 
-fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) -> Unit) {
+/*
+fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.0.2.2:8000/calculate"
+    val url = "http://10.0.2.16:8000/calculate"
 
     val json = JSONObject()
     json.put("values", values)
@@ -459,17 +669,6 @@ fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) 
                             - ${dinnerList.joinToString("\n- ")}
                         """.trimIndent()
 
-                        // 🔒 Guardar en SharedPreferences para el lunes
-                        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
-                        val editor = prefs.edit()
-                        val dietData = JSONObject().apply {
-                            put("breakfast", breakfast)
-                            put("lunch", JSONArray(lunchList))
-                            put("dinner", JSONArray(dinnerList))
-                        }
-                        editor.putString("lunes_diet", dietData.toString())
-                        editor.apply()
-
                         onResult(resultString)
                     }
                 } catch (e: Exception) {
@@ -479,91 +678,7 @@ fun sendDataToServer(context: Context, values: List<Double>, onResult: (String) 
         }
     })
 }
-
-@Composable
-fun CalendarScreen(navController: NavController, viewModel: MainViewModel) {
-    val daysOfWeek = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
-    val meals = remember { mutableStateOf(emptyList<String>()) }  // Aquí se guardarán las comidas del día
-
-    // Simulamos que tenemos una comida por cada día
-    val mealList = daysOfWeek.map { "$it: Desayuno, Almuerzo, Cena" }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text("Calendario de comidas", style = MaterialTheme.typography.titleLarge)
-
-        mealList.forEachIndexed { index, day ->
-            Text(day, modifier = Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodyLarge)
-            Button(
-                onClick = {
-                    // Accede al día específico para editar las comidas
-                    navController.navigate("edit_meal/$index")
-                },
-                modifier = Modifier.padding(vertical = 4.dp)
-            ) {
-                Text("Editar Comidas")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("welcome") }) {
-            Text("Regresar al inicio")
-        }
-    }
-}
-
-@Composable
-fun EditMealScreen(navController: NavController, dayIndex: Int, viewModel: MainViewModel) {
-    var breakfast by remember { mutableStateOf("") }
-    var lunch by remember { mutableStateOf("") }
-    var dinner by remember { mutableStateOf("") }
-
-    // Aquí podrías consultar los datos del servidor para obtener las comidas del día
-    // Simulamos que obtenemos las comidas para el día seleccionado
-    val meal = when (dayIndex) {
-        0 -> listOf("Huevos", "Ensalada", "Pollo al horno")
-        1 -> listOf("Avena", "Arroz con pollo", "Pasta")
-        else -> listOf("", "", "")
-    }
-
-    breakfast = meal[0]
-    lunch = meal[1]
-    dinner = meal[2]
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text("Editar Comidas", style = MaterialTheme.typography.titleLarge)
-
-        InputField("Desayuno", breakfast) { breakfast = it }
-        InputField("Almuerzo", lunch) { lunch = it }
-        InputField("Cena", dinner) { dinner = it }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = {
-            // Aquí puedes enviar las comidas al servidor para actualizarlas
-            val updatedMeals = mapOf(
-                "breakfast" to breakfast,
-                "lunch" to lunch,
-                "dinner" to dinner
-            )
-            // updateMealsForDay(dayIndex, updatedMeals)
-            navController.navigate("calendar")
-        }) {
-            Text("Guardar Cambios")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("calendar") }) {
-            Text("Cancelar")
-        }
-    }
-}
+*/
 
 fun checkDatabaseConnection() {
     val db = FirebaseFirestore.getInstance()
@@ -613,51 +728,32 @@ fun fetchAllUsers() {
     }
 }
 
-@Composable
-fun ButtonGridScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF8BC34A)),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Fila de botones para las diferentes funcionalidades
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            ColoredButton("Formulario Dieta", Color.Black) {
-                navController.navigate("diet_form")
-            }
-            ColoredButton("Gasto Basal", Color.Black) {
-                navController.navigate("basal_metabolism")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            ColoredButton("Calorías Mantenimiento", Color.Black) {
-                navController.navigate("maintenance_calories")
-            }
-            ColoredButton("Calendario", Color.Black) {
-                navController.navigate("calendar")
-            }
-        }
-    }
+fun printUserInfo(userViewModel: UserViewModel) {
+    Log.d("Resumen: ",
+        "Nombre: ${userViewModel.getUser().name},\n" +
+        " Edad: ${userViewModel.getUser().age},\n" +
+        " Sexo: ${userViewModel.getUser().sex},\n" +
+        " Altura: ${userViewModel.getUser().height}\n" +
+        " Peso: ${userViewModel.getUser().currentWeight}\n" +
+        " Peso objetivo: ${userViewModel.getUser().targetWeight}\n" +
+        " Objetivo de dieta: ${userViewModel.getUser().goal}"
+    )
 }
 
-@Composable
-fun ColoredButton(text: String, color: Color, onClick: () -> Unit) {
-    Button(
-        onClick = onClick, // Llama a la función onClick pasada como argumento
-        colors = ButtonDefaults.buttonColors(containerColor = color),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .size(120.dp)
-    ) {
-        Text(text = text, color = Color.White, fontSize = 16.sp)
-    }
+fun printFoodInfo(foodViewModel: FoodViewModel) {
+    Log.d("Resumen: ",
+        "Nombre: ${foodViewModel.getFood().name},\n" +
+        "Protein: ${foodViewModel.getFood().protein}, \n" +
+        "Fats: ${foodViewModel.getFood().fats}, \n" +
+        "Sugar: ${foodViewModel.getFood().sugar}, \n" +
+        "Salt: ${foodViewModel.getFood().salt}, \n" +
+        "Carbohydrates: ${foodViewModel.getFood().carbohydrates}, \n" +
+        "Calories: ${foodViewModel.getFood().calories}, \n" +
+        "Price: ${foodViewModel.getFood().price}, \n" +
+        "Vegetarian: ${foodViewModel.getFood().vegetarian}, \n" +
+        "Vegan: ${foodViewModel.getFood().vegan}, \n" +
+        "Celiac: ${foodViewModel.getFood().celiac}, \n" +
+        "Halal: ${foodViewModel.getFood().halal}, \n" +
+        "Food Types: ${foodViewModel.getFood().foodTypes}"
+    )
 }
