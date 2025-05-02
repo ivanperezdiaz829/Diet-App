@@ -3,34 +3,23 @@ import sqlite3
 
 def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, meal_type, sentence_type, sub_sentence, mult):
 
-    """
-    print(f"\n---------- SQL_SENTENCE ---------\n"
-          f"carbos: {carbohydrates[0] / mult, carbohydrates[1] * mult} \n"
-          f"sugar: {sugar * mult} \n"
-          f"energy: {energy[0] / mult, energy[1] * mult} \n"
-          f"protein: {protein[0] / mult, protein[1] * mult} \n"
-          f"salt: {salt * mult} \n"
-          f"fat: {fat[0] / mult, fat[1] * mult} \n"
-          f"price: {price * mult}")
-    """
-
     if sentence_type == 1:
-        sql = ("SELECT * FROM plates WHERE type == ? AND "
-               "carbohydrates * ? BETWEEN ? AND ? "
+        sql = ("SELECT * FROM food_data_sprint1 WHERE type == ? AND "
+               "carbohydrates * ? >= ? "
                "AND sugar * ? <= ? "
                "AND calories * ? BETWEEN ? AND ? "
-               "AND protein * ? BETWEEN ? AND ? "
+               "AND protein * ? >= ? "
                "AND sodium * ? <= ? "
-               "AND fats * ? BETWEEN ? AND ? "
+               "AND fats * ? <= ? "
                "AND price * ? <= ?")
 
         cursor.execute(sql, (meal_type,
-                             mult, carbohydrates[0] / mult, carbohydrates[1] * mult,
+                             mult, carbohydrates / mult,
                              mult, sugar * mult,
                              mult, energy[0] / mult, energy[1] * mult,
-                             mult, protein[0] / mult, protein[1] * mult,
+                             mult, protein / mult,
                              mult, salt * mult,
-                             mult, fat[0] / mult, fat[1] * mult,
+                             mult, fat * mult,
                              mult, price * mult))
         return cursor.fetchall()
 

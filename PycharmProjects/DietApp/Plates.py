@@ -13,6 +13,7 @@ class Plate:
         self.vegan = row[9]
         self.vegetarian = row[10]
         self.celiac = row[11]
+        self.halal = row[12]
 
     def __repr__(self):
         return self.name
@@ -26,4 +27,32 @@ class Plate:
             "sugar": self.sugar,
             "salt": self.salt,
             "price": self.price
+        }
+
+    def str(self):
+        return f"{self.name}, {self.calories}, {self.carbohydrates}, {self.protein}, {self.fat}, {self.sugar}, {self.salt}, {self.price}, {self.food_type}, {self.vegan}, {self.vegetarian}, {self.celiac}, {self.halal}"
+
+    def eq(self, other):
+        if not isinstance(other, Plate):
+            return NotImplemented
+        return self.to_dict() == other.to_dict()
+
+    def hash(self):
+        return hash(self.name)
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "calories": self.calories,
+            "carbohydrates": self.carbohydrates,
+            "protein": self.protein,
+            "fat": self.fat,
+            "sugar": self.sugar,
+            "salt": self.salt,
+            "price": self.price,
+            "food_type": self.food_type,
+            "vegan": self.vegan,
+            "vegetarian": self.vegetarian,
+            "celiac": self.celiac
+            "halal": self.halal
         }

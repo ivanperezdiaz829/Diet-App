@@ -1,11 +1,10 @@
-from Graphs import *
 from ObtainTotals import *
 import time
-
+from GenerarDieta2 import *
 
 start_time = time.time()
 
-
+"""
 def obtain_restrictions():
     carbohydrates, sugar, energy, protein, salt, fat = [], [], [], [], [], []
 
@@ -54,36 +53,69 @@ def obtain_restrictions():
     budget = float(input("Introduce el presupuesto máximo (euros): "))
 
     return carbohydrates, sugar, energy, protein, salt, fat, budget
-
-
-# Obtener las restricciones de dieta
-# carbohydrates, sugar, energy, protein, salt, fat, budget = obtain_restrictions()
-carbohydrates = [250, 300]  # Aproximadamente 50-60% de las calorías totales
-energy = [1800, 2200]  # Rango recomendado de calorías diarias
-sugar = 50  # Menos de 50g de azúcar añadido por día
-protein = [50, 75]  # 50-75 g de proteína por día
-salt = 5000.0  # 5g de sal (límite recomendado)
-fat = [70, 90]  # Aproximadamente 25-35% de las calorías totales de grasa
+"""
+"""
+carbohydrates_min = 250
+energy_min = 1800
+energy_max = 2200
+sugar_max = 50
+protein_min = 50
+salt_max = 5000.0
+fat_max = 90
 budget = 50
+solution = total_diet_generator(
+    carbohydrates_min,
+    sugar_max,
+    [energy_min, energy_max],
+    protein_min,
+    salt_max,
+    fat_max,
+    budget,
+    1, 1, 1
+)
+print("*****************************************")
+print(solution)
 
-# Llamar a la función resolver_dieta pasando la conexión a la base de datos
-# print("Dieta Estándar")
-solution = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, 3)
-image = barplot_generator(solution)
-# solution = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 1, 1, set(), set(), set())
+carbohydrates_min = 200
+energy_min = 1600
+energy_max = 1800
+sugar_max = 40
+protein_min = 40
+salt_max = 4000.0
+fat_max = 80
+solution = total_diet_generator(
+    carbohydrates_min,
+    sugar_max,
+    [energy_min, energy_max],
+    protein_min,
+    salt_max,
+    fat_max,
+    budget,
+    2, 1, 4
+)
+print("*****************************************")
+print(solution)
+"""
+
+carbohydrates_min = 250
+energy_min = 1800
+energy_max = 2200
+sugar_max = 50
+protein_min = 50
+salt_max = 5000.0
+fat_max = 90
+budget = 50
+solution = total_diet_generator(
+    carbohydrates_min,
+    sugar_max,
+    [energy_min, energy_max],
+    protein_min,
+    salt_max,
+    fat_max,
+    budget,
+    4, 1, 4
+)
+
+
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
-
-"""
-print("Dieta Vegetariana")
-solution_vegetarian = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 3, set(), set(), set())
-print_solution(solution_vegetarian)
-
-print("Dieta Veganana")
-solution_vegan = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 2, set(), set(), set())
-print_solution(solution_vegan)
-
-print("Dieta Glucémica")
-solution_glucemic = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, budget, 4, set(), set(), set())
-print_solution(solution_glucemic)
-"""
