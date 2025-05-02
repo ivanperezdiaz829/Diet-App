@@ -1,17 +1,16 @@
-#from flask import Flask, request, jsonify, send_file
-#from Graphs import *
+from flask import Flask, request, jsonify, send_file
+from Graphs import *
 from ObtainTotals import *
 import time
 import ast
 from io import BytesIO
-#import seaborn as sns
+import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 from GenerarDieta2 import *
 
 start_time = time.time()
 
-"""
 app = Flask(__name__)
 
 @app.route('/calculate', methods=['POST'])
@@ -38,16 +37,16 @@ def calculate_diet():
         print(f"Error al convertir: {e}")
         return jsonify({"error": "All values must be numbers"}), 400
 
-    carbohydrates = [values[0], values[1]]
-    sugar = values[2]
-    energy = [values[3], values[4]]
-    protein = [values[5], values[6]]
-    salt = values[7]
-    fat = [values[8], values[9]]
-    price = values[10]
+    carbohydrates = values[0]
+    sugar = values[1]
+    energy = [values[2], values[3]]
+    protein = values[4]
+    salt = values[5]
+    fat = values[6]
+    price = values[7]
     person_type = 1
     person_preferences = 1
-    total_days = 3
+    total_days = values[8]
 
     try:
         dieta = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
@@ -164,7 +163,7 @@ def calculate_maintenance_calories():
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8000)
-"""
+
 """
 def obtain_restrictions():
     carbohydrates, sugar, energy, protein, salt, fat = [], [], [], [], [], []
@@ -214,7 +213,7 @@ def obtain_restrictions():
     budget = float(input("Introduce el presupuesto máximo (euros): "))
 
     return carbohydrates, sugar, energy, protein, salt, fat, budget
-"""
+
 
 carbohydrates_min = 250
 energy_min = 1800
@@ -385,4 +384,6 @@ for day in solution:
 
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
+
+"""
 
