@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.diet_app.R
+import com.example.diet_app.model.Screen
+import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.SettingsOption
 import com.example.diet_app.screenActivities.components.ToolBox
 
@@ -33,9 +35,11 @@ fun SettingsScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(24.dp)
+            .padding(bottom = 90.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Spacer(modifier = Modifier.height(30.dp)) // Ajusta el valor según lo necesites
 
         Text(
@@ -68,6 +72,7 @@ fun SettingsScreen(navController: NavHostController) {
 
         // Opción: Cambiar contraseña
         SettingsOption(text = "Change your password", R.drawable.security_icon) {
+            navController.navigate(Screen.Password.route)
             // Acción al tocar cambiar contraseña
         }
 
@@ -91,6 +96,6 @@ fun SettingsScreen(navController: NavHostController) {
         ) {
             Text("Log out", color = Color.White, fontSize = 16.sp)
         }
-        ToolBox(navController)
     }
+        ToolBox(navController)
 }

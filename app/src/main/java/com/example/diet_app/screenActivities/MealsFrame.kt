@@ -58,8 +58,8 @@ fun MealPlanScreen(navController: NavController) {
                     // Título
                     Text(
                         text = "Meal plan",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(bottom = 24.dp)
                     )
                                 // Pestañas
@@ -164,7 +164,7 @@ fun OtherMealPlanContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         /*
@@ -179,6 +179,8 @@ fun OtherMealPlanContent(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
             */
-        DietViewScreen(onClick = { navController.navigate("diet") }, diet = DietViewModel(), image = R.drawable.healthy_icon)
+        DietViewScreen(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
+        DietViewScreen(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
+        DietViewScreen(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
     }
 }

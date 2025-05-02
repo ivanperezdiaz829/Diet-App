@@ -24,12 +24,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.diet_app.R
+import com.example.diet_app.model.Screen
 import com.example.diet_app.ui.theme.Typography
 
 // Composable que genera una cuadrícula de opciones en la pantalla principal
 @Composable
-fun OptionGrid() {
+fun OptionGrid(navController: NavController) {
     Column(
         verticalArrangement = Arrangement.spacedBy(14.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -62,7 +65,9 @@ fun OptionGrid() {
                 label = "Modify diet",
                 imageId = R.drawable.modify,
                 backgroundColor = Color(0xFFFFB36D), // color personalizado
-                onClick = { /* Acción temporal, no se hace nada por ahora */ }
+                onClick = {
+                    navController.navigate(Screen.FoodList.route)
+                }
             )
         }
     }
