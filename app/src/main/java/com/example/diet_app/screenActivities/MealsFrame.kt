@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.diet_app.R
+import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.components.DietViewScreen
 import com.example.diet_app.screenActivities.components.ToolBox
 import com.example.diet_app.ui.theme.GrayGreen
@@ -106,7 +107,7 @@ fun MealPlanScreen(navController: NavController) {
 
                     // Contenido dinámico
                     when (selectedTab) {
-                        0 -> CurrentMealPlanContent()
+                        0 -> CurrentMealPlanContent(navController)
                         1 -> OtherMealPlanContent(navController)
                     }
                 }
@@ -115,7 +116,7 @@ fun MealPlanScreen(navController: NavController) {
 }
 
 @Composable
-fun CurrentMealPlanContent() {
+fun CurrentMealPlanContent(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -130,7 +131,9 @@ fun CurrentMealPlanContent() {
             modifier = Modifier.padding(bottom = 24.dp))
 
         Button(
-            onClick = { /* Navegación a pantalla de creación de dieta */ },
+            onClick = {
+                navController.navigate(Screen.GenerateMealPlan.route)
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = PrimaryGreen,
                 contentColor = Color.White

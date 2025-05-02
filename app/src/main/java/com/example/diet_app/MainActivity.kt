@@ -46,6 +46,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
+import com.example.diet_app.screenActivities.components.navigateSingleInStack
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
@@ -215,7 +216,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onSkip = { navController.navigate("welcome") },
                 onNext = {
                     userViewModel.updateUser(currentWeight = it)
-                    navController.navigate(Screen.TargetWeight.route)
+                    navController.navigate(Screen.Goal.route)
                     printUserInfo(userViewModel)
                 } // O la siguiente pantalla que corresponda
             )
@@ -335,10 +336,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     carbohydrates = it.getFood().carbohydrates,
                     calories = it.getFood().calories,
                     price = it.getFood().price,
-                    vegetarian = it.getFood().vegetarian,
-                    vegan = it.getFood().vegan,
-                    celiac = it.getFood().celiac,
-                    halal = it.getFood().halal
+                    foodVariants = it.getFood().foodVariants
                 )
                 printFoodInfo(newFood)
                 navController.navigate(Screen.NewFoodType.route)
@@ -364,8 +362,128 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNext = {
                     newFood.updateFood(foodTypes = it)
                     printFoodInfo(newFood)
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.NewFoodSummary.route)
                 }
+            )
+        }
+
+        composable(route = Screen.NewFoodSummary.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            NewFoodSummaryScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    newFood.updateFood(name = it.getFood().name)
+                    printFoodInfo(newFood)
+                    navController.navigate(Screen.FoodDetail.route)
+                    //llamar a la API para guardar comida
+                },
+                foodViewModel = newFood
+            )
+        }
+
+        composable(route = Screen.GenerateMealPlan.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            GenerateMealPlanScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    if (it) {
+                        navController.navigate(Screen.TypeOfDietSelection.route)
+                    } else {
+                        navController.navigate(Screen.Sex.route)
+                    }
+                },
+                userViewModel = userViewModel
+            )
+        }
+
+        composable(route = Screen.TypeOfDietSelection.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            DietSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    navController.navigate(Screen.DietDurationSelection.route)
+                },
+            )
+        }
+
+        composable(route = Screen.TypeOfDietSelection.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            DietDurationScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    // llamada a la API para generar la dieta
+                    it // it tiene aquí la duración de la dieta
+                    navController.navigate(Screen.Home.route)
+                },
+            )
+        }
+
+        composable(route = Screen.FoodDetail.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            FoodDetailScreen(
+                foodViewModel = newFood,
+                onNavigateBack = { navController.navigateSingleInStack(Screen.Home.route) },
+
             )
         }
 
@@ -750,10 +868,7 @@ fun printFoodInfo(foodViewModel: FoodViewModel) {
         "Carbohydrates: ${foodViewModel.getFood().carbohydrates}, \n" +
         "Calories: ${foodViewModel.getFood().calories}, \n" +
         "Price: ${foodViewModel.getFood().price}, \n" +
-        "Vegetarian: ${foodViewModel.getFood().vegetarian}, \n" +
-        "Vegan: ${foodViewModel.getFood().vegan}, \n" +
-        "Celiac: ${foodViewModel.getFood().celiac}, \n" +
-        "Halal: ${foodViewModel.getFood().halal}, \n" +
+        "Food Variants: ${foodViewModel.getFood().foodVariants}, \n" +
         "Food Types: ${foodViewModel.getFood().foodTypes}"
     )
 }

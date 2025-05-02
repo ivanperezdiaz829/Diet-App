@@ -7,9 +7,6 @@ sealed class Screen(val route: String) {
     object Register : Screen("register")
     object Profile : Screen("profile")
     object Settings : Screen("settings")
-    object Details : Screen("details/{itemId}") {
-        fun createRoute(itemId: Int) = "details/$itemId"
-    }
     object Goal : Screen("goal")
     object Sex : Screen("sex")
     object Age : Screen("age")
@@ -23,4 +20,14 @@ sealed class Screen(val route: String) {
     object FoodList: Screen("foodList")
     object AddFood: Screen("addFood")
     object NewFoodType: Screen("newFoodType")
+    object NewFoodSummary: Screen("newFoodSummary")
+
+    object FoodDetail: Screen("foodDetail/{foodId}") {
+        // Función auxiliar para crear la ruta con el ID
+        fun createRoute(foodId: Int) = "foodDetail/$foodId"
+    }
+
+    object GenerateMealPlan: Screen("generateMealPlan")
+    object TypeOfDietSelection: Screen("typeOfDietSelection")
+    object DietDurationSelection: Screen("dietDurationSelection")
 }

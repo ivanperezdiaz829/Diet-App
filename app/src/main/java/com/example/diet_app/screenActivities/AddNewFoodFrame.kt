@@ -14,6 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.diet_app.model.FoodType
+import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
@@ -43,6 +45,7 @@ fun AddNewFoodScreen(
     var isVegan by remember { mutableStateOf(false) }
     var isCeliac by remember { mutableStateOf(false) }
     var isHalal by remember { mutableStateOf(false) }
+    var foodVariants by remember { mutableStateOf(setOf<FoodVariant>()) }
 
     var foodViewModel by remember { mutableStateOf(FoodViewModel())}
 
@@ -165,7 +168,20 @@ fun AddNewFoodScreen(
             NextButton(
                 enabled = protein.isNotEmpty() && fats.isNotEmpty() && sugar.isNotEmpty() && salt.isNotEmpty() && carbohydrates.isNotEmpty() && calories.isNotEmpty() && price.isNotEmpty(),
                 onClick = {
+                    if (isVegan) {
+                        foodVariants = foodVariants.plus(FoodVariant.VEGAN)
+                    }
+                    if (isVegetarian) {
+                        foodVariants = foodVariants.plus(FoodVariant.VEGETARIAN)
+                    }
+                    if (isCeliac) {
+                        foodVariants = foodVariants.plus(FoodVariant.CELIAC)
+                    }
+                    if (isHalal) {
+                        foodVariants = foodVariants.plus(FoodVariant.HALAL)
+                    }
                     foodViewModel.updateFood(protein = protein.toDouble(), fats = fats.toDouble(), sugar = sugar.toDouble(), salt = salt.toDouble(), carbohydrates = carbohydrates.toDouble(), calories = calories.toDouble(), price = price.toDouble())
+                    foodViewModel.updateFood(foodVariants = foodVariants)
                     onNext(foodViewModel)
                 }
             )

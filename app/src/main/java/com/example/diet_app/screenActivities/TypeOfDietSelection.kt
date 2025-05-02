@@ -13,11 +13,17 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import com.example.diet_app.screenActivities.components.BackButtonLeft
 
 @Composable
-fun DietSelectionScreen() {
+fun DietSelectionScreen(
+    onNavigateBack: () -> Unit,
+    onNext: (Int) -> Unit
+) {
     val options = listOf("Regular", "Vegan", "Vegetarian", "Glycemic", "Halal")
-    var selectedIndex by remember { mutableStateOf(0) }
+    var selectedIndex by remember { mutableIntStateOf(0) }
+
+    BackButtonLeft(onNavigateBack)
 
     Column(
         modifier = Modifier
@@ -69,7 +75,9 @@ fun DietSelectionScreen() {
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { },
+            onClick = {
+                onNext(selectedIndex)
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF40B93C),
                 contentColor = Color.White

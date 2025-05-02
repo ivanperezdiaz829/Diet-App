@@ -9,10 +9,7 @@ class FoodModel(
     var carbohydrates: Double = 0.0,
     var calories: Double = 0.0,
     var price: Double = 0.0,
-    var vegetarian: Boolean = false,
-    var vegan: Boolean = false,
-    var celiac: Boolean = false,
-    var halal: Boolean = false,
+    var foodVariants: Set<FoodVariant> = emptySet(),
     var foodTypes: Set<FoodType> = emptySet(),
 ) {
 

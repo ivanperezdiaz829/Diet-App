@@ -32,10 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.diet_app.ui.theme.BackButtonBackground
 import com.example.diet_app.ui.theme.Typography
+import com.example.diet_app.viewModel.FoodViewModel
 
 // Pantalla de configuración del usuario con botón de logout funcional
 @Composable
-fun FoodDetailScreen(onNavigateBack: () -> Unit) {
+fun FoodDetailScreen(
+    foodViewModel: FoodViewModel,
+    onNavigateBack: () -> Unit)
+{
 
     Row(
         modifier = Modifier.fillMaxWidth().statusBarsPadding(),
@@ -72,7 +76,7 @@ fun FoodDetailScreen(onNavigateBack: () -> Unit) {
         Spacer(modifier = Modifier.height(30.dp)) // Ajusta el valor según lo necesites
 
         Text(
-            text = "Croissant with poached egg",
+            text = foodViewModel.getFood().name,
             fontSize = 30.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
@@ -87,17 +91,17 @@ fun FoodDetailScreen(onNavigateBack: () -> Unit) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
-            FoodVariants("Vegetarian", "Vegan", "Celiac", "Halal")
+            FoodVariants(foodViewModel)
 
             Spacer(modifier = Modifier.height(30.dp))
 
             val nutritionalData = mapOf(
-                "Proteins" to 12.7f,
-                "Fats" to 6.3f,
-                "Sugar" to 20.3f,
-                "Salt" to 15.7f,
-                "Carbohydrates" to 26.7f,
-                "Calories" to 229.8f
+                "Proteins" to 0.0,
+                "Fats" to 0.0,
+                "Sugar" to 0.0,
+                "Salt" to 0.0,
+                "Carbohydrates" to 0.0,
+                "Calories" to 0.0
             )
 
             NutritionalInfoGrid(data = nutritionalData)
@@ -107,7 +111,7 @@ fun FoodDetailScreen(onNavigateBack: () -> Unit) {
 }
 
 @Composable
-fun FoodVariants(vararg variants: String){
+fun FoodVariants(foodViewModel: FoodViewModel){
 
     Text(
         text = "Food Variants",
@@ -122,7 +126,7 @@ fun FoodVariants(vararg variants: String){
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        for (variant in variants) {
+        for (variant in foodViewModel.getFood().foodVariants) {
             Surface(
                 modifier = Modifier
                     .wrapContentWidth() // Asegura que el ancho se ajuste al contenido
@@ -136,7 +140,7 @@ fun FoodVariants(vararg variants: String){
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = variant,
+                        text = variant.toString(),
                         style = Typography.labelMedium
                     )
                 }
@@ -146,7 +150,7 @@ fun FoodVariants(vararg variants: String){
 }
 
 @Composable
-fun NutritionalInfoGrid(data: Map<String, Float>) {
+fun NutritionalInfoGrid(data: Map<String, Double>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
