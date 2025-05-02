@@ -16,3 +16,25 @@ create_user: creates a user with the data contained in the request body as JSON 
 500: Iternal error server (usually a SQL error)
 200: Request completed succesfully (update or get or delete)
 201: Resource created succesfully (create)
+
+-CREATE_USER
+Expected body content:
+{
+    "email": "future@gmail.com",
+    "password": "Dummy_password1",
+    "height": 200,
+    "weight": 120,
+    "sex": "Male",
+    "physical_activity": "Gain Weight",
+    "birthday": "2025-04-30"
+}
+
+Password: min 8 characters long, must include a capital letter and a special carácter
+height weight: have a valid range
+email: follows regular expression ^(?!.*[._-]{2})[\w.-]{4,}@(gmail|hotmail)\.[a-z]{2,3}$. Cant contained two special characters together ,
+only accepts Gmail and Hotmail.
+physical_activity: Valid values depend on database state. At the moment ['Lose Weight', 'Gain Weight', 'Stay Healthy']
+
+-UPDATE_USER
+Body content:
+Can only contain valid user fields (all of which can be included in CREATE_USER). Same field validation
