@@ -24,4 +24,7 @@ sealed class Screen(val route: String) {
     object AddFood: Screen("addFood")
     object NewFoodType: Screen("newFoodType")
     object NewFoodSummary: Screen("newFoodSummary")
+    object GenerateMealPlan: Screen("generateMealPlan")
+    object TypeOfDietSelection: Screen("typeOfDietSelection")
+    object DietDurationSelection: Screen("dietDurationSelection")
 }

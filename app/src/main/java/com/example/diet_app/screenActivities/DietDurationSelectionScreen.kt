@@ -2,7 +2,6 @@ package com.example.diet_app.screenActivities
 
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -10,8 +9,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -20,12 +17,18 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.example.diet_app.R
+import com.example.diet_app.screenActivities.components.BackButtonLeft
 
 
 @Composable
-fun DietDurationScreen() {
-    var selectedDays by remember { mutableStateOf(1) }
+fun DietDurationScreen(
+    onNavigateBack: () -> Unit,
+    onNext: (Int) -> Unit
+) {
+    var selectedDays by remember { mutableIntStateOf(1) }
     val customGreen = Color(0xFF40B93C)
+
+    BackButtonLeft(onNavigateBack)
 
     Column(
         modifier = Modifier
@@ -120,7 +123,9 @@ fun DietDurationScreen() {
 
         // Botón de confirmación
         Button(
-            onClick = {  },
+            onClick = {
+                onNext(selectedDays)
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = customGreen,
                 contentColor = Color.White

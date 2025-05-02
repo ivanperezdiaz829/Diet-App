@@ -12,15 +12,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.diet_app.screenActivities.components.BackButtonLeft
+import com.example.diet_app.viewModel.UserViewModel
 
 @Composable
 fun GenerateMealPlanScreen(
-    goal: Goal,
-    sex: Sex,
-    age: Int,
-    height: Int,
-    weight: Int,
+    userViewModel: UserViewModel,
+    onNavigateBack: () -> Unit,
+    onNext: (Boolean) -> Unit
 ) {
+
+    BackButtonLeft(onNavigateBack)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,11 +72,11 @@ fun GenerateMealPlanScreen(
                 .padding(horizontal = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            UserDataItem(label = "Goal:", value = goal.toString())
-            UserDataItem(label = "Sex:", value = sex.toString())
-            UserDataItem(label = "Age:", value = age.toString())
-            UserDataItem(label = "Height:", value = "$height cm")
-            UserDataItem(label = "Current weight:", value = "$weight kg")
+            UserDataItem(label = "Goal:", value = userViewModel.getUser().goal.toString())
+            UserDataItem(label = "Sex:", value = userViewModel.getUser().sex.toString())
+            UserDataItem(label = "Age:", value = "${userViewModel.getUser().age} years")
+            UserDataItem(label = "Height:", value = "${userViewModel.getUser().height} cm")
+            UserDataItem(label = "Current weight:", value = "${userViewModel.getUser().currentWeight} kg")
         }
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -84,13 +87,17 @@ fun GenerateMealPlanScreen(
         ) {
             CustomButton(
                 text = "Proceed",
-                onClick = {},
+                onClick = {
+                    onNext(true)
+                },
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
 
             CustomButton(
                 text = "Update",
-                onClick = {},
+                onClick = {
+                    onNext(false)
+                },
                 modifier = Modifier.fillMaxWidth(0.8f),
                 isSecondary = true
             )
