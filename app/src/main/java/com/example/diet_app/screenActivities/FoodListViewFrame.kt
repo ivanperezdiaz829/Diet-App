@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,7 @@ import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.components.BackButtonLeft
 import com.example.diet_app.screenActivities.components.FoodViewScreen
 import com.example.diet_app.screenActivities.components.TitleSection
+import com.example.diet_app.screenActivities.components.ToolBox
 import com.example.diet_app.ui.theme.DarkGreen
 import com.example.diet_app.ui.theme.PrimaryGreen
 import com.example.diet_app.viewModel.FoodViewModel
@@ -33,8 +35,9 @@ fun FoodListViewScreen(
     foods: List<FoodViewModel>,
 ) {
 
-    Scaffold(
-        floatingActionButton = {
+    Scaffold( modifier = Modifier
+        .padding(bottom = 70.dp),
+            floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.AddFood.route) }, // Ruta para creación
                 containerColor = PrimaryGreen,
@@ -48,6 +51,8 @@ fun FoodListViewScreen(
 
         Column(
             modifier = Modifier
+                .statusBarsPadding()
+                .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()) // Hace la columna scrollable
                 .padding(horizontal = 16.dp),
@@ -56,7 +61,7 @@ fun FoodListViewScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            BackButtonLeft(onNavigateBack = { navController.popBackStack() })
+            //BackButtonLeft(onNavigateBack = { navController.popBackStack() })
 
             TitleSection("Your ", "foods", "You can add your favorite foods")
 
@@ -75,4 +80,5 @@ fun FoodListViewScreen(
 
         }
     }
+    ToolBox(navController)
 }

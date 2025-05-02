@@ -312,18 +312,6 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
         }
 
         composable(route = Screen.FoodList.route,
-            enterTransition = {
-                slideInHorizontally(initialOffsetX = { it })
-            },
-            exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -it })
-            },
-            popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -it })
-            },
-            popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { it })
-            }
         ) {
             var foodViewModel = FoodViewModel()
             foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))

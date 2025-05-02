@@ -20,12 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.diet_app.R
 import com.example.diet_app.model.Screen
 
@@ -39,7 +37,7 @@ fun ToolBox(
     val currentScreen = when (currentRoute) {
         Screen.Home.route -> "Home"
         Screen.Meals.route -> "Meals"
-        Screen.Home.route -> "Activities"
+        Screen.FoodList.route -> "Activities"
         Screen.Settings.route -> "Settings"
         else -> ""
     }
@@ -54,7 +52,7 @@ fun ToolBox(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .windowInsetsPadding(WindowInsets.systemBars)
-                .padding(bottom = 20.dp)
+                .padding(bottom = 10.dp)
                 .background(Color.Transparent)
                 .drawBehind {
                     val offsetY = -10.dp.toPx()
@@ -86,7 +84,7 @@ fun ToolBox(
                     painterResource(id = R.drawable.book_symbol),
                     screen = "Activities",
                     currentScreen,
-                    onClick = {navController.navigateSingleInStack(Screen.Home.route)}
+                    onClick = {navController.navigateSingleInStack(Screen.FoodList.route)}
                     // onScreenSelected,
                 )
                 ToolBoxItem(
