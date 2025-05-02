@@ -1,12 +1,13 @@
-from flask import Flask, request, jsonify, send_file
-from Graphs import *
+#from flask import Flask, request, jsonify, send_file
+#from Graphs import *
 from ObtainTotals import *
 import time
 import ast
 from io import BytesIO
-import seaborn as sns
+#import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+from GenerarDieta2 import *
 
 start_time = time.time()
 
@@ -213,7 +214,8 @@ def obtain_restrictions():
     budget = float(input("Introduce el presupuesto máximo (euros): "))
 
     return carbohydrates, sugar, energy, protein, salt, fat, budget
-""""
+"""
+
 carbohydrates_min = 250
 energy_min = 1800
 energy_max = 2200
@@ -230,10 +232,12 @@ solution = total_diet_generator(
     salt_max,
     fat_max,
     budget,
-    1, 1, 1
+    1, 1, 2
 )
-print("*****************************************")
-print(solution)
+print("*")
+for day in solution:
+    print(day)
+
 
 carbohydrates_min = 200
 energy_min = 1600
@@ -250,11 +254,33 @@ solution = total_diet_generator(
     salt_max,
     fat_max,
     budget,
-    2, 1, 4
+    2, 1, 3
 )
-print("*****************************************")
-print(solution)
 
+print("**")
+for day in solution:
+    print(day)
+carbohydrates_min = 250
+energy_min = 1800
+energy_max = 2200
+sugar_max = 50
+protein_min = 50
+salt_max = 5000.0
+fat_max = 90
+budget = 30
+solution = total_diet_generator(
+    carbohydrates_min,
+    sugar_max,
+    [energy_min, energy_max],
+    protein_min,
+    salt_max,
+    fat_max,
+    budget,
+    3, 1, 4
+)
+print("***")
+for day in solution:
+    print(day)
 carbohydrates_min = 250
 energy_min = 1800
 energy_max = 2200
@@ -271,10 +297,92 @@ solution = total_diet_generator(
     salt_max,
     fat_max,
     budget,
-    4, 1, 4
+    4, 1, 5
 )
-print("*****************************************")
-print(solution)
-"""
+print("****")
+for day in solution:
+    print(day)
+carbohydrates_min = 250
+energy_min = 2600
+energy_max = 2900
+sugar_max = 80
+protein_min = 100
+salt_max = 5000.0
+fat_max = 90
+budget = 50
+solution = total_diet_generator(
+    carbohydrates_min,
+    sugar_max,
+    [energy_min, energy_max],
+    protein_min,
+    salt_max,
+    fat_max,
+    budget,
+    5, 1, 2
+)
+
+print("*****")
+for day in solution:
+    print(day)
+mch_requirements = calculate_nutritional_requirements(60, 183, 21, "m", 2, "gain")
+erc_requirements = calculate_nutritional_requirements(70, 179, 24, "m", 3, "lose")
+ggn_requirements = calculate_nutritional_requirements(55, 170, 20, "m", 1, "maintain")
+
+
+print(mch_requirements)
+print(erc_requirements)
+print(ggn_requirements)
+
+solution = total_diet_generator(
+    mch_requirements[0],
+    mch_requirements[1],
+    mch_requirements[2],
+    mch_requirements[3],
+    mch_requirements[4],
+    mch_requirements[5],
+    30,
+    4,
+    1,
+    2
+)
+
+print("******")
+for day in solution:
+    print(day)
+solution = total_diet_generator(
+    erc_requirements[0],
+    erc_requirements[1],
+    erc_requirements[2],
+    erc_requirements[3],
+    erc_requirements[4],
+    erc_requirements[5],
+    30,
+    3,
+    1,
+    2
+)
+
+print("*******")
+for day in solution:
+    print(day)
+solution = total_diet_generator(
+    ggn_requirements[0],
+    ggn_requirements[1],
+    ggn_requirements[2],
+    ggn_requirements[3],
+    ggn_requirements[4],
+    ggn_requirements[5],
+    30,
+    2,
+    1,
+    4
+)
+
+print("********")
+for day in solution:
+    print(day)
+
+
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
+

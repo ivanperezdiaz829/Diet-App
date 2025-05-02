@@ -8,16 +8,17 @@ def sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, pric
                "AND protein * ? >= ? "
                "AND sodium * ? <= ? "
                "AND fats * ? <= ? "
-               "AND price * ? <= ?")
+               "AND price * ? <= ? ")
 
         cursor.execute(sql, (meal_type,
-                             mult, carbohydrates / mult,
-                             mult, sugar * mult,
-                             mult, energy[0] / mult, energy[1] * mult,
-                             mult, protein / mult,
-                             mult, salt * mult,
-                             mult, fat * mult,
-                             mult, price * mult))
+                             mult, carbohydrates,
+                             mult, sugar,
+                             mult, energy[0], energy[1],
+                             mult, protein,
+                             mult, salt,
+                             mult, fat,
+                             mult, price))
+
         return cursor.fetchall()
 
     if sentence_type == 2:

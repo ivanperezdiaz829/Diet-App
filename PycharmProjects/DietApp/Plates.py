@@ -1,14 +1,14 @@
 class Plate:
 
-    def __init__(self, row):
+    def __init__(self, row, mult):
         self.name = row[0]
-        self.calories = row[1]
-        self.carbohydrates = row[2]
-        self.protein = row[3]
-        self.fat = row[4]
-        self.sugar = row[5]
-        self.salt = row[6]
-        self.price = row[7]
+        self.calories = row[1] * mult
+        self.carbohydrates = row[2] * mult
+        self.protein = row[3] * mult
+        self.fat = row[4] * mult
+        self.sugar = row[5] * mult
+        self.salt = row[6] * mult
+        self.price = row[7] * mult
         self.food_type = row[8]
         self.vegan = row[9]
         self.vegetarian = row[10]
@@ -72,6 +72,6 @@ class Plate:
             "food_type": self.food_type,
             "vegan": self.vegan,
             "vegetarian": self.vegetarian,
-            "celiac": self.celiac
+            "celiac": self.celiac,
             "halal": self.halal
         }

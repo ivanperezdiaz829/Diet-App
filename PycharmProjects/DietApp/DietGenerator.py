@@ -27,26 +27,14 @@ def nutrient_quantity_kcal_split(nutrient_limit, kcal_meal_limit, kcal_total_lim
     return nutrient_limit * (kcal_meal_limit / kcal_total_limit)
 
 def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
-    print()
-    print("\n--------- PLATOS DISPOBIBLES DESAYUNO ---------")
-    print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
-    breakfasts_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1, 2)
-    breakfasts_convert = [Plate(row) for row in breakfasts_rows]
+    breakfast_mult = 2
+    breakfasts_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 1, 1, -1, breakfast_mult)
+    breakfasts_convert = [Plate(row, breakfast_mult) for row in breakfasts_rows]
     breakfasts = filter_plates(breakfasts_convert, person_type)
-    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
-    drinks_convert = [Plate(row) for row in drinks_rows]
+    drink_mult = 1
+    drinks_rows = sql_sentences(cursor, 0, sugar, [0, energy[1]], 0, salt, fat, price, 4, 1, -1, drink_mult)
+    drinks_convert = [Plate(row, drink_mult) for row in drinks_rows]
     drinks = filter_plates(drinks_convert, person_type)
-    breakfasts = [Plate(row) for row in breakfasts_rows]
-    breakfasts = filter_plates(breakfasts, person_type)
-    drinks_rows = sql_sentences(cursor, 0, sugar, [0, energy[1]], 0, salt, fat, price, 4, 1, -1, 1)
-    drinks = [Plate(row) for row in drinks_rows]
-    drinks = filter_plates(drinks, person_type)
-    print(f'\nPRINCIPAL:')
-    for i in range(len(breakfasts)):
-        print(f"breakfast: {breakfasts[i]}")
-    print(f'\nBEBIDA:')
-    for i in range(len(drinks)):
-        print(f"drink: {drinks[i]}")
 
     valid_combinations = []
     if breakfasts and drinks:
@@ -76,47 +64,23 @@ def obtain_breakfast(cursor, selected_breakfasts, carbohydrates, sugar, energy, 
                     valid_combinations.append((breakfast, drink))
 
     if valid_combinations:
-        print(f"\nVALID_BREAKFASTS:")
-        for combi in valid_combinations:
-            print(combi)
-        selected_combination = random.choice(valid_combinations)
-        return selected_combination
-
+        return valid_combinations
     return None
 
 
 def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
-    print("\n--------- PLATOS DISPONIBLES ALMUERZO ---------")
-    print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
-    print()
-
-    # Consulta directa para platos principales
-    mains_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1, 2)
-    mains = [Plate(row) for row in mains_rows]
-    mains = filter_plates(mains, person_type)
-
-    # Consulta directa para platos secundarios
-    sides_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 3, 1, -1, 2)
-    sides = [Plate(row) for row in sides_rows]
-    sides = filter_plates(sides, person_type)
-
-    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
-    drinks_convert = [Plate(row) for row in drinks_rows]
+    main_mult = 2
+    mains_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1, main_mult)
+    mains_convert = [Plate(row, main_mult) for row in mains_rows]
+    mains = filter_plates(mains_convert, person_type)
+    side_mult = 2
+    sides_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 3, 1, -1, side_mult)
+    sides_convert = [Plate(row, side_mult) for row in sides_rows]
+    sides = filter_plates(sides_convert, person_type)
+    drink_mult = 1
+    drinks_rows = sql_sentences(cursor, 0, sugar, [0, energy[1]], 0, salt, fat, price, 4, 1, -1, drink_mult)
+    drinks_convert = [Plate(row, drink_mult) for row in drinks_rows]
     drinks = filter_plates(drinks_convert, person_type)
-    # Consulta directa para bebidas
-    drinks_rows = sql_sentences(cursor, 0, sugar, [0, energy[1]], 0, salt, fat, price, 4, 1, -1, 1)
-    drinks = [Plate(row) for row in drinks_rows]
-    drinks = filter_plates(drinks, person_type)
-
-    print(f'\nPRINCIPAL:')
-    for i in range(len(mains)):
-        print(f"main: {mains[i]}")
-    print("\nSECUNDARIO:")
-    for i in range(len(sides)):
-        print(f"side: {sides[i]}")
-    print(f'\nBEBIDA:')
-    for i in range(len(drinks)):
-        print(f"drink: {drinks[i]}")
 
     valid_combinations = []
 
@@ -149,40 +113,21 @@ def obtain_lunch(cursor, selected_lunches, carbohydrates, sugar, energy, protein
                         valid_combinations.append((main, side, drink))
 
     if valid_combinations:
-        print(f"\nVALID_LUNCHES:")
-        for combi in valid_combinations:
-            print(combi)
-        selected_combination = random.choice(valid_combinations)
-        return selected_combination
-
+        return valid_combinations
     return None
 
 
 def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protein, salt, fat, price, person_type):
-    print()
-    print("\n--------- PLATOS DISPONIBLES CENA ---------")
-    print(energy, carbohydrates, protein, fat, sugar, salt, price, person_type)
-    mains_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1, 2)
-    mains2_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 3, 1, -1, 2)
+    main_mult = 2
+    mains_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 2, 1, -1, main_mult)
+    mains2_rows = sql_sentences(cursor, carbohydrates, sugar, energy, protein, salt, fat, price, 3, 1, -1, main_mult)
     mains_rows.extend(mains2_rows)
-    mains_convert = [Plate(row) for row in mains_rows]
+    mains_convert = [Plate(row, main_mult) for row in mains_rows]
     mains = filter_plates(mains_convert, person_type)
-    drinks_rows = sql_sentences(cursor, [0, carbohydrates[1]], sugar, [0, energy[1]], [0, protein[1]], salt, [0, fat[1]], price, 4, 1, -1, 1)
-    drinks_convert = [Plate(row) for row in drinks_rows]
+    drink_mult = 1
+    drinks_rows = sql_sentences(cursor, 0, sugar, [0, energy[1]], 0, salt, fat, price, 4, 1, -1, drink_mult)
+    drinks_convert = [Plate(row, drink_mult) for row in drinks_rows]
     drinks = filter_plates(drinks_convert, person_type)
-    mains = [Plate(row) for row in mains_rows]
-    mains = filter_plates(mains, person_type)
-
-    drinks_rows = sql_sentences(cursor, 0, sugar, [0, energy[1]], 0, salt, fat, price, 4, 1, -1, 1)
-    drinks = [Plate(row) for row in drinks_rows]
-    drinks = filter_plates(drinks, person_type)
-
-    print(f'\nPRINCIPAL:')
-    for i in range(len(mains)):
-        print(f"main: {mains[i]}")
-    print(f'\nBEBIDA:')
-    for i in range(len(drinks)):
-        print(f"drink: {drinks[i]}")
 
     valid_combinations = []
 
@@ -213,11 +158,7 @@ def obtain_dinner(cursor, selected_dinners, carbohydrates, sugar, energy, protei
                     valid_combinations.append((main, drink))
 
     if valid_combinations:
-        print(f"\nVALID_DINNERS:")
-        for combi in valid_combinations:
-            print(combi)
-        selected_combination = random.choice(valid_combinations)
-        return selected_combination
+        return valid_combinations
     return None
 
 
@@ -234,7 +175,6 @@ def validate_full_diet(diet, carbs_min, sugar_max, kcal_range, protein_min, salt
             total_fat += plate.fat
             total_price += plate.price
 
-    # Validaciones de límites
     if not (kcal_range[0] <= total_kcal <= kcal_range[1]):
         return False
     if total_carbs < carbs_min:
@@ -250,30 +190,20 @@ def validate_full_diet(diet, carbs_min, sugar_max, kcal_range, protein_min, salt
     if total_price > price_max:
         return False
 
-    print("\n--------- DIETA VÁLIDA ---------")
-    print(f"Carbohidratos totales: {total_carbs} (Mínimo Requerido: {carbs_min})")
-    print(f"Azúcar total: {total_sugar} (Máximo Permitido: {sugar_max})")
-    print(f"Calorías totales: {total_kcal} (Rango: {kcal_range[0]} - {kcal_range[1]})")
-    print(f"Proteínas totales: {total_protein} (Mínimo Requerido: {protein_min})")
-    print(f"Sal total: {total_salt} (Máximo Permitido: {salt_max})")
-    print(f"Grasas totales: {total_fat} (Máximo Permitido: {fat_max})")
-    print(f"Precio total: {total_price} (Máximo Permitido: {price_max})")
-
     return True
 
 
-def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid):
+def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, '../../FoodDbManagement', 'DietApp.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    solution = []
 
-    print(f"\nValores de entrada resolver_dieta: {carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max}")
 
-    kcal_breakfast = (energy_range[0] * 0.20, energy_range[1] * 0.20)
-    kcal_lunch = (energy_range[0] * 0.50, energy_range[1] * 0.50)
-    kcal_dinner = (energy_range[0] * 0.30, energy_range[1] * 0.30)
+
+    kcal_breakfast = (energy_range[0] * 0.2, energy_range[1] * 0.5)
+    kcal_lunch = (energy_range[0] * 0.2, energy_range[1] * 0.5)
+    kcal_dinner = (energy_range[0] * 0.2, energy_range[1] * 0.5)
 
     carbs_b = nutrient_quantity_kcal_split(carbohydrates_min, kcal_breakfast[0], energy_range[0])
     carbs_l = nutrient_quantity_kcal_split(carbohydrates_min, kcal_lunch[0], energy_range[0])
@@ -283,7 +213,6 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
     protein_l = nutrient_quantity_kcal_split(protein_min, kcal_lunch[0], energy_range[0])
     protein_d = nutrient_quantity_kcal_split(protein_min, kcal_dinner[0], energy_range[0])
 
-    # Macronutrientes con máximo → solo se calcula máximo por comida
     sugar_b = nutrient_quantity_kcal_split(sugar_max, kcal_breakfast[1], energy_range[1])
     sugar_l = nutrient_quantity_kcal_split(sugar_max, kcal_lunch[1], energy_range[1])
     sugar_d = nutrient_quantity_kcal_split(sugar_max, kcal_dinner[1], energy_range[1])
@@ -296,32 +225,64 @@ def diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, pers
     salt_l = nutrient_quantity_kcal_split(salt_max, kcal_lunch[1], energy_range[1])
     salt_d = nutrient_quantity_kcal_split(salt_max, kcal_dinner[1], energy_range[1])
 
-    # --- Obtener comidas ---
-    breakfast = obtain_breakfast(cursor, selected_breakfasts,
+    breakfasts = obtain_breakfast(cursor, selected_breakfasts,
                                  carbs_b, sugar_b, kcal_breakfast,
                                  protein_b, salt_b, fat_b, price_max / 4, person_type)
 
-    lunch = obtain_lunch(cursor, selected_lunches,
+    lunches = obtain_lunch(cursor, selected_lunches,
                          carbs_l, sugar_l, kcal_lunch,
                          protein_l, salt_l, fat_l, price_max / 2, person_type)
 
-    dinner = obtain_dinner(cursor, selected_dinners,
+    dinners = obtain_dinner(cursor, selected_dinners,
                            carbs_d, sugar_d, kcal_dinner,
                            protein_d, salt_d, fat_d, price_max / 4, person_type)
 
-    if breakfast is None or lunch is None or dinner is None:
+    if not breakfasts or not lunches or not dinners:
         conn.close()
         return None
 
-    solution.extend([breakfast, lunch, dinner])
+    random.shuffle(breakfasts)
+    random.shuffle(lunches)
+    random.shuffle(dinners)
+    for breakfast in breakfasts:
+        for lunch in lunches:
+            for dinner in dinners:
+                solution = [breakfast, lunch, dinner]
+                if validate_full_diet(solution, carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max):
+                    if lunch[0] not in selected_lunches and lunch[1] not in selected_breakfasts and dinner[0] not in selected_dinners:
+                        selected_lunches.add(lunch[0])
+                        selected_breakfasts.add(lunch[1])
+                        selected_dinners.add(dinner[0])
+                        conn.close()
+                        total_carbs = 0
+                        total_sugar = 0
+                        total_kcal = 0
+                        total_protein = 0
+                        total_salt = 0
+                        total_fat = 0
+                        total_price = 0
+                        for meal in solution:
+                            for plate in meal:
+                                total_carbs += plate.carbohydrates
+                                total_sugar += plate.sugar
+                                total_kcal += plate.calories
+                                total_protein += plate.protein
+                                total_salt += plate.salt
+                                total_fat += plate.fat
+                                total_price += plate.price
 
-    if not validate_full_diet(solution, carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max):
-        print("La dieta generada no cumple con los requisitos totales.")
-        if solution in not_valid:
-            return None
-        not_valid.append(solution)
-        return diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max,
-                              person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid)
+                        print("\n--PLAN DIETA DÍA-")
+                        print(f"Carbohidratos totales: {total_carbs} (Mínimo Requerido: {carbohydrates_min})")
+                        print(f"Azúcar total: {total_sugar} (Máximo Permitido: {sugar_max})")
+                        print(f"Calorías totales: {total_kcal} (Rango: {energy_range[0]} - {energy_range[1]})")
+                        print(f"Proteínas totales: {total_protein} (Mínimo Requerido: {protein_min})")
+                        print(f"Sal total: {total_salt} (Máximo Permitido: {salt_max})")
+                        print(f"Grasas totales: {total_fat} (Máximo Permitido: {fat_max})")
+                        print(f"Precio total: {total_price} (Máximo Permitido: {price_max})")
+
+                        return solution
 
     conn.close()
-    return solution
+    return None
+
+

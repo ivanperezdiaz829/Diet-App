@@ -1,10 +1,10 @@
 from DietGenerator import *
 
 def total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days):
+    print(f"\nValores de entrada resolver_dieta: {carbohydrates, sugar, energy, protein, salt, fat, price}")
 
     selected_breakfasts, selected_lunches, selected_dinners, not_valid = set(), set(), set(), []
     total_diet = []
-    solution = []
 
     for i in range(total_days):
         daily_meals = diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid)

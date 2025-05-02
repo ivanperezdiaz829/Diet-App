@@ -1,5 +1,3 @@
-from CaloriesCalculator import calculate_maintenance_calories
-
 def calculate_nutritional_requirements(weight, height, age, gender, activity_level, goal):
     try:
         w = float(weight)
@@ -20,49 +18,37 @@ def calculate_nutritional_requirements(weight, height, age, gender, activity_lev
     except ValueError:
         return {"error": "Datos numéricos inválidos"}
 
-    # Cálculo de calorías
     if gender == 'm':
         maintenance = (10 * w + 6.25 * h - 5 * a + 5) * [1.2, 1.375, 1.55, 1.725, 1.9][activity_level]
     else:
         maintenance = (10 * w + 6.25 * h - 5 * a - 161) * [1.2, 1.375, 1.55, 1.725, 1.9][activity_level]
 
-    # Ajuste por objetivo
     if goal == 'lose':
-        target = max(maintenance - 500, maintenance * 0.8)
-        protein_range = (1.6 * w, 2.2 * w)
+        target_calories = max(maintenance - 500, maintenance * 0.85)  # Más flexible
+        protein_min = 1.6 * w  # Reducido de 1.8
     elif goal == 'gain':
-        target = min(maintenance + 500, maintenance * 1.2)
-        protein_range = (1.4 * w, 2.0 * w)
+        target_calories = min(maintenance + 500, maintenance * 1.15)  # Más flexible
+        protein_min = 1.4 * w  # Reducido de 1.6
     else:
-        target = maintenance
-        protein_range = (1.2 * w, 1.8 * w)
+        target_calories = maintenance
+        protein_min = 1.2 * w  # Reducido de 1.4
 
-    # Macronutrientes
-    fat_lower = (0.20 * target) / 9
-    fat_upper = (0.35 * target) / 9
-    carbs_lower = (target - (protein_range[1] * 4) - (fat_upper * 9)) / 4
-    carbs_upper = (target - (protein_range[0] * 4) - (fat_lower * 9)) / 4
+    # Macronutrientes con rangos más flexibles
+    fat_max = (0.4 * target_calories) / 9  # Aumentado de 0.35
+    carbs_min = (target_calories - (protein_min * 4) - (fat_max * 9)) / 4  # Más flexible
 
-    # Límites superiores
-    sugar_limit = (target * 0.05) / 4
-    sodium_limit = 2300 if a <= 50 else 1500
+    # Límites superiores más flexibles
+    sugar_max = (target_calories * 0.1) / 4  # Aumentado de 5% a 10% y mayor conversión
+    sodium_max = 6000 if a <= 50 else 3000  # Aumentado
 
-    # Devolver lista en el orden requerido
+    # Rango de calorías más amplio
+    calorie_range = (round(target_calories * 0.85), round(target_calories * 1.15))  # 15% en lugar de 20%
+
     return [
-        (round(carbs_lower), round(carbs_upper)),         # carbohydrates (min, max)
-        round(sugar_limit, 1),                            # sugar
-        (round(target * 0.8), round(target * 1.2)),       # energy (min, max)
-        (round(protein_range[0], 1), round(protein_range[1], 1)),  # protein (min, max)
-        sodium_limit,                                     # salt (sodium)
-        (round(fat_lower, 1), round(fat_upper, 1))        # fat (min, max)
+        round(carbs_min),
+        round(sugar_max, 1),
+        calorie_range,
+        round(protein_min),
+        sodium_max,
+        round(fat_max)
     ]
-
-
-carbohydrates, sugar, energy, protein, salt, fat = calculate_nutritional_requirements(
-    weight=40,
-    height=150,
-    age=18,
-    gender='f',
-    activity_level=1,
-    goal='gain'
-)
