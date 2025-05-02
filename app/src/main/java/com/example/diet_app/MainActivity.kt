@@ -391,6 +391,79 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         }
 
+        composable(route = Screen.GenerateMealPlan.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            GenerateMealPlanScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    if (it) {
+                        navController.navigate(Screen.TypeOfDietSelection.route)
+                    } else {
+                        navController.navigate(Screen.Home.route)
+                    }
+                },
+                userViewModel = userViewModel
+            )
+        }
+
+        composable(route = Screen.TypeOfDietSelection.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            DietSelectionScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    navController.navigate(Screen.DietDurationSelection.route)
+                },
+            )
+        }
+
+        composable(route = Screen.TypeOfDietSelection.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            DietDurationScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    // llamada a la API para generar la dieta
+                    it // it tiene aquí la duración de la dieta
+                    navController.navigate(Screen.Home.route)
+                },
+            )
+        }
+
         composable(route = Screen.Settings.route
         ) {
             SettingsScreen(navController)
