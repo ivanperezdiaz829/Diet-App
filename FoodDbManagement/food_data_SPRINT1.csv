@@ -1,0 +1,206 @@
+name;calories;carbohydrates;protein;fats;sugar;sodium;price;type;vegan;vegetarian;celiac;halal
+Avena con frutas;300;50;10;5;20;10;2.5;1;1;1;1;1
+Tostadas con aguacate;250;30;6;10;3;150;3.0;1;1;1;0;1
+Yogur con granola y miel;200;35;8;4;15;50;2.0;1;0;1;1;1
+Batido de plátano y avena;180;40;5;2;20;20;1.5;1;1;1;1;1
+Huevos revueltos con espinacas;200;1;15;15;1;150;2.8;1;0;1;1;1
+Pan integral con mantequilla de maní;350;40;12;16;8;180;2.5;1;1;1;0;1
+Porridge de quinoa con frutas secas;280;50;7;8;25;10;3.2;1;1;1;1;1
+Tortitas de avena y plátano;320;60;6;9;30;25;2.0;1;1;1;0;1
+Batido verde;150;35;3;1;22;10;1.8;1;1;1;1;1
+Muffin de zanahoria y nueces;340;45;6;15;20;200;2.5;1;1;1;0;1
+Croissant con mermelada;400;45;5;22;30;300;3.5;1;0;1;0;1
+Sandwich de pavo y queso;320;30;20;12;4;450;4.0;1;0;1;1;1
+Cereal integral con leche de almendra;220;40;5;6;18;200;3.0;1;1;1;0;1
+Chía pudding con fruta fresca;190;25;4;9;15;5;2.0;1;1;1;1;1
+Galletas de avena y pasas;300;45;6;10;25;150;2.8;1;1;1;0;1
+Tortilla de vegetales;250;5;18;12;3;350;3.2;2;1;1;1;1
+Smoothie de frutos rojos;130;30;2;1;20;5;1.5;1;1;1;1;1
+Panqueques con sirope de arce;450;75;8;10;35;400;3.0;1;1;1;0;1
+Fruta fresca con yogurt griego;200;35;10;5;25;50;2.0;1;0;1;1;1
+Gofres con fresas y nata;380;60;6;18;30;150;3.5;1;0;1;0;1
+Pollo asado con vegetales;400;15;35;15;5;500;6.0;2;0;0;1;1
+Salmón a la parrilla;450;0;40;25;0;200;8.0;2;0;0;1;1
+Spaghetti a la boloñesa;600;80;25;20;10;600;7.0;2;0;0;0;1
+Enchiladas de pollo;550;45;30;25;6;800;7.5;2;0;0;0;1
+Risotto de hongos;500;70;15;18;7;400;6.5;2;0;0;0;1
+Paella de mariscos;600;65;35;15;2;800;9.0;2;0;0;1;1
+Lasagna de carne;700;60;30;35;10;900;8.5;2;0;0;0;1
+Tacos de pescado;450;35;25;20;3;500;6.0;2;0;0;1;1
+Chuletas de cerdo con puré de papa;650;50;30;25;2;900;7.5;2;0;0;0;1
+Pollo al curry con arroz;500;60;30;15;6;700;6.5;2;0;0;0;1
+Hamburguesa con queso;750;50;40;45;8;1200;9.0;2;0;0;1;1
+Fajitas de carne;600;45;35;20;5;700;8.0;2;0;0;1;1
+Pollo teriyaki con arroz;550;65;30;12;15;800;6.5;2;0;0;0;1
+Guiso de lentejas con chorizo;500;50;25;20;5;1000;5.0;2;0;0;1;1
+Pollo tikka masala;600;50;35;25;8;800;7.0;2;0;0;1;1
+Cazuela de mariscos;700;40;50;25;3;900;8.5;2;0;0;1;1
+Falafel con ensalada;450;40;15;25;5;500;5.5;2;1;1;1;1
+Camarones al ajillo;400;5;35;25;1;600;8.0;2;0;0;1;1
+Estofado de res con papas;650;30;45;25;4;800;9.0;2;0;0;0;1
+Ensalada César con pollo;500;20;40;30;2;700;7.0;2;0;0;1;1
+Pollo a la parrilla con quinoa;450;35;35;12;3;600;6.0;2;0;0;1;1
+Tortilla española;500;30;20;30;6;700;5.0;2;0;0;1;1
+Pollo a la mostaza con papas;550;45;35;20;4;600;6.5;2;0;0;0;1
+Pechuga de pavo al horno;400;5;40;15;1;300;7.5;2;0;0;1;1
+Moussaka;600;50;25;30;5;800;8.0;2;0;1;1;1
+Ensalada mixta;120;10;3;7;5;150;3.0;3;1;1;1;1
+Patatas bravas;250;30;5;12;1;400;2.5;3;1;1;1;1
+Brócoli al vapor;50;10;4;0;2;20;1.5;3;1;1;1;1
+Guacamole con nachos;350;25;6;25;2;500;4.0;3;1;1;0;1
+Hummus con zanahorias;200;20;6;10;1;150;2.5;3;1;1;1;1
+Macarrones con queso;450;60;15;20;5;600;3.0;3;0;1;0;1
+Ensalada de col;150;15;2;10;5;300;1.8;3;1;1;1;1
+Arroz pilaf;200;40;4;3;1;350;2.0;3;1;1;1;1
+Garbanzos al curry;250;40;8;6;2;450;2.8;3;1;1;1;1
+Tostadas de ajo;300;35;7;15;1;400;2.2;3;1;1;0;1
+Espárragos a la parrilla;100;10;5;5;2;150;3.0;3;1;1;1;1
+Judías verdes salteadas;80;15;4;2;1;200;2.0;3;1;1;1;1
+Puré de patatas;200;30;4;10;2;300;2.5;3;1;1;1;1
+Coles de Bruselas asadas;150;20;5;7;3;250;3.0;3;1;1;1;1
+Cuscús con vegetales;180;35;6;3;2;200;2.5;3;1;1;0;1
+Patatas al horno;160;35;4;2;1;300;2.0;3;1;1;1;1
+Falafel;300;40;10;15;1;350;3.5;3;1;1;1;1
+Ensalada de quinoa;250;45;8;6;2;300;3.0;3;1;1;1;1
+Batatas fritas;300;50;4;12;5;400;3.5;3;1;1;1;1
+Champiñones salteados;100;10;4;5;1;200;2.5;3;1;1;1;1
+Tabbouleh;150;25;5;3;1;200;2.0;3;1;1;1;1
+Col rizada al horno;80;15;3;2;1;150;3.0;3;1;1;1;1
+Lentejas guisadas;200;30;10;5;1;250;2.8;3;1;1;1;1
+Ensalada de espinacas con fresas;150;20;4;7;5;100;2.0;3;1;1;1;1
+Tomates asados;90;15;2;4;3;150;2.5;3;1;1;1;1
+Jugo de naranja;120;30;2;0;25;5;1.2;4;1;1;1;1
+Té verde sin azúcar;0;0;0;0;0;0;0.5;4;1;1;1;1
+Limonada;150;40;0;0;30;10;2.0;4;1;1;1;1
+Batido de fresa;200;45;5;2;35;20;3.0;4;1;1;1;1
+Café con leche;120;12;6;4;10;40;2.0;4;0;1;1;1
+Smoothie de mango;180;40;2;1;30;5;2.5;4;1;1;1;1
+Agua de coco;60;15;1;0;12;15;2.0;4;1;1;1;1
+Jugo de manzana;100;25;0;0;22;5;1.5;4;1;1;1;1
+Leche de almendra;30;1;1;2;0;150;1.8;4;1;1;1;1
+Batido de proteínas;250;20;30;5;10;100;4.0;4;0;1;1;1
+Agua con gas;0;0;0;0;0;0;0.5;4;1;1;1;1
+Té helado;80;20;0;0;18;15;1.5;4;1;1;1;1
+Chocolate caliente;250;40;5;8;30;200;3.0;4;0;1;1;1
+Jugo de uva;150;35;1;0;32;10;2.0;4;1;1;1;1
+Smoothie verde;130;30;3;1;25;20;2.5;4;1;1;1;1
+Refresco de cola;150;40;0;0;40;35;1.2;4;1;1;1;1
+Lassi de mango;180;35;5;3;25;150;3.0;4;0;1;1;1
+Té de hierbas;0;0;0;0;0;0;0.8;4;1;1;1;1
+Batido de plátano y avena;180;40;5;2;20;20;1.5;4;1;1;1;1
+Jugo de arándano;120;30;0;0;28;10;1.5;4;1;1;1;1
+Tarta de manzana;400;60;5;20;30;20;3.5;5;0;1;0;1
+Helado de vainilla;250;30;4;15;25;80;2.0;5;0;1;1;1
+Brownie de chocolate;450;50;5;25;35;200;3.0;5;0;1;0;1
+Tiramisu;500;60;7;25;40;150;4.0;5;0;1;0;0
+Mousse de chocolate;350;40;6;18;30;100;3.0;5;0;1;1;1
+Cheesecake;400;45;7;22;35;250;4.5;5;0;1;0;1
+Panna cotta;300;25;5;20;20;50;2.5;5;0;1;1;1
+Profiteroles;350;40;6;20;30;200;3.5;5;0;1;0;1
+Tarta de queso con frutas;450;55;8;25;35;150;4.0;5;0;1;0;1
+Gelatina con frutas;150;30;2;0;25;5;1.0;5;1;1;1;1
+Galletas de chocolate;300;45;4;15;25;150;2.0;5;0;1;0;1
+Flan de caramelo;250;35;6;10;20;100;2.5;5;0;1;1;1
+Natillas;200;25;6;8;15;50;1.8;5;0;1;1;1
+Cremoso de limón;180;30;4;7;20;30;2.0;5;0;1;1;1
+Tarta de zanahoria;400;50;6;20;25;200;3.5;5;0;1;0;1
+Macarons;150;20;3;6;18;100;2.5;5;0;1;0;1
+Arroz con leche;250;40;6;8;20;150;2.0;5;0;1;1;1
+Pastel de chocolate;450;55;7;22;35;250;4.0;5;0;1;0;1
+Muffin de arándanos;350;50;5;15;30;200;3.0;5;0;1;0;1
+Churros con chocolate;400;45;4;20;35;300;4.5;5;0;1;0;1
+Bowl de tofu con arroz integral;400;50;18;15;6;250;5.5;2;1;1;1;1
+Ensalada de garbanzos y aguacate;350;35;12;20;4;200;4.0;3;1;1;1;1
+Estofado de lentejas y verduras;300;40;15;8;5;180;3.5;2;1;1;1;1
+Wrap de hummus con vegetales sin gluten;320;45;10;12;6;220;4.5;2;1;1;1;1
+Curry de coco con garbanzos y arroz;450;55;12;18;8;300;5.0;2;1;1;1;1
+Tacos veganos de portobello y pimientos;380;40;10;14;6;240;4.5;2;1;1;1;1
+Sopa de quinoa y kale;250;30;10;5;4;150;3.5;2;1;1;1;1
+Wok de vegetales con tofu y tamari;400;35;20;12;5;200;5.5;2;1;1;1;1
+Albóndigas vegetales con salsa de tomate;370;30;15;10;6;180;4.0;2;1;1;1;1
+Berenjenas rellenas de quinoa y verduras;360;40;12;14;5;160;4.2;2;1;1;1;1
+Pudding de chía con leche de coco;250;30;6;12;10;50;3.0;1;1;1;1;1
+Tostadas sin gluten con aguacate y tomate;280;35;7;14;4;180;3.2;1;1;1;1;1
+Granola casera sin gluten con frutas;300;40;8;10;15;100;2.8;1;1;1;1;1
+Batido de espinaca, manzana y chía;180;30;5;4;12;30;2.0;1;1;1;1;1
+Galletas de avena sin gluten con banana;270;40;6;10;18;80;2.5;1;1;1;1;1
+Pan de plátano vegano sin gluten;290;45;5;9;20;120;2.8;1;1;1;1;1
+Smoothie bowl de frutos del bosque;220;35;4;6;18;40;3.0;1;1;1;1;1
+Barritas energéticas caseras de frutos secos;320;25;10;18;8;70;2.5;1;1;1;1;1
+Papilla de mijo con leche vegetal y manzana;260;40;5;7;12;50;2.5;1;1;1;1;1
+Yogur de soya con semillas y frutas frescas;230;30;6;8;10;60;2.0;1;1;1;1;1
+Crepes de harina de arroz con frutas;270;45;5;8;18;60;3.2;1;1;1;1;1
+Porridge de mijo con dátiles y canela;280;50;6;7;20;30;2.8;1;1;1;1;1
+Bowl de frutas con semillas y coco rallado;200;35;3;7;25;20;2.2;1;1;1;1;1
+Pan de quinoa con hummus;310;30;10;15;2;150;3.0;1;1;1;1;1
+Tostadas de batata con aguacate;240;30;4;12;5;140;2.5;1;1;1;1;1
+Ensalada de frutas tropicales;180;35;2;3;25;10;2.0;1;1;1;1;1
+Barra de cereal casera sin gluten;250;35;6;10;12;40;2.3;1;1;1;1;1
+Muffin de almendra y manzana sin gluten;320;40;6;14;18;120;3.0;1;1;1;1;1
+Arepas de maíz con aguacate;300;30;6;16;1;160;2.8;1;1;1;1;1
+Bizcocho vegano de avena y plátano;290;45;5;9;22;90;2.7;1;1;1;1;1
+Leche de avena casera;90;15;2;2;6;10;1.5;4;1;1;1;1
+Infusión de jengibre y limón;0;0;0;0;0;0;1.0;4;1;1;1;1
+Smoothie de piña y espinacas;160;35;3;1;20;15;2.2;4;1;1;1;1
+Jugo verde detox (pepino, manzana, menta);120;25;2;0;18;10;2.0;4;1;1;1;1
+Agua saborizada con frutas y menta;20;5;0;0;4;5;1.0;4;1;1;1;1
+Tazón de açaí con frutas del bosque;280;45;5;9;20;15;3.5;1;1;1;1;1
+Bowl de amaranto con frutas y semillas;310;50;8;10;18;30;3.2;1;1;1;1;1
+Avena sin gluten con manzana y canela;270;45;7;6;15;20;2.8;1;1;1;1;1
+Tostadas de arroz con aguacate y tomate;240;30;5;12;3;150;2.5;1;1;1;1;1
+Crepes de harina de garbanzo con frutas;320;40;10;14;18;80;3.0;1;1;1;1;1
+Smoothie bowl de mango y coco;260;50;4;8;25;25;3.2;1;1;1;1;1
+Parfait de yogur de coco con semillas de chía;290;35;6;15;20;40;3.0;1;1;1;1;1
+Tortillas de maíz con frijoles y aguacate;350;45;12;14;3;200;3.5;1;1;1;1;1
+Pan de plátano y nueces sin gluten;330;50;6;15;25;80;3.0;1;1;1;1;1
+Quinoa dulce con leche de almendra y frutas;290;45;8;7;15;40;3.2;1;1;1;1;1
+Panqueques de harina de coco con frutas;310;40;6;16;20;60;3.5;1;1;1;1;1
+Budín de semillas con frutas frescas;250;30;8;12;15;20;2.8;1;1;1;1;1
+Ensalada de quinoa con granada y hierbas;180;30;6;7;5;120;3.0;3;1;1;1;1
+Patatas dulces asadas con romero;160;35;3;3;6;150;2.5;3;1;1;1;1
+Coliflor asada con especias;120;15;5;6;3;180;2.8;3;1;1;1;1
+Ensalada de frijoles negros y maíz;200;35;9;4;5;200;2.5;3;1;1;1;1
+Zanahorias glaseadas con naranja;140;25;2;5;15;100;2.0;3;1;1;1;1
+Polenta cremosa con hierbas;180;30;4;6;1;120;2.5;3;1;1;1;1
+Berenjena a la parrilla con tahini;150;15;3;10;4;150;3.0;3;1;1;1;1
+Champiñones al ajillo con perejil;110;10;4;7;2;160;3.0;3;1;1;1;1
+Ensalada de pepino y tomate con sumac;100;15;2;5;4;120;2.2;3;1;1;1;1
+Arroz basmati con azafrán y pistachos;220;45;5;6;2;100;2.8;3;1;1;1;1
+Calabacín relleno de quinoa y hierbas;160;20;6;8;3;150;3.0;3;1;1;1;1
+Tabulé de coliflor con hierbas frescas;150;20;5;7;4;130;2.5;3;1;1;1;1
+Curry de garbanzos y espinacas;380;45;14;16;5;400;6.0;2;1;1;1;1
+Risotto de hongos con arroz integral;410;60;10;15;3;350;6.5;2;1;1;1;1
+Chili sin carne con frijoles y quinoa;380;55;15;10;8;500;5.5;2;1;1;1;1
+Buddha bowl de verduras asadas y tofu;420;50;18;20;6;300;6.0;2;1;1;1;1
+Lasaña vegetal con láminas de calabacín;350;30;15;18;7;450;7.0;2;1;1;1;1
+Pad thai de vegetales con fideos de arroz;400;65;12;10;10;600;6.5;2;1;1;1;1
+Paella de verduras y azafrán;380;60;10;12;5;450;7.0;2;1;1;1;1
+Guiso de lentejas rojas con verduras;350;50;16;8;6;350;5.0;2;1;1;1;1
+Ratatouille provenzal con polenta sin gluten;320;40;8;15;10;300;6.0;2;1;1;1;1
+Curry verde tailandés con verduras y leche de coco;420;35;10;25;8;500;6.5;2;1;1;1;1
+Tacos de jackfruit con tortillas de maíz;380;45;8;12;6;400;6.0;2;1;1;1;1
+Moussaka vegetal con berenjena y lentejas;400;45;14;18;8;450;6.5;2;1;1;1;1
+Kombucha de frambuesa;80;20;0;0;15;5;3.0;4;1;1;1;1
+Batido de maca y cacao;190;30;6;7;18;30;3.5;4;1;1;1;1
+Té chai con leche de almendra;90;15;2;4;10;40;2.5;4;1;1;1;1
+Agua de Jamaica con hierbabuena;60;15;0;0;12;5;1.8;4;1;1;1;1
+Smoothie de aguacate y espinacas;200;25;5;12;10;30;3.0;4;1;1;1;1
+Limonada de cúrcuma y jengibre;80;20;0;0;18;10;2.2;4;1;1;1;1
+Horchata de arroz casera;120;25;2;3;15;20;2.0;4;1;1;1;1
+Agua de coco con cardamomo;70;15;1;1;12;30;2.5;4;1;1;1;1
+Kéfir de agua con limón;50;12;1;0;10;5;2.0;4;1;1;1;1
+Té de hibisco frío;40;10;0;0;8;5;1.5;4;1;1;1;1
+Batido de plátano y matcha;170;35;3;4;20;15;3.0;4;1;1;1;1
+Agua infusionada con pepino y menta;20;5;0;0;3;5;1.5;4;1;1;1;1
+Brownie de batata y cacao sin gluten;300;45;5;15;25;80;3.5;5;1;1;1;1
+Mousse de aguacate y chocolate;250;25;4;18;20;40;3.0;5;1;1;1;1
+Galletas de almendra y canela sin gluten;280;30;6;16;12;50;2.8;5;1;1;1;1
+Tarta cruda de limón y anacardos;320;35;8;20;15;60;4.0;5;1;1;1;1
+Pudding de tapioca con leche de coco y mango;230;40;3;8;25;30;3.0;5;1;1;1;1
+Compota de manzana con canela y nueces;180;30;3;9;20;15;2.5;5;1;1;1;1
+Crumble de frutas del bosque sin gluten;250;40;4;12;22;40;3.5;5;1;1;1;1
+Trufas de dátiles y cacao;180;25;3;10;18;10;2.0;5;1;1;1;1
+Sorbete de fruta de la pasión;150;35;1;0;30;5;2.5;5;1;1;1;1
+Baklava con masa de arroz y pistachos;300;45;6;15;25;60;3.8;5;1;1;1;1
+Tartaleta de frutas con base de almendra;280;35;5;16;20;40;3.5;5;1;1;1;1
+Panacotta de coco con coulis de frambuesa;220;30;3;12;18;30;3.0;5;1;1;1;1
