@@ -80,6 +80,17 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
         setContent {
+            createUser(
+                email = "Janedoe@example",
+                password = "superSeguro.123",
+                physicalActivity = "stay healthy",
+                sex = "female",
+                birthday = "1995-06-15",
+                height = 1.68,
+                weight = 60.5,
+                context = LocalContext.current,
+                onResult = {}
+            )
             //DietApp(LocalContext.current, userViewModel, foodViewModel)
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
