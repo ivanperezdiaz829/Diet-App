@@ -14,17 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import com.example.diet_app.R
-import com.example.diet_app.screenActivities.Goal
 import com.example.diet_app.ui.theme.DarkGreen
 import com.example.diet_app.ui.theme.DarkOverlay
-import com.example.diet_app.ui.theme.GrayGreen
-import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.ui.theme.Typography
 import com.example.diet_app.viewModel.DietViewModel
 
