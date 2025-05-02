@@ -180,12 +180,11 @@ fun calculateMaintenanceCalories(
 fun createUser(
     email: String,
     password: String,
-    physicalActivity: Int,
+    physicalActivity: String,
     sex: String,
     birthday: String,
     height: Double,
     weight: Double,
-    targetWeight: Double,
     context: Context,
     onResult: (String) -> Unit
 ): String {
@@ -200,7 +199,6 @@ fun createUser(
         put("birthday", birthday) // formato: "YYYY-MM-DD"
         put("height", height)
         put("weight", weight)
-        put("target_weight", targetWeight)
     }
 
     Log.d("CreateUser", "Enviando datos: $json")
