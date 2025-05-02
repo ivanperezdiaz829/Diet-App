@@ -10,6 +10,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.diet_app.screenActivities.components.OptionGrid
 import com.example.diet_app.screenActivities.components.ToolBox
@@ -18,7 +19,7 @@ import com.example.diet_app.ui.theme.Typography
 import com.example.diet_app.viewModel.UserViewModel
 
 @Composable
-fun HomePageFrame(navController: NavHostController, userViewModel: UserViewModel) {
+fun HomePageFrame(navController: NavController, userViewModel: UserViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -39,9 +40,9 @@ fun HomePageFrame(navController: NavHostController, userViewModel: UserViewModel
                 textAlign = TextAlign.Center
             )
 
-            OptionGrid() // Llamamos a OptionGrid sin navegación por ahora
+            OptionGrid(navController) // Llamamos a OptionGrid sin navegación por ahora
         }
     }
-    ToolBox()
+    ToolBox(navController)
 }
 

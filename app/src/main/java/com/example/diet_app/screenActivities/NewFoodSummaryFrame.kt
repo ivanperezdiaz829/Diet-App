@@ -32,6 +32,7 @@ import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.R
+import com.example.diet_app.model.FoodType
 
 @Composable
 fun NewFoodSummaryScreen(

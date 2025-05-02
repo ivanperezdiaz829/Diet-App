@@ -1,7 +1,7 @@
 package com.example.diet_app.viewModel
 import androidx.lifecycle.ViewModel
 import com.example.diet_app.model.FoodModel
-import com.example.diet_app.model.UserModel
+import com.example.diet_app.model.FoodType
 
 class FoodViewModel : ViewModel() {
     private var food: FoodModel = FoodModel() // Inicialización por defecto
@@ -19,6 +19,7 @@ class FoodViewModel : ViewModel() {
         vegan: Boolean = food.vegan,
         celiac: Boolean = food.celiac,
         halal: Boolean = food.halal,
+        foodTypes: Set<FoodType> = food.foodTypes
     ) {
         food = FoodModel(
             name = name,
@@ -33,6 +34,7 @@ class FoodViewModel : ViewModel() {
             vegan = vegan,
             celiac = celiac,
             halal = halal,
+            foodTypes = foodTypes
         )
     }
 

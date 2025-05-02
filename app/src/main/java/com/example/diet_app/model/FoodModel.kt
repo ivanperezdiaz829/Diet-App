@@ -13,6 +13,7 @@ class FoodModel(
     var vegan: Boolean = false,
     var celiac: Boolean = false,
     var halal: Boolean = false,
+    var foodTypes: Set<FoodType> = emptySet(),
 ) {
 
 }

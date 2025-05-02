@@ -22,18 +22,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.diet_app.R
+import com.example.diet_app.model.Screen
+import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.SettingsOption
+import com.example.diet_app.screenActivities.components.ToolBox
 
 // Pantalla de configuración del usuario con botón de logout funcional
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(24.dp)
+            .padding(bottom = 90.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Spacer(modifier = Modifier.height(30.dp)) // Ajusta el valor según lo necesites
 
         Text(
@@ -66,6 +72,7 @@ fun SettingsScreen() {
 
         // Opción: Cambiar contraseña
         SettingsOption(text = "Change your password", R.drawable.security_icon) {
+            navController.navigate(Screen.Password.route)
             // Acción al tocar cambiar contraseña
         }
 
@@ -90,4 +97,5 @@ fun SettingsScreen() {
             Text("Log out", color = Color.White, fontSize = 16.sp)
         }
     }
+        ToolBox(navController)
 }

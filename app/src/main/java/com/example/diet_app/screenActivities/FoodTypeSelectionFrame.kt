@@ -1,6 +1,5 @@
 package com.example.diet_app.screenActivities
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,13 +10,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import androidx.navigation.NavHostController
 import com.example.diet_app.screenActivities.components.BackButton
-import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
 import com.example.diet_app.ui.theme.Typography
@@ -26,17 +23,13 @@ import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.R
-
-enum class FoodType {
-    Breakfast,
-    Lunch,
-    Dinner
-}
+import com.example.diet_app.model.FoodType
 
 @Composable
 fun FoodTypeSelectionScreen(
+    navController: NavHostController,
     onNavigateBack: () -> Unit,
-    onNext: (Set<FoodType>) -> Unit // Cambiado para aceptar múltiples selecciones
+    onNext: (Set<FoodType>) -> Unit // Cambiado para aceptar múltiples selecciones){}
 ) {
     var selectedFoodTypes by remember { mutableStateOf<Set<FoodType>>(setOf()) } // Usamos un Set para almacenar múltiples selecciones
 
@@ -96,27 +89,27 @@ private fun FoodOptions(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         FoodOption(
-            foodType = FoodType.Breakfast,
-            text = "Breakfast",
+            foodType = FoodType.BREAKFAST,
+            text = "BREAKFAST",
             imageId = R.drawable.sun_day_morning,
-            isSelected = selectedFoodTypes.contains(FoodType.Breakfast),
-            onClick = { onFoodTypeSelected(FoodType.Breakfast) }
+            isSelected = selectedFoodTypes.contains(FoodType.BREAKFAST),
+            onClick = { onFoodTypeSelected(FoodType.BREAKFAST) }
         )
 
         FoodOption(
-            foodType = FoodType.Lunch,
-            text = "Lunch",
+            foodType = FoodType.LUNCH,
+            text = "LUNCH",
             imageId = R.drawable.sun_day_midday,
-            isSelected = selectedFoodTypes.contains(FoodType.Lunch),
-            onClick = { onFoodTypeSelected(FoodType.Lunch) }
+            isSelected = selectedFoodTypes.contains(FoodType.LUNCH),
+            onClick = { onFoodTypeSelected(FoodType.LUNCH) }
         )
 
         FoodOption(
-            foodType = FoodType.Dinner,
-            text = "Dinner",
+            foodType = FoodType.DINNER,
+            text = "DINNER",
             imageId = R.drawable.sun_day_afternoon,
-            isSelected = selectedFoodTypes.contains(FoodType.Dinner),
-            onClick = { onFoodTypeSelected(FoodType.Dinner) }
+            isSelected = selectedFoodTypes.contains(FoodType.DINNER),
+            onClick = { onFoodTypeSelected(FoodType.DINNER) }
         )
     }
 }

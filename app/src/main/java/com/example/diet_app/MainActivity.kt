@@ -1,5 +1,6 @@
 package com.example.diet_app
 
+import MealPlanScreen
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -38,17 +39,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.google.firebase.firestore.FirebaseFirestore
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
-import java.io.IOException
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
+import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
 
@@ -67,6 +65,13 @@ class MainActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         dbManager = DatabaseManager(this)
         var userViewModel = UserViewModel()
+        var foodViewModel = FoodViewModel()
+        foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))
+        Log.d(foodViewModel.getFood().foodTypes.toString(), "foodTypes")
+
+        var dietViewModel = DietViewModel()
+
+        dietViewModel.updateDiet(name = "Dieta 1", duration = 2)
 
         // Prueba abriendo la base de datos
         try {
@@ -90,24 +95,12 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Welcome.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable("auth") {
         }
 
-        composable(route = Screen.Home.route,
-            enterTransition = {
-                slideInHorizontally(initialOffsetX = { it })
-            },
-            exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -it })
-            },
-            popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -it })
-            },
-            popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { it })
-            }
+        composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
 
         composable(route = Screen.Goal.route,
@@ -127,7 +120,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
             onSkip = { navController.navigate("welcome") },
             onNavigateBack = { navController.popBackStack() },
             onNext = {
-                userViewModel.updateUser(goal = it.toString())
+                userViewModel.updateUser(goal = it)
                 navController.navigate(Screen.Home.route)
                 printUserInfo(userViewModel)
             },
@@ -151,7 +144,7 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                 onNavigateBack = { navController.popBackStack() },
                 onSkip = { navController.navigate("welcome") },
                 onNext = {
-                    userViewModel.updateUser(sex = it.toString())
+                    userViewModel.updateUser(sex = it)
                     navController.navigate(Screen.Age.route)
                     Log.d("SexSelectionScreen", "Selected sex: $it")
                 }
@@ -260,6 +253,11 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
             )
         }
 
+        composable(route = Screen.Meals.route
+        ) {
+            MealPlanScreen(navController)
+        }
+
         composable(route = Screen.Welcome.route,
             exitTransition = {
                 slideOutHorizontally(targetOffsetX = { -it })
@@ -294,6 +292,72 @@ fun DietApp(dbManager: DatabaseManager, applicationContext: Context, userViewMod
                     navController.navigate(Screen.Sex.route)  // Navega a Height tras registro
                 }
             )
+        }
+
+        composable(route = Screen.Password.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            ChangePasswordScreen(navController)
+        }
+
+        composable(route = Screen.FoodList.route,
+        ) {
+            var foodViewModel = FoodViewModel()
+            foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))
+            FoodListViewScreen(navController, listOf(foodViewModel))
+        }
+
+        composable(route = Screen.AddFood.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            AddNewFoodScreen(navController, onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(route = Screen.NewFoodType.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            FoodTypeSelectionScreen(navController, onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    navController.navigate(Screen.Home.route)
+                })
+        }
+
+        composable(route = Screen.Settings.route
+        ) {
+            SettingsScreen(navController)
         }
 
     }
@@ -373,7 +437,7 @@ fun WelcomeScreen(navController: NavController, userViewModel: UserViewModel) {
 }
 
 @Composable
-fun DietForm(userViewModel: UserViewModel) {
+fun DietForm(userViewModel: UserViewModel, context: Context) {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxCarbohydrates by remember { mutableStateOf("") }
     var minSugar by remember { mutableStateOf("") }
@@ -421,7 +485,7 @@ fun DietForm(userViewModel: UserViewModel) {
             Log.d("DietForm", "Valores convertidos a Double: $numericValues")
 
             if (numericValues.size == 13) { // Asegurar que todos los valores sean numéricos
-                sendDataToServer(numericValues) { response ->
+                sendDataToServer(numericValues, context) { response ->
                     result = response
                 }
             } else {
@@ -543,9 +607,10 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
     )
 }
 
+/*
 fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.193.223.36:8000/calculate"
+    val url = "http://10.0.2.16:8000/calculate"
 
     val json = JSONObject()
     json.put("values", values)
@@ -599,6 +664,7 @@ fun sendDataToServer(values: List<Double>, onResult: (String) -> Unit) {
         }
     })
 }
+*/
 
 fun checkDatabaseConnection() {
     val db = FirebaseFirestore.getInstance()

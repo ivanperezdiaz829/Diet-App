@@ -5,12 +5,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.diet_app.screenActivities.components.BackButtonLeft
 import com.example.ui.components.*
 
 @Composable
-fun ChangePasswordScreen(username: String = "gloton") {
+fun ChangePasswordScreen(navController: NavController, username: String = "gloton") {
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+
+    BackButtonLeft(onNavigateBack = { navController.popBackStack() })
 
     Box(
         modifier = Modifier
@@ -18,11 +22,15 @@ fun ChangePasswordScreen(username: String = "gloton") {
             .padding(48.dp),
         contentAlignment = Alignment.Center
     ) {
+
+
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
+
+
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
