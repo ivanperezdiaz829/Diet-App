@@ -1,13 +1,8 @@
 package com.example.diet_app.screenActivities
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,29 +10,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
 import com.example.diet_app.screenActivities.components.BackButton
-import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
-import com.example.diet_app.ui.theme.Typography
-import com.example.diet_app.ui.theme.DarkGreen
-import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen
-import com.example.diet_app.ui.theme.LightGray
-import com.example.diet_app.R
 import com.example.diet_app.model.FoodType
+import com.example.diet_app.viewModel.FoodViewModel
 
 @Composable
 fun NewFoodSummaryScreen(
     onNavigateBack: () -> Unit,
-    onNext: (Set<FoodType>) -> Unit // Cambiado para aceptar múltiples selecciones
+    onNext: (foodViewModel: FoodViewModel) -> Unit, // Cambiado para aceptar múltiples selecciones
+    foodViewModel: FoodViewModel
 ) {
     var selectedName by remember { mutableStateOf("") } // Usamos un Set para almacenar múltiples selecciones
 
@@ -68,7 +55,7 @@ fun NewFoodSummaryScreen(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            FoodSummaryView()
+            FoodSummaryView(foodViewModel)
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -83,34 +70,29 @@ fun NewFoodSummaryScreen(
 
             NextButton(
                 enabled = selectedName.isNotEmpty(), // Habilitar si hay al menos una selección
-                onClick = { }
+                onClick = {
+                    foodViewModel.updateFood(name = selectedName)
+                    onNext(foodViewModel)
+                }
             )
         }
     }
 }
 
 @Composable
-fun FoodSummaryView(){
+fun FoodSummaryView(foodViewModel: FoodViewModel){
 
-    Text(
-        text = "Food Variants",
-        fontSize = 24.sp,
-        fontWeight = FontWeight.SemiBold,
-        color = DarkGray,
-        modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
-    )
-
-    FoodVariants("Vegetarian", "Vegan", "Celiac", "Halal")
+    FoodVariants(foodViewModel)
 
     Spacer(modifier = Modifier.height(30.dp))
 
     val nutritionalData = mapOf(
-        "Proteins" to 12.7f,
-        "Fats" to 6.3f,
-        "Sugar" to 20.3f,
-        "Salt" to 15.7f,
-        "Carbohydrates" to 26.7f,
-        "Calories" to 229.8f
+        "Proteins" to foodViewModel.getFood().protein,
+        "Fats" to foodViewModel.getFood().fats,
+        "Sugar" to foodViewModel.getFood().sugar,
+        "Salt" to foodViewModel.getFood().salt,
+        "Carbohydrates" to foodViewModel.getFood().carbohydrates,
+        "Calories" to foodViewModel.getFood().calories,
     )
 
     NutritionalInfoGrid(data = nutritionalData)

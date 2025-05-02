@@ -335,10 +335,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     carbohydrates = it.getFood().carbohydrates,
                     calories = it.getFood().calories,
                     price = it.getFood().price,
-                    vegetarian = it.getFood().vegetarian,
-                    vegan = it.getFood().vegan,
-                    celiac = it.getFood().celiac,
-                    halal = it.getFood().halal
+                    foodVariants = it.getFood().foodVariants
                 )
                 printFoodInfo(newFood)
                 navController.navigate(Screen.NewFoodType.route)
@@ -364,8 +361,33 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNext = {
                     newFood.updateFood(foodTypes = it)
                     printFoodInfo(newFood)
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.NewFoodSummary.route)
                 }
+            )
+        }
+
+        composable(route = Screen.NewFoodSummary.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            NewFoodSummaryScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    newFood.updateFood(name = it.getFood().name)
+                    printFoodInfo(newFood)
+                    navController.navigate(Screen.Home.route)
+                },
+                foodViewModel = newFood
             )
         }
 
@@ -750,10 +772,7 @@ fun printFoodInfo(foodViewModel: FoodViewModel) {
         "Carbohydrates: ${foodViewModel.getFood().carbohydrates}, \n" +
         "Calories: ${foodViewModel.getFood().calories}, \n" +
         "Price: ${foodViewModel.getFood().price}, \n" +
-        "Vegetarian: ${foodViewModel.getFood().vegetarian}, \n" +
-        "Vegan: ${foodViewModel.getFood().vegan}, \n" +
-        "Celiac: ${foodViewModel.getFood().celiac}, \n" +
-        "Halal: ${foodViewModel.getFood().halal}, \n" +
+        "Food Variants: ${foodViewModel.getFood().foodVariants}, \n" +
         "Food Types: ${foodViewModel.getFood().foodTypes}"
     )
 }
