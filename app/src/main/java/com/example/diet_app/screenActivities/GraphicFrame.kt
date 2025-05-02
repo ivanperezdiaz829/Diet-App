@@ -1,5 +1,6 @@
 package com.example.diet_app.screenActivities
 
+import android.widget.ImageView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,8 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import com.example.diet_app.loadBarplotImage
 import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.screenActivities.components.ListIconScreen
 import com.example.diet_app.screenActivities.components.NutritionInfoComponent
@@ -64,19 +68,15 @@ fun CustomScreen(
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            Box(
+
+            BarplotImage(
+                dietJson = """{"data": ${dataFromApi.map { mapOf("name" to it.first, "value" to it.second) }}}""",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color.Gray),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Gráfica generada con datos externos",
-                    color = Color.White
-                )
-            }
+                    .background(Color.LightGray)
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -95,6 +95,20 @@ fun CustomScreen(
 }
 
 
+@Composable
+fun BarplotImage(dietJson: String, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
+    AndroidView(
+        modifier = modifier,
+        factory = { ctx ->
+            ImageView(ctx).apply {
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                loadBarplotImage(ctx, dietJson)
+            }
+        }
+    )
+}
 
 @Preview(showBackground = true)
 @Composable
