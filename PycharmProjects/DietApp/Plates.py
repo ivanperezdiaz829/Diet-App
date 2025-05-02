@@ -46,15 +46,3 @@ class Plate:
             "vegetarian": self.vegetarian,
             "celiac": self.celiac
         }
-
-    @property
-    def is_vegan(self):
-        return self.vegan
-
-    @property
-    def is_vegetarian(self):
-        return self.vegetarian
-
-    @property
-    def is_celiac(self):
-        return self.celiac
