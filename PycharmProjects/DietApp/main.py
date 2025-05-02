@@ -46,7 +46,7 @@ def calculate_diet():
     price = values[7]
     person_type = 1
     person_preferences = 1
-    total_days = values[8]
+    total_days = 3
 
     try:
         dieta = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
