@@ -46,6 +46,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
+import com.example.diet_app.screenActivities.components.navigateSingleInStack
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
@@ -215,7 +216,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onSkip = { navController.navigate("welcome") },
                 onNext = {
                     userViewModel.updateUser(currentWeight = it)
-                    navController.navigate(Screen.TargetWeight.route)
+                    navController.navigate(Screen.Goal.route)
                     printUserInfo(userViewModel)
                 } // O la siguiente pantalla que corresponda
             )
@@ -380,7 +381,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNext = {
                     newFood.updateFood(name = it.getFood().name)
                     printFoodInfo(newFood)
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.FoodDetail.route)
+                    //llamar a la API para guardar comida
                 },
                 foodViewModel = newFood
             )
@@ -406,7 +408,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     if (it) {
                         navController.navigate(Screen.TypeOfDietSelection.route)
                     } else {
-                        navController.navigate(Screen.Home.route)
+                        navController.navigate(Screen.Sex.route)
                     }
                 },
                 userViewModel = userViewModel
@@ -456,6 +458,27 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     it // it tiene aquí la duración de la dieta
                     navController.navigate(Screen.Home.route)
                 },
+            )
+        }
+
+        composable(route = Screen.FoodDetail.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            FoodDetailScreen(
+                foodViewModel = newFood,
+                onNavigateBack = { navController.navigateSingleInStack(Screen.Home.route) },
+
             )
         }
 

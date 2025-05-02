@@ -6,7 +6,7 @@ from configuration.config import INSERT_SCRIPTS
 import sqlite3
 
 
-def load_plates(conn, dataset_path, separator=','):
+def load_plates(conn, dataset_path, separator=';'):
     cursor = conn.cursor()
     try:
         with (open(dataset_path, 'r', encoding="utf-8") as file):

@@ -36,7 +36,10 @@ import com.example.diet_app.viewModel.FoodViewModel
 
 // Pantalla de configuración del usuario con botón de logout funcional
 @Composable
-fun FoodDetailScreen(foodViewModel: FoodViewModel, onNavigateBack: () -> Unit) {
+fun FoodDetailScreen(
+    foodViewModel: FoodViewModel,
+    onNavigateBack: () -> Unit)
+{
 
     Row(
         modifier = Modifier.fillMaxWidth().statusBarsPadding(),
@@ -73,7 +76,7 @@ fun FoodDetailScreen(foodViewModel: FoodViewModel, onNavigateBack: () -> Unit) {
         Spacer(modifier = Modifier.height(30.dp)) // Ajusta el valor según lo necesites
 
         Text(
-            text = "Croissant with poached egg",
+            text = foodViewModel.getFood().name,
             fontSize = 30.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)

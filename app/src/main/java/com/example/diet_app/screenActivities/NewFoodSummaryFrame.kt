@@ -9,15 +9,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
 import com.example.diet_app.ui.theme.GrayGreen
-import com.example.diet_app.model.FoodType
 import com.example.diet_app.viewModel.FoodViewModel
 
 @Composable

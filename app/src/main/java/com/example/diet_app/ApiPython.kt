@@ -188,7 +188,7 @@ fun createUser(
     targetWeight: Double,
     context: Context,
     onResult: (String) -> Unit
-) {
+): String {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/create_user"
 
@@ -225,10 +225,11 @@ fun createUser(
                     val jsonResponse = JSONObject(responseBody)
                     if (response.isSuccessful) {
                         val message = jsonResponse.optString("message", "✅ Usuario creado con éxito")
-                        onResult(message)
+                        return onResult(message)
                     } else {
                         val error = jsonResponse.optString("error", "❗ Error desconocido")
                         onResult("Error: $error")
+                        return onResult("Error: $error")
                     }
                 } catch (e: Exception) {
                     Log.e("CreateUser", "Error procesando JSON: ${e.message}")
@@ -237,6 +238,7 @@ fun createUser(
             }
         }
     })
+    return ""
 }
 
 fun getUserByEmail(
