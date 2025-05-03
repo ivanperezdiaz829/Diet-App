@@ -400,36 +400,6 @@ fun updateUserByEmail(
     })
 }
 
-fun ImageView.loadBarplotImage(context: Context, dietJson: String) {
-    val client = OkHttpClient()
-    val url = "http://10.0.2.2:8000/generate_barplot"
-
-    val requestBody = dietJson.toRequestBody("application/json; charset=utf-8".toMediaType())
-
-    val request = Request.Builder()
-        .url(url)
-        .post(requestBody)
-        .build()
-
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            Log.e("Graph", "Error al obtener gráfica: ${e.message}")
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            if (response.isSuccessful) {
-                val inputStream = response.body?.byteStream()
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                (context as Activity).runOnUiThread {
-                    setImageBitmap(bitmap)
-                }
-            } else {
-                Log.e("Graph", "Error en la respuesta del servidor")
-            }
-        }
-    })
-}
-
 fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Map<String, Float>) -> Unit) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/barplot"
