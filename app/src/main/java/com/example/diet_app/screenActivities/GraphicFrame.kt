@@ -43,6 +43,62 @@ import com.example.diet_app.fetchNutritionalData
 import com.example.diet_app.screenActivities.components.ToolBox
 
 @Composable
+fun GraphicFrame(
+    navController: NavController,
+    dietId: String
+) {
+    val context = LocalContext.current
+    val scrollState = rememberScrollState()
+    val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
+
+    LaunchedEffect(dietId) {
+        fetchNutritionalData(context, dietId) { data ->
+            nutritionData.value = data
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(scrollState)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            BackButton(onNavigateBack = { navController.popBackStack() })
+            ListIconScreen()
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Gráfica de valores nutricionales",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        nutritionData.value?.let { data ->
+            NutritionBarChart(data = data)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            data.forEach { (title, value) ->
+                NutritionInfoComponent(
+                    title = title,
+                    content = "Valor: $value",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
+            }
+        } ?: Text("Cargando datos...", modifier = Modifier.padding(16.dp))
+    }
+}
+
+@Composable
 fun NutritionBarChart(data: Map<String, Float>) {
     SimpleBarChart(data = data)
 }
@@ -100,60 +156,3 @@ fun SimpleBarChart(data: Map<String, Float>, modifier: Modifier = Modifier) {
         }
     }
 }
-
-@Composable
-fun GraphicFrame(
-    dietJson: String,
-    onNavigateBack: () -> Unit
-) {
-    val context = LocalContext.current
-    val scrollState = rememberScrollState()
-    val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
-
-    LaunchedEffect(dietJson) {
-        fetchNutritionalData(context, dietJson) { data ->
-            nutritionData.value = data
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(scrollState)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BackButton(onNavigateBack = onNavigateBack)
-            ListIconScreen()
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Gráfica de valores nutricionales",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        nutritionData.value?.let { data ->
-            NutritionBarChart(data = data)
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            data.forEach { (title, value) ->
-                NutritionInfoComponent(
-                    title = title,
-                    content = "Valor: $value",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                )
-            }
-        } ?: Text("Cargando datos...", modifier = Modifier.padding(16.dp))
-    }
-}
-

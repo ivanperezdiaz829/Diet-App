@@ -35,6 +35,10 @@ sealed class Screen(val route: String) {
         fun createRoute(dietId: String) = "dietInterface/$dietId"
     }
 
+    object GraphicFrame : Screen("graphicFrame/{dietId}") {
+        fun createRoute(dietId: String) = "graphicFrame/$dietId"
+    }
+
     object SelectTypeOfDietGeneration: Screen("selectTypeOfDietGeneration")
     object GenerateMealPlanWithInputs: Screen("generateMealPlanWithInputs")
     object Calendar: Screen("calendar")

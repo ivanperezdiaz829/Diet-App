@@ -600,6 +600,22 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         }
 
+        composable(
+            route = Screen.GraphicFrame.route,
+            arguments = listOf(
+                navArgument("dietId") {
+                    type = NavType.StringType
+                    nullable = false
+                }
+            )
+        ) { entry ->
+            val dietId = entry.arguments?.getString("dietId") ?: ""
+            GraphicFrame(
+                navController = navController,
+                dietId = dietId
+            )
+        }
+
         composable(route = Screen.Home.route
         ) {
             HomePageFrame(navController, userViewModel)

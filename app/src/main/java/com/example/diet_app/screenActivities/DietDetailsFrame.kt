@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.screenActivities.components.FitnessIconButton
 import com.example.diet_app.screenActivities.components.FoodDetailDialog
@@ -87,15 +88,16 @@ fun DietInterface(
             BackButton(onNavigateBack = { navController.popBackStack() })
 
             Button(
-                onClick = { /* Acción */ },
+                onClick = {
+                    navController.navigate(Screen.GraphicFrame.createRoute(dietViewModel.getDiet().dietId))
+                },
                 modifier = Modifier
-                    .width(200.dp)  // Ancho fijo para mejor centrado
+                    .width(200.dp)
                     .height(50.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Ver Gráfico")
             }
-
 
         }
 

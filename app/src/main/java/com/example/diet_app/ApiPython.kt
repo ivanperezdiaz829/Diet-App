@@ -412,7 +412,6 @@ fun updateUserByEmail(
 fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Map<String, Float>) -> Unit) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/barplot"
-
     val requestBody = dietJson.toRequestBody("application/json; charset=utf-8".toMediaType())
 
     val request = Request.Builder()
