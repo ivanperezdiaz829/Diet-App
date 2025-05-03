@@ -30,15 +30,14 @@ def nutritional_values_total(diet_total):
 
     calories, carbohydrates, protein, fat, sugar, salt, price = 0, 0, 0, 0, 0, 0, 0
     for food_group in diet_total:
-        for food in food_group:
-            for plate in food:
-                calories += plate.calories
-                carbohydrates += plate.carbohydrates
-                protein += plate.protein
-                fat += plate.fat
-                sugar += plate.sugar
-                salt += plate.salt
-                price += plate.price
+        for plate in food_group:
+            calories += plate.calories
+            carbohydrates += plate.carbohydrates
+            protein += plate.protein
+            fat += plate.fat
+            sugar += plate.sugar
+            salt += plate.salt
+            price += plate.price
 
     return calories, carbohydrates, protein, fat, sugar, salt/1000, price
 

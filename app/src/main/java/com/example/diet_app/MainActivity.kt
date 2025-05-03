@@ -46,8 +46,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
-import com.example.diet_app.screenActivities.components.DietViewScreen
 import com.example.diet_app.screenActivities.components.navigateSingleInStack
+import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
@@ -68,9 +68,17 @@ class MainActivity : ComponentActivity() {
         dbManager = DatabaseManager(this)
         var userViewModel = UserViewModel()
         var foodViewModel = FoodViewModel()
+        var foodViewModel2 = FoodViewModel()
+        var foodViewModel3 = FoodViewModel()
         foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))
+        foodViewModel2.updateFood(name = "Rice", foodTypes = setOf(FoodType.LUNCH, FoodType.LUNCH))
+        foodViewModel3.updateFood(name = "Sandwich", foodTypes = setOf(FoodType.LUNCH, FoodType.DINNER))
         var dietViewModel = DietViewModel()
-        dietViewModel.updateDiet(name = "Dieta 1", duration = 2)
+        var dietDayViewModel = DietDayViewModel()
+        var dietDayViewModel2 = DietDayViewModel()
+        dietDayViewModel.updateDietDay(foods = listOf(foodViewModel, foodViewModel2, foodViewModel3))
+        dietDayViewModel2.updateDietDay(foods = listOf(foodViewModel3, foodViewModel2, foodViewModel))
+        dietViewModel.updateDiet(name = "Dieta 1", duration = 2, diets = listOf(dietDayViewModel, dietDayViewModel2))
 
         // Prueba abriendo la base de datos
         try {
@@ -80,6 +88,88 @@ class MainActivity : ComponentActivity() {
         } catch (e: Exception) {
             Log.e("MainActivity", "Error al abrir la base de datos: ${e.message}")
         }
+        val dietJson = """
+{
+  "dieta": [
+    [
+      {
+        "name": "Manzana",
+        "calories": 52,
+        "carbohydrates": 14,
+        "protein": 0.3,
+        "fat": 0.2,
+        "sugar": 10,
+        "salt": 0,
+        "price": 0.5
+      },
+      {
+        "name": "Yogur",
+        "calories": 59,
+        "carbohydrates": 3.6,
+        "protein": 10,
+        "fat": 1.5,
+        "sugar": 4.7,
+        "salt": 0.1,
+        "price": 0.8
+      }
+    ],
+    [
+      {
+        "name": "Pasta",
+        "calories": 131,
+        "carbohydrates": 25,
+        "protein": 5,
+        "fat": 1.1,
+        "sugar": 1,
+        "salt": 0.3,
+        "price": 1.2
+      },
+      {
+        "name": "Ensalada",
+        "calories": 33,
+        "carbohydrates": 6,
+        "protein": 1.5,
+        "fat": 0.5,
+        "sugar": 2,
+        "salt": 0.2,
+        "price": 1.0
+      },
+      {
+        "name": "Agua",
+        "calories": 0,
+        "carbohydrates": 0,
+        "protein": 0,
+        "fat": 0,
+        "sugar": 0,
+        "salt": 0,
+        "price": 0
+      }
+    ],
+    [
+      {
+        "name": "Sopa",
+        "calories": 80,
+        "carbohydrates": 10,
+        "protein": 3,
+        "fat": 2,
+        "sugar": 1,
+        "salt": 0.4,
+        "price": 1.0
+      },
+      {
+        "name": "Pan integral",
+        "calories": 69,
+        "carbohydrates": 12,
+        "protein": 2.5,
+        "fat": 1.2,
+        "sugar": 1,
+        "salt": 0.3,
+        "price": 0.6
+      }
+    ]
+  ]
+}
+""".trimIndent()
         setContent {
             /*
             createUser(
@@ -93,9 +183,15 @@ class MainActivity : ComponentActivity() {
                 context = LocalContext.current,
                 onResult = {}
             )*/
-            //DietForm(userViewModel, LocalContext.current)
-            DietApp(LocalContext.current, userViewModel, foodViewModel)
-            //DietInterface()
+            //DietApp(LocalContext.current, userViewModel, foodViewModel)
+            /*
+            DietInterface(
+                navController = rememberNavController(),
+                dietViewModel = dietViewModel
+            )
+            */
+            //CalendarScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //GraphicFrame(dietJson, onNavigateBack = {finish()})
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
@@ -413,7 +509,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
-            GenerateMealPlanScreen(
+            GenerateMealPlanWithDataScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     if (it) {

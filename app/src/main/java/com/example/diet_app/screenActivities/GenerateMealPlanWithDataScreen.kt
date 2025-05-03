@@ -16,13 +16,13 @@ import com.example.diet_app.screenActivities.components.BackButtonLeft
 import com.example.diet_app.viewModel.UserViewModel
 
 @Composable
-fun GenerateMealPlanScreen(
+fun GenerateMealPlanWithDataScreen(
     userViewModel: UserViewModel,
     onNavigateBack: () -> Unit,
     onNext: (Boolean) -> Unit
 ) {
 
-    BackButtonLeft(onNavigateBack)
+    // NAVIGATE BACK
 
     Column(
         modifier = Modifier

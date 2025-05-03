@@ -7,7 +7,9 @@ class DietModel(
     var userModel: UserModel = UserModel(),
     var duration: Int = 0,
     var creationDate: String = "",
-    var diets: List<DietDayViewModel> = emptyList()
+    var diets: List<DietDayViewModel> = emptyList(),
+    var foodVariant: FoodVariant = FoodVariant.REGULAR,
+    var goal: Goal = Goal.STAY_HEALTHY
 ) {
 
 }

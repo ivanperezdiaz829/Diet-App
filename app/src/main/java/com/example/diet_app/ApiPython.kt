@@ -15,6 +15,9 @@ import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) -> Unit) {
@@ -49,7 +52,9 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
                     val jsonArray = JSONArray(responseBody)
                     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
                     val editor = prefs.edit()
-                    val dias = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val calendar = Calendar.getInstance() // hoy
+
                     val stringBuilder = StringBuilder()
 
                     for (i in 0 until jsonArray.length()) {
@@ -58,20 +63,24 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
                         val lunch = dayData.getString("lunch")
                         val dinner = dayData.getString("dinner")
 
-                        val dayName = dias.getOrElse(i) { "Día ${i + 1}" }
+                        val dateString = sdf.format(calendar.time) // fecha actual
 
-                        stringBuilder.append("📅 *$dayName*\n")
+                        // Construir texto para mostrar
+                        stringBuilder.append("📅 *$dateString*\n")
                         stringBuilder.append("🍳 **Desayuno:** $breakfast\n")
                         stringBuilder.append("🥗 **Almuerzo:** $lunch\n")
                         stringBuilder.append("🍽 **Cena:** $dinner\n\n")
 
-                        // Guardar en SharedPreferences por día
+                        // Guardar en SharedPreferences usando la fecha como clave
                         val dietData = JSONObject().apply {
                             put("breakfast", breakfast)
                             put("lunch", lunch)
                             put("dinner", dinner)
                         }
-                        editor.putString("${dayName.lowercase()}_diet", dietData.toString())
+                        editor.putString("${dateString}_diet", dietData.toString())
+
+                        // Avanzar al día siguiente
+                        calendar.add(Calendar.DAY_OF_YEAR, 1)
                     }
 
                     editor.apply()
@@ -400,9 +409,9 @@ fun updateUserByEmail(
     })
 }
 
-fun ImageView.loadBarplotImage(context: Context, dietJson: String) {
+fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Map<String, Float>) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.0.2.2:8000/generate_barplot"
+    val url = "http://10.0.2.2:8000/barplot"
 
     val requestBody = dietJson.toRequestBody("application/json; charset=utf-8".toMediaType())
 
@@ -413,15 +422,25 @@ fun ImageView.loadBarplotImage(context: Context, dietJson: String) {
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            Log.e("Graph", "Error al obtener gráfica: ${e.message}")
+            Log.e("Graph", "Error al obtener datos: ${e.message}")
         }
 
         override fun onResponse(call: Call, response: Response) {
             if (response.isSuccessful) {
-                val inputStream = response.body?.byteStream()
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                (context as Activity).runOnUiThread {
-                    setImageBitmap(bitmap)
+                response.body?.string()?.let { body ->
+                    val json = JSONObject(body)
+                    val data = mapOf(
+                        "Calorías" to json.getDouble("calorias").toFloat(), // Cambiado a "Calorías"
+                        "Carbohidratos" to json.getDouble("carbohidratos").toFloat(),
+                        "Proteinas" to json.getDouble("proteinas").toFloat(),
+                        "Grasas" to json.getDouble("grasas").toFloat(),
+                        "Azucares" to json.getDouble("azucares").toFloat(),
+                        "Sales" to json.getDouble("sales").toFloat()
+                        // Eliminar "Precio" del mapa
+                    )
+                    (context as Activity).runOnUiThread {
+                        onDataReceived(data)
+                    }
                 }
             } else {
                 Log.e("Graph", "Error en la respuesta del servidor")

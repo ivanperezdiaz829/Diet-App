@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.example.diet_app.model.DietDayModel
 import com.example.diet_app.model.DietModel
 import com.example.diet_app.model.FoodModel
+import com.example.diet_app.model.FoodVariant
+import com.example.diet_app.model.Goal
 import com.example.diet_app.model.UserModel
 
 class DietViewModel: ViewModel() {
@@ -15,14 +17,18 @@ class DietViewModel: ViewModel() {
         userModel: UserModel = currentDiet.userModel,
         duration: Int = currentDiet.duration,
         creationDate: String = currentDiet.creationDate,
-        diets: List<DietDayViewModel> = currentDiet.diets
+        diets: List<DietDayViewModel> = currentDiet.diets,
+        foodVariant: FoodVariant = currentDiet.foodVariant,
+        goal: Goal = currentDiet.goal
     ) {
         currentDiet = DietModel(
             name = name,
             userModel = userModel,
             duration = duration,
             creationDate = creationDate,
-            diets = diets
+            diets = diets,
+            foodVariant = foodVariant,
+            goal = goal
         )
     }
 

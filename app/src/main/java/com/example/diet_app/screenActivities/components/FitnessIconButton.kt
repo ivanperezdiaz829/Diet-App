@@ -43,9 +43,3 @@ fun FitnessIconButton(
         )
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun FitnessIconButtonPreview() {
-    FitnessIconButton()
-}
