@@ -15,6 +15,9 @@ import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) -> Unit) {
@@ -49,7 +52,9 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
                     val jsonArray = JSONArray(responseBody)
                     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
                     val editor = prefs.edit()
-                    val dias = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val calendar = Calendar.getInstance() // hoy
+
                     val stringBuilder = StringBuilder()
 
                     for (i in 0 until jsonArray.length()) {
@@ -58,20 +63,24 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
                         val lunch = dayData.getString("lunch")
                         val dinner = dayData.getString("dinner")
 
-                        val dayName = dias.getOrElse(i) { "Día ${i + 1}" }
+                        val dateString = sdf.format(calendar.time) // fecha actual
 
-                        stringBuilder.append("📅 *$dayName*\n")
+                        // Construir texto para mostrar
+                        stringBuilder.append("📅 *$dateString*\n")
                         stringBuilder.append("🍳 **Desayuno:** $breakfast\n")
                         stringBuilder.append("🥗 **Almuerzo:** $lunch\n")
                         stringBuilder.append("🍽 **Cena:** $dinner\n\n")
 
-                        // Guardar en SharedPreferences por día
+                        // Guardar en SharedPreferences usando la fecha como clave
                         val dietData = JSONObject().apply {
                             put("breakfast", breakfast)
                             put("lunch", lunch)
                             put("dinner", dinner)
                         }
-                        editor.putString("${dayName.lowercase()}_diet", dietData.toString())
+                        editor.putString("${dateString}_diet", dietData.toString())
+
+                        // Avanzar al día siguiente
+                        calendar.add(Calendar.DAY_OF_YEAR, 1)
                     }
 
                     editor.apply()

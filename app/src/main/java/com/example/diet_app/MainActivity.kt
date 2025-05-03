@@ -183,7 +183,6 @@ class MainActivity : ComponentActivity() {
                 context = LocalContext.current,
                 onResult = {}
             )*/
-            //DietForm(userViewModel, LocalContext.current)
             //DietApp(LocalContext.current, userViewModel, foodViewModel)
             /*
             DietInterface(
@@ -191,7 +190,8 @@ class MainActivity : ComponentActivity() {
                 dietViewModel = dietViewModel
             )
             */
-            GraphicFrame(dietJson, onNavigateBack = {finish()})
+            //CalendarScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+            //GraphicFrame(dietJson, onNavigateBack = {finish()})
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
