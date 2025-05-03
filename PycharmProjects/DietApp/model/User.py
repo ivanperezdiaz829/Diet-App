@@ -1,6 +1,6 @@
 import re
 from datetime import date, datetime
-from PycharmProjects.DietApp.configuration.config import *
+from configuration.config import *
 
 
 
