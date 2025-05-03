@@ -429,3 +429,43 @@ fun ImageView.loadBarplotImage(context: Context, dietJson: String) {
         }
     })
 }
+
+fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Map<String, Float>) -> Unit) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/barplot"
+
+    val requestBody = dietJson.toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("Graph", "Error al obtener datos: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            if (response.isSuccessful) {
+                response.body?.string()?.let { body ->
+                    val json = JSONObject(body)
+                    val data = mapOf(
+                        "Calorías" to json.getDouble("calorias").toFloat(), // Cambiado a "Calorías"
+                        "Carbohidratos" to json.getDouble("carbohidratos").toFloat(),
+                        "Proteinas" to json.getDouble("proteinas").toFloat(),
+                        "Grasas" to json.getDouble("grasas").toFloat(),
+                        "Azucares" to json.getDouble("azucares").toFloat(),
+                        "Sales" to json.getDouble("sales").toFloat()
+                        // Eliminar "Precio" del mapa
+                    )
+                    (context as Activity).runOnUiThread {
+                        onDataReceived(data)
+                    }
+                }
+            } else {
+                Log.e("Graph", "Error en la respuesta del servidor")
+            }
+        }
+    })
+}

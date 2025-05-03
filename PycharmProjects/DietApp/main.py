@@ -74,37 +74,38 @@ def calculate_diet():
 
 @app.route("/barplot", methods=["POST"])
 def barplot():
-    data = request.get_json()
+    data = request.get_json(force=True)
+    print("DEBUG - JSON recibido:", data)
     if not data or 'dieta' not in data:
         return jsonify({'error': 'Falta el parámetro "dieta"'}), 400
 
     dieta = data['dieta']
-    res = nutritional_values_day(dieta)
 
-    df = pd.DataFrame({
-        'Valores Nutricionales': ["Carbohidratos", "Proteina", "Grasas", "Azúcares", "Sales", "Precio"],
-        'Cantidades': [res[1], res[2], res[3], res[4], res[5], res[6]],
-    })
+    # Convertimos cada plato en la dieta en un objeto Plate
+    diet_total = []
+    for food_group in dieta:
+        plates_group = []
+        for plate_data in food_group:
+            # Creamos un objeto Plate para cada plato
+            plate = Plate(plate_data, 1)  # Pasamos directamente el diccionario plate_data
+            plates_group.append(plate)
+        diet_total.append(plates_group)
 
-    plt.figure(figsize=(6, 4))
-    colores = sns.color_palette("blend:#b2e2b2,#40B93C", n_colors=len(df))
-    ax = sns.barplot(data=df, x='Valores Nutricionales', y='Cantidades', hue="Valores Nutricionales",
-                     palette=colores, width=0.6, legend=False)
-    ax.set_xlabel("")
-    ax.set_ylabel(" Cantidades (gr.)")
-    for patch in ax.patches:
-        patch.set_edgecolor('black')
-        patch.set_linewidth(1)
+    # Pasamos la dieta convertida a la función nutritional_values_total
+    res = nutritional_values_total(diet_total)
 
-    plt.title("Datos dieta de " + str(res[0]) + " calorías")
-    plt.xticks(fontsize=9)
-    plt.tight_layout()
+    # Devolvemos los resultados como lista
+    valores = {
+        "calorias": res[0],
+        "carbohidratos": res[1],
+        "proteinas": res[2],
+        "grasas": res[3],
+        "azucares": res[4],
+        "sales": res[5],
+        "precio": res[6]
+    }
 
-    img = BytesIO()
-    plt.savefig(img, format='png')
-    plt.close()
-    img.seek(0)
-    return send_file(img, mimetype='image/png')
+    return jsonify(valores)
 
 @app.route("/basal", methods=["POST"])
 def calculate_basal_metabolic_rate():
