@@ -3,13 +3,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -37,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.diet_app.R
 import com.example.diet_app.model.Screen
-import com.example.diet_app.screenActivities.components.DietViewScreen
+import com.example.diet_app.screenActivities.components.DietView
 import com.example.diet_app.screenActivities.components.ToolBox
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.PrimaryGreen
@@ -182,8 +180,8 @@ fun OtherMealPlanContent(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
             */
-        DietViewScreen(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
-        DietViewScreen(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
-        DietViewScreen(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
+        DietView(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
+        DietView(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
+        DietView(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
     }
 }
