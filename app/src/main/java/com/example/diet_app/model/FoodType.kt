@@ -1,8 +1,9 @@
 package com.example.diet_app.model
 
 enum class FoodType {
-    BREAKFAST,
-    LUNCH,
-    DINNER,
-    SNACK
+    LIGHT_MEAL,
+    DRINK,
+    MAIN_DISH,
+    SIDE_DISH,
+    DESSERT
 }

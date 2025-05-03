@@ -92,27 +92,27 @@ private fun FoodOptions(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         FoodOption(
-            foodType = FoodType.BREAKFAST,
-            text = "BREAKFAST",
+            foodType = FoodType.LIGHT_MEAL,
+            text = "Light Meal",
             imageId = R.drawable.sun_day_morning,
-            isSelected = selectedFoodTypes.contains(FoodType.BREAKFAST),
-            onClick = { onFoodTypeSelected(FoodType.BREAKFAST) }
+            isSelected = selectedFoodTypes.contains(FoodType.LIGHT_MEAL),
+            onClick = { onFoodTypeSelected(FoodType.LIGHT_MEAL) }
         )
 
         FoodOption(
-            foodType = FoodType.LUNCH,
-            text = "LUNCH",
+            foodType = FoodType.MAIN_DISH,
+            text = "Main Dish",
             imageId = R.drawable.sun_day_midday,
-            isSelected = selectedFoodTypes.contains(FoodType.LUNCH),
-            onClick = { onFoodTypeSelected(FoodType.LUNCH) }
+            isSelected = selectedFoodTypes.contains(FoodType.MAIN_DISH),
+            onClick = { onFoodTypeSelected(FoodType.MAIN_DISH) }
         )
 
         FoodOption(
-            foodType = FoodType.DINNER,
-            text = "DINNER",
+            foodType = FoodType.SIDE_DISH,
+            text = "Side Dish",
             imageId = R.drawable.sun_day_afternoon,
-            isSelected = selectedFoodTypes.contains(FoodType.DINNER),
-            onClick = { onFoodTypeSelected(FoodType.DINNER) }
+            isSelected = selectedFoodTypes.contains(FoodType.SIDE_DISH),
+            onClick = { onFoodTypeSelected(FoodType.SIDE_DISH) }
         )
     }
 }

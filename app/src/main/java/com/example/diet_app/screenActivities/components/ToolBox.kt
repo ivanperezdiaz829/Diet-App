@@ -153,3 +153,20 @@ fun NavController.navigateSingleInStack(route: String) {
     }
 }
 
+/**
+ * Navega a una pantalla eliminando TODAS las rutas anteriores del stack,
+ * dejando solo la nueva pantalla como única en la pila.
+ *
+ * @param route Ruta destino a navegar
+ */
+fun NavController.navigateAndClearStack(route: String) {
+    navigate(route) {
+        // Elimina TODA la pila de navegación existente
+        popUpTo(0) {
+            inclusive = true // Incluye la primera pantalla (índice 0)
+        }
+        // Configuración adicional recomendada
+        launchSingleTop = true
+        restoreState = true
+    }
+}
