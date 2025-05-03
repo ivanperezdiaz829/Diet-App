@@ -7,10 +7,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.diet_app.screenActivities.components.BackButtonLeft
+import com.example.diet_app.viewModel.UserViewModel
 import com.example.ui.components.*
 
 @Composable
-fun ChangePasswordScreen(navController: NavController, username: String = "gloton") {
+fun ChangePasswordScreen(
+    navController: NavController,
+    userViewModel: UserViewModel,) {
+
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
@@ -38,7 +42,7 @@ fun ChangePasswordScreen(navController: NavController, username: String = "gloto
                 TitleSection()
             }
 
-            UsernameText(username)
+            UsernameText(userViewModel.getUser().name)
             ChangePasswordTitle()
             PasswordRequirementText()
             PasswordField(
