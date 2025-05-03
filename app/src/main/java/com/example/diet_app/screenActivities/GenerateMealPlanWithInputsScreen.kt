@@ -1,3 +1,4 @@
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -8,9 +9,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.diet_app.ui.theme.PrimaryGreen
 import com.example.diet_app.model.FoodVariant
+import com.example.diet_app.sendDataToServer
 
 @Composable
-fun GenerateMealPlanWithInputsScreen() {
+fun GenerateMealPlanWithInputsScreen(context: Context) {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxSugar by remember { mutableStateOf("") }
     var minEnergy by remember { mutableStateOf("") }
@@ -37,7 +39,7 @@ fun GenerateMealPlanWithInputsScreen() {
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 8.dp)) {
             Column(modifier = Modifier.weight(1f)) {
-                NutritionInputField("Carbs máx.", minCarbohydrates, { minCarbohydrates = it })
+                NutritionInputField("Carbs mín.", minCarbohydrates, { minCarbohydrates = it })
                 NutritionInputField("Azúcar máx.", maxSugar, { maxSugar = it })
                 NutritionInputField("Energía mín.", minEnergy, { minEnergy = it })
                 NutritionInputField("Energía máx.", maxEnergy, { maxEnergy = it })
@@ -65,7 +67,24 @@ fun GenerateMealPlanWithInputsScreen() {
                     minCarbohydrates, maxSugar, minEnergy, maxEnergy,
                     minProtein, maxSalt, maxFat, days, budget, selectedDiet
                 )
-                formErrors = if (result.isValid) emptyList() else result.errors
+                formErrors = if (result.isValid) {
+                    val formData = listOf(
+                        minCarbohydrates.toDouble(),
+                        maxSugar.toDouble(),
+                        minEnergy.toDouble(),
+                        maxEnergy.toDouble(),
+                        minProtein.toDouble(),
+                        maxSalt.toDouble(),
+                        maxFat.toDouble(),
+                        days.toDouble(),
+                        budget.toDouble(),
+                        selectedDiet.ordinal.toDouble()
+                    )
+                    sendDataToServer(formData, context) {}
+                    emptyList<FormError>()
+                } else {
+                    result.errors
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -204,19 +223,6 @@ private fun validateInputs(
 
     return ValidationResult(errors.isEmpty(), errors)
 }
-
-data class DietParameters(
-    val minCarbs: Double,
-    val maxSugar: Double,
-    val minEnergy: Double,
-    val maxEnergy: Double,
-    val minProtein: Double,
-    val maxSalt: Double,
-    val maxFat: Double,
-    val days: Int,
-    val budget: Double,
-    val dietType: FoodVariant
-)
 
 data class FormError(val field: String, val message: String)
 data class ValidationResult(val isValid: Boolean, val errors: List<FormError>)
