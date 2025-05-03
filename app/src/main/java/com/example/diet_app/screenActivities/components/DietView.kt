@@ -23,7 +23,7 @@ import com.example.diet_app.ui.theme.Typography
 import com.example.diet_app.viewModel.DietViewModel
 
 @Composable
-fun DietViewScreen(
+fun DietView(
     onClick: () -> Unit,
     diet: DietViewModel,
     image: Int,

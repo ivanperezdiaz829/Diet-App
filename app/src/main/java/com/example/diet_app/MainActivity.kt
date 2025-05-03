@@ -46,8 +46,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
-import com.example.diet_app.screenActivities.components.DietViewScreen
 import com.example.diet_app.screenActivities.components.navigateSingleInStack
+import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
@@ -68,9 +68,17 @@ class MainActivity : ComponentActivity() {
         dbManager = DatabaseManager(this)
         var userViewModel = UserViewModel()
         var foodViewModel = FoodViewModel()
+        var foodViewModel2 = FoodViewModel()
+        var foodViewModel3 = FoodViewModel()
         foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LUNCH, FoodType.BREAKFAST))
+        foodViewModel2.updateFood(name = "Rice", foodTypes = setOf(FoodType.LUNCH, FoodType.LUNCH))
+        foodViewModel3.updateFood(name = "Sandwich", foodTypes = setOf(FoodType.LUNCH, FoodType.DINNER))
         var dietViewModel = DietViewModel()
-        dietViewModel.updateDiet(name = "Dieta 1", duration = 2)
+        var dietDayViewModel = DietDayViewModel()
+        var dietDayViewModel2 = DietDayViewModel()
+        dietDayViewModel.updateDietDay(foods = listOf(foodViewModel, foodViewModel2, foodViewModel3))
+        dietDayViewModel2.updateDietDay(foods = listOf(foodViewModel3, foodViewModel2, foodViewModel))
+        dietViewModel.updateDiet(name = "Dieta 1", duration = 2, diets = listOf(dietDayViewModel, dietDayViewModel2))
 
         // Prueba abriendo la base de datos
         try {
@@ -95,7 +103,12 @@ class MainActivity : ComponentActivity() {
             )*/
             //DietForm(userViewModel, LocalContext.current)
             DietApp(LocalContext.current, userViewModel, foodViewModel)
-            //DietInterface()
+            /*
+            DietInterface(
+                navController = rememberNavController(),
+                dietViewModel = dietViewModel
+            )
+            */
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
