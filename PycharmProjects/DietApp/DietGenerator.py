@@ -1,5 +1,6 @@
 from Plates import *
 from SQLsentences import *
+from collections import Counter
 
 import sqlite3
 import random
@@ -242,33 +243,34 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
     random.shuffle(breakfasts)
     random.shuffle(lunches)
     random.shuffle(dinners)
+
     for breakfast in breakfasts:
         for lunch in lunches:
             for dinner in dinners:
                 solution = [breakfast, lunch, dinner]
-                if validate_full_diet(solution, carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max):
-                    if lunch[0] not in selected_lunches and breakfast[0] not in selected_breakfasts and dinner[0] not in selected_dinners:
-                        selected_lunches.add(lunch[0])
-                        selected_breakfasts.add(breakfasts[0])
-                        selected_dinners.add(dinner[0])
+                if validate_full_diet(solution, carbohydrates_min, sugar_max, energy_range, protein_min, salt_max,
+                                      fat_max, price_max):
+                    lunch_combo = (lunch[0], lunch[1])
+                    dinner_combo = (dinner[0],)
+
+                    if not_valid.count(lunch_combo) <= len(not_valid) // 3 and \
+                            not_valid.count(dinner_combo) <= len(not_valid) // 3:
+                        not_valid.append(lunch_combo)
+                        not_valid.append(dinner_combo)
+
+                        selected_lunches.append(lunch[0])
+                        selected_breakfasts.append(breakfast[0])
+                        selected_dinners.append(dinner[0])
+
                         conn.close()
-                        total_carbs = 0
-                        total_sugar = 0
-                        total_kcal = 0
-                        total_protein = 0
-                        total_salt = 0
-                        total_fat = 0
-                        total_price = 0
-                        for meal in solution:
-                            for plate in meal:
-                                total_carbs += plate.carbohydrates
-                                total_sugar += plate.sugar
-                                total_kcal += plate.calories
-                                total_protein += plate.protein
-                                total_salt += plate.salt
-                                total_fat += plate.fat
-                                total_price += plate.price
                         """
+                        total_carbs = sum(plate.carbohydrates for meal in solution for plate in meal)
+                        total_sugar = sum(plate.sugar for meal in solution for plate in meal)
+                        total_kcal = sum(plate.calories for meal in solution for plate in meal)
+                        total_protein = sum(plate.protein for meal in solution for plate in meal)
+                        total_salt = sum(plate.salt for meal in solution for plate in meal)
+                        total_fat = sum(plate.fat for meal in solution for plate in meal)
+                        total_price = sum(plate.price for meal in solution for plate in meal)
                         print("\n--PLAN DIETA DÍA-")
                         print(f"Carbohidratos totales: {total_carbs} (Mínimo Requerido: {carbohydrates_min})")
                         print(f"Azúcar total: {total_sugar} (Máximo Permitido: {sugar_max})")
