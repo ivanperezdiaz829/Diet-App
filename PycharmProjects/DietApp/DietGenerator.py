@@ -211,8 +211,8 @@ def validate_full_diet(diet, carbs_min, sugar_max, kcal_range, protein_min, salt
 
 
 def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max, person_type, person_preferences, selected_breakfasts, selected_lunches, selected_dinners, not_valid):
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(BASE_DIR, '../../DietAppAPI/database', 'DietApp_Sprint1.db')
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # ubicación del script actual (por ejemplo model/main.py)
+    db_path = "C:/Users/Portatil/Desktop/Diet-App/PycharmProjects/DietApp/database/DietApp_Sprint1.db"
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     kcal_breakfast = (energy_range[0] * 0.2, energy_range[1] * 0.5)

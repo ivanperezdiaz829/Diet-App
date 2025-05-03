@@ -537,7 +537,6 @@ fun createDiet(context: Context, name: String, userId: Int, dietTypeId: Int, onR
     }
 
     for (i in 0 until duration) {
-        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
         val dateKey = sdf.format(calendar.time) + "_diet"
         val dayString = prefs.getString(dateKey, null)
         if (dayString != null) {
