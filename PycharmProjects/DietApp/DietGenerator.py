@@ -270,7 +270,7 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
                                 total_salt += plate.salt
                                 total_fat += plate.fat
                                 total_price += plate.price
-
+                        """
                         print("\n--PLAN DIETA DÍA-")
                         print(f"Carbohidratos totales: {total_carbs} (Mínimo Requerido: {carbohydrates_min})")
                         print(f"Azúcar total: {total_sugar} (Máximo Permitido: {sugar_max})")
@@ -279,7 +279,7 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
                         print(f"Sal total: {total_salt} (Máximo Permitido: {salt_max})")
                         print(f"Grasas totales: {total_fat} (Máximo Permitido: {fat_max})")
                         print(f"Precio total: {total_price} (Máximo Permitido: {price_max})")
-
+                        """
                         return solution
 
     conn.close()

@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from GenerarDieta2 import *
 
-start_time = time.time()
+#start_time = time.time()
 
 app = Flask(__name__)
 
@@ -386,4 +386,3 @@ end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
 
 """
-
