@@ -7,13 +7,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.diet_app.ui.theme.PrimaryGreen
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.screenActivities.components.BackButton
-import com.example.diet_app.sendDataToServer
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import com.example.diet_app.sendDataToServer
 
 
 @Composable
@@ -97,7 +96,9 @@ fun GenerateMealPlanWithInputsScreen(
                         budget.toDouble(),
                         selectedDiet.ordinal.toDouble()
                     )
-                    sendDataToServer(formData, context) {}
+                    sendDataToServer(formData, context) {
+                        onNext()
+                    }
                     emptyList<FormError>()
                 } else {
                     result.errors

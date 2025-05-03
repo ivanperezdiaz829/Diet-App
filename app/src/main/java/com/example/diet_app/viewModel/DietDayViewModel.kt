@@ -6,6 +6,8 @@ import com.example.diet_app.model.FoodModel
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.UserModel
+import org.json.JSONArray
+import org.json.JSONObject
 
 class DietDayViewModel {
     private var currentDietDay: DietDayModel = DietDayModel()
@@ -26,5 +28,18 @@ class DietDayViewModel {
 
     fun getDiet(): DietDayModel {
         return currentDietDay
+    }
+
+    // En DietDayViewModel
+    fun toJson(): JSONObject {
+        return JSONObject().apply {
+            put("foods", JSONArray().apply {
+                currentDietDay.foods.forEach { food ->
+                    put(food.toJson()) // Necesitarás implementar toJson() en FoodViewModel
+                }
+            })
+            put("dietId", currentDietDay.dietId)
+            // Añade más campos según necesites
+        }
     }
 }

@@ -1,6 +1,8 @@
 import re
 from datetime import date, datetime
-from DietAppAPI.configuration.config import *
+from configuration.config import *
+
+
 
 class User:
 
@@ -9,7 +11,7 @@ class User:
         self.email = validate_email(email)
         self.password = validate_password(password)
         self.physical_activity = validate_physical_activity(physical_activity)
-        self.sex = validate_sex(sex)
+        self.sex = sex
         self.birthday = validate_birthday(birthday)
         self.height = validate_height(height)
         self.weight = validate_weight(weight)

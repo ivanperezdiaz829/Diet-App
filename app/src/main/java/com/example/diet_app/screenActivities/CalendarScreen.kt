@@ -121,10 +121,21 @@ fun CalendarScreen(
                                         val json = JSONObject(storedDiet)
                                         """
                                             📅 *$date*
-                                            🍳 Desayuno: ${json.getString("breakfast")}
-                                            🥗 Almuerzo: ${json.getString("lunch")}
-                                            🍽 Cena: ${json.getString("dinner")}
+    
+                                            🍳 Desayuno:
+                                            - Plato: ${json.getString("breakfast_dish")}
+                                            - Bebida: ${json.getString("breakfast_drink")}
+    
+                                            🥗 Almuerzo:
+                                            - Plato principal: ${json.getString("lunch_main_dish")}
+                                            - Segundo: ${json.getString("lunch_side_dish")}
+                                            - Bebida: ${json.getString("lunch_drink")}
+    
+                                            🍽 Cena:
+                                            - Plato: ${json.getString("dinner_dish")}
+                                            - Bebida: ${json.getString("dinner_drink")}
                                         """.trimIndent()
+
                                     } else {
                                         "❌ No hay dieta guardada para $date."
                                     }

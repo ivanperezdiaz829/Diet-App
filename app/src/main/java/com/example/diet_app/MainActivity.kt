@@ -55,6 +55,7 @@ import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
+import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
 
@@ -157,14 +158,14 @@ class MainActivity : ComponentActivity() {
                 email = "frikazoA2@gmail.es",
                 password = "superSeguro.123",
                 physicalActivity = "STAY_HEALTHY",
-                sex = "Male",
+                sex = 1,
                 birthday = "1995-06-15",
                 height = 168,
                 weight = 60,
                 context = LocalContext.current,
                 onResult = {}
-            )
-            */
+            )*/
+
             DietApp(LocalContext.current, userViewModel, foodViewModel)
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
             /*
@@ -209,11 +210,12 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             onSkip = { navController.navigate("welcome") },
             onNavigateBack = { navController.popBackStack() },
             onNext = {
+                /*
                 createUser(
                     email = userViewModel.getUser().email,
                     password = userViewModel.getUser().password,
                     physicalActivity = userViewModel.getUser().goal.toString(),
-                    sex = userViewModel.getUser().sex.toString(),
+                    sex = 0,
                     birthday = "1995-06-15",
                     height = userViewModel.getUser().height,
                     weight = userViewModel.getUser().currentWeight.toInt(),
@@ -223,6 +225,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 userViewModel.updateUser(goal = it)
                 navController.navigate(Screen.Home.route)
                 printUserInfo(userViewModel)
+                */
+
             },
         )}
 
@@ -498,6 +502,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     if (it) {
+
                         navController.navigate(Screen.TypeOfDietSelection.route)
                     } else {
                         navController.navigate(Screen.Sex.route)
@@ -666,7 +671,12 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             GenerateMealPlanWithInputsScreen(
                 context = applicationContext,
                 onNavigateBack = { navController.popBackStack() },
-                onNext = { navController.navigate(Screen.Home.route) }
+                onNext = {
+                    val planJson = getPrefs(applicationContext, "name", 0, 0, 7)
+                    val foodList = parseFoodsFromJson(planJson)
+                    Log.d("FoodList", foodList.toString())
+                    navController.navigate(Screen.Home.route)
+                }
             )
         }
 

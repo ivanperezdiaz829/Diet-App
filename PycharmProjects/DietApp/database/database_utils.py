@@ -1,8 +1,8 @@
 import os
 
-from DietAppAPI.configuration.config import MAX_HEIGHT, MAX_WEIGHT, MIN_HEIGHT, MIN_WEIGHT
-from DietAppAPI.configuration.config import DB_PATH, SCHEME_PATH, DATASET_PATH
-from DietAppAPI.configuration.config import INSERT_SCRIPTS
+
+from configuration.config import *
+
 import sqlite3
 
 

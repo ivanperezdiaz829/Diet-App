@@ -1,5 +1,7 @@
 package com.example.diet_app.viewModel
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.diet_app.model.DietDayModel
 import com.example.diet_app.model.DietModel
@@ -7,6 +9,9 @@ import com.example.diet_app.model.FoodModel
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.UserModel
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 
 class DietViewModel: ViewModel() {
 
@@ -37,4 +42,40 @@ class DietViewModel: ViewModel() {
     fun getDiet(): DietModel {
         return currentDiet
     }
+
+    // En DietViewModel
+    fun toJson(): JSONObject {
+        return JSONObject().apply {
+            put("name", currentDiet.name)
+            put("duration", currentDiet.duration)
+            put("dietId", currentDiet.dietId)
+            put("creationDate", currentDiet.creationDate)
+            put("diets", JSONArray().apply {
+                currentDiet.diets.forEach { dietDay ->
+                    put(dietDay.toJson())
+                }
+            })
+            // Añade más campos según necesites
+        }
+    }
+
+    fun saveDietToPreferences(context: Context, diet: DietViewModel) {
+        val prefs = context.getSharedPreferences("DietData", Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+
+        try {
+            // Guardar la dieta principal
+            editor.putString("current_diet", diet.toJson().toString())
+
+            // Guardar días individualmente (opcional, para fácil acceso)
+            diet.getDiet().diets.forEachIndexed { index, day ->
+                editor.putString("diet_day_$index", day.toJson().toString())
+            }
+
+            editor.apply()
+        } catch (e: JSONException) {
+            Log.e("SaveDiet", "Error al serializar dieta", e)
+        }
+    }
+
 }
