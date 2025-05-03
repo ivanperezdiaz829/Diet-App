@@ -46,6 +46,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
+import com.example.diet_app.screenActivities.components.DietViewScreen
 import com.example.diet_app.screenActivities.components.navigateSingleInStack
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
@@ -92,8 +93,9 @@ class MainActivity : ComponentActivity() {
                 context = LocalContext.current,
                 onResult = {}
             )*/
-            DietForm(userViewModel, LocalContext.current)
-            //DietApp(LocalContext.current, userViewModel, foodViewModel)
+            //DietForm(userViewModel, LocalContext.current)
+            DietApp(LocalContext.current, userViewModel, foodViewModel)
+            //DietInterface()
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
