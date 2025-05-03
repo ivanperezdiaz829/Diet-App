@@ -65,7 +65,7 @@ fun GenerateMealPlanWithInputsScreen(context: Context) {
             onClick = {
                 val result = validateInputs(
                     minCarbohydrates, maxSugar, minEnergy, maxEnergy,
-                    minProtein, maxSalt, maxFat, days, budget, selectedDiet
+                    minProtein, maxSalt, maxFat, days, budget,
                 )
                 formErrors = if (result.isValid) {
                     val formData = listOf(
@@ -175,7 +175,6 @@ private fun validateInputs(
     maxFat: String,
     days: String,
     budget: String,
-    dietType: FoodVariant
 ): ValidationResult {
     val errors = mutableListOf<FormError>()
     fun addError(field: String, message: String) = errors.add(FormError(field, message))
@@ -189,7 +188,6 @@ private fun validateInputs(
     if (maxFat.isEmpty()) addError("maxFat", "Grasa máxima")
     if (days.isEmpty()) addError("days", "Días")
     if (budget.isEmpty()) addError("budget", "Presupuesto (€)")
-
     if (errors.isNotEmpty()) return ValidationResult(false, errors)
 
     // Validar números
