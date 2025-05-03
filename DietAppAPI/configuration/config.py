@@ -19,7 +19,7 @@ def to_sql_value_list(values):
     return ', '.join(rows) + ';'
 
 
-PHYSICAL_ACTIVITY_LEVELS = ['Lose Weight', 'Gain Weight', 'Stay Healthy']
+PHYSICAL_ACTIVITY_LEVELS = ['LOSE_WEIGHT', 'GAIN_WEIGHT', 'STAY_HEALTHY']
 SEX_VALUES = ['Female', 'Male']
 PLATE_TYPES = ['Light Meal', 'Drink', 'Main Dish', 'Side Dish', 'Dessert']
 

@@ -1,5 +1,3 @@
-from enum import nonmember
-
 from Plates import *
 from SQLsentences import *
 
@@ -249,9 +247,9 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
             for dinner in dinners:
                 solution = [breakfast, lunch, dinner]
                 if validate_full_diet(solution, carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max):
-                    if lunch[0] not in selected_lunches and lunch[1] not in selected_breakfasts and dinner[0] not in selected_dinners:
+                    if lunch[0] not in selected_lunches and breakfast[0] not in selected_breakfasts and dinner[0] not in selected_dinners:
                         selected_lunches.add(lunch[0])
-                        selected_breakfasts.add(lunch[1])
+                        selected_breakfasts.add(breakfasts[0])
                         selected_dinners.add(dinner[0])
                         conn.close()
                         total_carbs = 0
@@ -270,7 +268,7 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
                                 total_salt += plate.salt
                                 total_fat += plate.fat
                                 total_price += plate.price
-
+                        """
                         print("\n--PLAN DIETA DÍA-")
                         print(f"Carbohidratos totales: {total_carbs} (Mínimo Requerido: {carbohydrates_min})")
                         print(f"Azúcar total: {total_sugar} (Máximo Permitido: {sugar_max})")
@@ -279,7 +277,7 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
                         print(f"Sal total: {total_salt} (Máximo Permitido: {salt_max})")
                         print(f"Grasas totales: {total_fat} (Máximo Permitido: {fat_max})")
                         print(f"Precio total: {total_price} (Máximo Permitido: {price_max})")
-
+                        """
                         return solution
 
     conn.close()

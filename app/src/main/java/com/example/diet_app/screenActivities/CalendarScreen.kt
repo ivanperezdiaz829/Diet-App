@@ -27,6 +27,7 @@ import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -113,7 +114,20 @@ fun CalendarScreen(
                             .clickable {
                                 showDatePicker(context) { date ->
                                     selectedDate = date
-                                    infoText = "Información del día $date: Aquí podrías mostrar datos relevantes."
+
+                                    val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+                                    val storedDiet = prefs.getString("${date}_diet", null)
+                                    infoText = if (storedDiet != null) {
+                                        val json = JSONObject(storedDiet)
+                                        """
+                                            📅 *$date*
+                                            🍳 Desayuno: ${json.getString("breakfast")}
+                                            🥗 Almuerzo: ${json.getString("lunch")}
+                                            🍽 Cena: ${json.getString("dinner")}
+                                        """.trimIndent()
+                                    } else {
+                                        "❌ No hay dieta guardada para $date."
+                                    }
                                 }
                             }
                     )

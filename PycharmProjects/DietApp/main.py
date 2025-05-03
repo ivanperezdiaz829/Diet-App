@@ -1,17 +1,16 @@
-#from flask import Flask, request, jsonify, send_file
-#from Graphs import *
+from flask import Flask, request, jsonify, send_file
+from Graphs import *
 from ObtainTotals import *
 import time
 import ast
 from io import BytesIO
-#import seaborn as sns
+import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 from GenerarDieta2 import *
 
-start_time = time.time()
+#start_time = time.time()
 
-"""
 app = Flask(__name__)
 
 @app.route('/calculate', methods=['POST'])
@@ -38,16 +37,16 @@ def calculate_diet():
         print(f"Error al convertir: {e}")
         return jsonify({"error": "All values must be numbers"}), 400
 
-    carbohydrates = [values[0], values[1]]
-    sugar = values[2]
-    energy = [values[3], values[4]]
-    protein = [values[5], values[6]]
-    salt = values[7]
-    fat = [values[8], values[9]]
-    price = values[10]
-    person_type = 1
+    carbohydrates = values[0]
+    sugar = values[1]
+    energy = [values[2], values[3]]
+    protein = values[4]
+    salt = values[5]
+    fat = values[6]
+    price = values[8]
+    person_type = int(values[9])
     person_preferences = 1
-    total_days = 3
+    total_days = int(values[7])
 
     try:
         dieta = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
@@ -75,37 +74,38 @@ def calculate_diet():
 
 @app.route("/barplot", methods=["POST"])
 def barplot():
-    data = request.get_json()
+    data = request.get_json(force=True)
+    print("DEBUG - JSON recibido:", data)
     if not data or 'dieta' not in data:
         return jsonify({'error': 'Falta el parámetro "dieta"'}), 400
 
     dieta = data['dieta']
-    res = nutritional_values_day(dieta)
 
-    df = pd.DataFrame({
-        'Valores Nutricionales': ["Carbohidratos", "Proteina", "Grasas", "Azúcares", "Sales", "Precio"],
-        'Cantidades': [res[1], res[2], res[3], res[4], res[5], res[6]],
-    })
+    # Convertimos cada plato en la dieta en un objeto Plate
+    diet_total = []
+    for food_group in dieta:
+        plates_group = []
+        for plate_data in food_group:
+            # Creamos un objeto Plate para cada plato
+            plate = Plate(plate_data, 1)  # Pasamos directamente el diccionario plate_data
+            plates_group.append(plate)
+        diet_total.append(plates_group)
 
-    plt.figure(figsize=(6, 4))
-    colores = sns.color_palette("blend:#b2e2b2,#40B93C", n_colors=len(df))
-    ax = sns.barplot(data=df, x='Valores Nutricionales', y='Cantidades', hue="Valores Nutricionales",
-                     palette=colores, width=0.6, legend=False)
-    ax.set_xlabel("")
-    ax.set_ylabel(" Cantidades (gr.)")
-    for patch in ax.patches:
-        patch.set_edgecolor('black')
-        patch.set_linewidth(1)
+    # Pasamos la dieta convertida a la función nutritional_values_total
+    res = nutritional_values_total(diet_total)
 
-    plt.title("Datos dieta de " + str(res[0]) + " calorías")
-    plt.xticks(fontsize=9)
-    plt.tight_layout()
+    # Devolvemos los resultados como lista
+    valores = {
+        "calorias": res[0],
+        "carbohidratos": res[1],
+        "proteinas": res[2],
+        "grasas": res[3],
+        "azucares": res[4],
+        "sales": res[5],
+        "precio": res[6]
+    }
 
-    img = BytesIO()
-    plt.savefig(img, format='png')
-    plt.close()
-    img.seek(0)
-    return send_file(img, mimetype='image/png')
+    return jsonify(valores)
 
 @app.route("/basal", methods=["POST"])
 def calculate_basal_metabolic_rate():
@@ -164,7 +164,7 @@ def calculate_maintenance_calories():
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8000)
-"""
+
 """
 def obtain_restrictions():
     carbohydrates, sugar, energy, protein, salt, fat = [], [], [], [], [], []
@@ -214,7 +214,7 @@ def obtain_restrictions():
     budget = float(input("Introduce el presupuesto máximo (euros): "))
 
     return carbohydrates, sugar, energy, protein, salt, fat, budget
-"""
+
 
 carbohydrates_min = 250
 energy_min = 1800
@@ -386,3 +386,4 @@ for day in solution:
 end_time = time.time() - start_time
 print(f"\nTiempo de ejecución {end_time}")
 
+"""

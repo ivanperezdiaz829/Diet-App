@@ -14,6 +14,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import com.example.diet_app.screenActivities.components.BackButtonLeft
+import com.example.diet_app.ui.theme.PrimaryGreen
 
 @Composable
 fun DietSelectionScreen(
@@ -60,7 +61,7 @@ fun DietSelectionScreen(
                         onCheckedChange = { if (it) selectedIndex = index },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
-                            checkedTrackColor = Color(0xFF40B93C),
+                            checkedTrackColor = PrimaryGreen,
                             uncheckedThumbColor = Color.White,
                             uncheckedTrackColor = Color.Gray
                         )
@@ -79,7 +80,7 @@ fun DietSelectionScreen(
                 onNext(selectedIndex)
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF40B93C),
+                containerColor = PrimaryGreen,
                 contentColor = Color.White
             ),
             enabled = selectedIndex != -1,
