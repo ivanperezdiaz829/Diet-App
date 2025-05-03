@@ -9,92 +9,491 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from GenerarDieta2 import *
 from InfoForGraph import *
+import sqlite3
+import os
 
-#start_time = time.time()
+from model.User import User, validate_email
+from configuration.config import DB_PATH, PHYSICAL_ACTIVITY_LEVELS, SEX_VALUES
+from database.database_utils import create_database
+from model.DietPlanDay import DietPlanDay
+from model.DietPlanComplete import DietPlanComplete
 
+# Inicialización única de la aplicación Flask
 app = Flask(__name__)
+
+# Configuración inicial
+if not os.path.exists(DB_PATH):
+    raise Exception("Database is not available, must be created through create_database.py")
+
+SEX_DICT = {value: i for i, value in enumerate(SEX_VALUES)}
+
+
+# --------------------------
+# Endpoints de Usuarios
+# --------------------------
+
+@app.route('/create_user', methods=['POST'])
+def create_user():
+    try:
+        data = request.get_json()
+        user = User.from_dict(data)
+
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO users(email, password, physical_activity, sex, birthday, height, weight)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, user.get_values())
+            conn.commit()
+
+        return jsonify({
+            "message": "Usuario creado exitosamente",
+            "user": user.to_dict()
+        }), 201
+
+    except (TypeError, ValueError) as e:
+        return jsonify({"error": str(e)}), 400
+    except sqlite3.DatabaseError as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/get_user/<string:email>', methods=['GET'])
+def get_user(email):
+    try:
+        user = select_user(email)
+        if not user:
+            return jsonify({"error": "No existe un usuario con el email proporcionado"}), 404
+        return jsonify({
+            "message": "Usuario encontrado",
+            "user": user.to_dict()
+        })
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    except sqlite3.DatabaseError as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/delete_user/<string:email>', methods=['DELETE'])
+def delete_user(email):
+    try:
+        user = select_user(email)
+        if not user:
+            return jsonify({"error": "El usuario con el email proporcionado no existe"}), 404
+
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM users WHERE email=?", (email,))
+            conn.commit()
+
+        return jsonify({
+            "message": "Usuario eliminado exitosamente",
+            "user": user.to_dict()
+        })
+    except (TypeError, ValueError) as e:
+        return jsonify({"error": str(e)}), 400
+    except sqlite3.DatabaseError as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/update_user/<string:email>', methods=['PATCH'])
+def update_user(email):
+    try:
+        user = select_user(email)
+        if not user:
+            return jsonify({'error': f'El usuario con email {email} no existe'}), 400
+
+        data = request.get_json()
+        fields = []
+        values = []
+
+        for field in data.keys():
+            if field not in User.get_fields():
+                raise ValueError(f"Campo no permitido: {field}")
+            fields.append(f"{field} = ?")
+            values.append(data[field])
+
+        if fields:
+            sql = f"UPDATE users SET {', '.join(fields)} WHERE email = ?"
+            values.append(email)
+
+            with sqlite3.connect(DB_PATH) as conn:
+                cursor = conn.cursor()
+                cursor.execute(sql, tuple(values))
+                conn.commit()
+                user = select_user(email)
+                if user:
+                    return jsonify({
+                        "message": "Usuario actualizado exitosamente",
+                        "user": user.to_dict()
+                    })
+                return jsonify({"error": "El usuario no existe"}), 404
+        return jsonify({"message": "No se proporcionaron datos para actualizar"}), 400
+
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    except sqlite3.DatabaseError as e:
+        return jsonify({'error': str(e)}), 500
+
+
+# --------------------------
+# Endpoints de Planes de Dieta
+# --------------------------
+
+@app.route('/create_diet_plan', methods=['POST'])
+def create_diet_plan():
+    try:
+        data = request.get_json()
+
+        # Validate required fields
+        required_fields = ['name', 'user_id', 'duration', 'diet_type_id']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Campo requerido faltante: {field}"}), 400
+
+        # Validate duration is between 1-7
+        duration = data['duration']
+        if not 1 <= duration <= 7:
+            return jsonify({"error": "Duración debe estar entre 1 y 7 días"}), 400
+
+        # Validate that required days exist
+        for day_num in range(1, duration + 1):
+            day_key = f'day{day_num}'
+            if day_key not in data:
+                return jsonify({
+                    "error": f"Se requiere día {day_num} para duración {duration}"
+                }), 400
+
+        day_ids = []
+
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+
+            # Process each day up to the duration
+            for day_num in range(1, 8):
+                day_key = f'day{day_num}'
+                if day_key in data and day_num <= duration:
+                    try:
+                        day_obj = DietPlanDay(**data[day_key])
+                        cursor.execute("""
+                            INSERT INTO diet_plans_day (
+                                breakfast_dish, breakfast_drink,
+                                lunch_main_dish, lunch_side_dish, lunch_drink,
+                                dinner_dish, dinner_drink
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """, day_obj.to_tuple())
+                        day_ids.append(cursor.lastrowid)
+                    except ValueError as e:
+                        return jsonify({"error": f"Error en {day_key}: {str(e)}"}), 400
+                else:
+                    day_ids.append(None)
+
+            # Verify we have the required days
+            for day_num in range(1, duration + 1):
+                if day_ids[day_num - 1] is None:
+                    return jsonify({
+                        "error": f"El día {day_num} no puede ser NULL para duración {duration}"
+                    }), 400
+
+            try:
+                plan = DietPlanComplete(
+                    name=data['name'],
+                    user_id=data['user_id'],
+                    duration=duration,
+                    diet_type_id=data['diet_type_id'],
+                    day1=day_ids[0],
+                    day2=day_ids[1],
+                    day3=day_ids[2],
+                    day4=day_ids[3],
+                    day5=day_ids[4],
+                    day6=day_ids[5],
+                    day7=day_ids[6]
+                )
+
+                cursor.execute("""
+                    INSERT INTO diet_plans_complete (
+                        name, user_id, duration, diet_type_id,
+                        day1, day2, day3, day4, day5, day6, day7
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, plan.to_tuple())
+
+                plan_id = cursor.lastrowid
+                conn.commit()
+
+                return jsonify({
+                    "message": "Plan de dieta creado exitosamente",
+                    "plan_id": plan_id
+                }), 201
+
+            except ValueError as e:
+                conn.rollback()
+                return jsonify({"error": str(e)}), 400
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
+@app.route('/get_diet_plan/<int:plan_id>', methods=['GET'])
+def get_diet_plan(plan_id):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT * FROM diet_plans_complete WHERE id = ?", (plan_id,))
+            plan_row = cursor.fetchone()
+
+            if not plan_row:
+                return jsonify({"error": "Plan no encontrado"}), 404
+
+            days = {}
+            for i in range(1, 8):
+                day_id = plan_row[f'day{i}']
+                if day_id:
+                    cursor.execute("SELECT * FROM diet_plans_day WHERE id = ?", (day_id,))
+                    day_row = cursor.fetchone()
+                    if day_row:
+                        days[f'day{i}'] = dict(day_row)
+
+            return jsonify({
+                "plan": dict(plan_row),
+                "days": days
+            }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
+
+@app.route('/update_diet_plan/<int:plan_id>', methods=['PATCH'])
+def update_diet_plan(plan_id):
+    try:
+        data = request.get_json()
+
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM diet_plans_complete WHERE id = ?", (plan_id,))
+            plan = cursor.fetchone()
+
+            if not plan:
+                return jsonify({"error": "Plan no encontrado"}), 404
+
+            if 'name' in data or 'user_id' in data or 'duration' in data or 'diet_type_id' in data:
+                try:
+                    temp_plan = DietPlanComplete(
+                        name=data.get('name', plan['name']),
+                        user_id=data.get('user_id', plan['user_id']),
+                        duration=data.get('duration', plan['duration']),
+                        diet_type_id=data.get('diet_type_id', plan['diet_type_id']),
+                        day1=plan['day1'],
+                        day2=plan['day2'],
+                        day3=plan['day3'],
+                        day4=plan['day4'],
+                        day5=plan['day5'],
+                        day6=plan['day6'],
+                        day7=plan['day7']
+                    )
+
+                    cursor.execute("""
+                        UPDATE diet_plans_complete 
+                        SET name = ?, user_id = ?, duration = ?, diet_type_id = ?
+                        WHERE id = ?
+                    """, (
+                        temp_plan.name,
+                        temp_plan.user_id,
+                        temp_plan.duration,
+                        temp_plan.diet_type_id,
+                        plan_id
+                    ))
+
+                except ValueError as e:
+                    return jsonify({"error": str(e)}), 400
+
+            for day_num in range(1, 8):
+                day_key = f'day{day_num}'
+                if day_key in data:
+                    day_id = plan[day_key]
+                    if not day_id:
+                        continue
+
+                    try:
+                        cursor.execute("SELECT * FROM diet_plans_day WHERE id = ?", (day_id,))
+                        current_day = cursor.fetchone()
+
+                        if not current_day:
+                            return jsonify({"error": f"{day_key} no encontrado"}), 404
+
+                        updated_day = DietPlanDay(
+                            breakfast_dish=data[day_key].get('breakfast_dish', current_day['breakfast_dish']),
+                            breakfast_drink=data[day_key].get('breakfast_drink', current_day['breakfast_drink']),
+                            lunch_main_dish=data[day_key].get('lunch_main_dish', current_day['lunch_main_dish']),
+                            lunch_side_dish=data[day_key].get('lunch_side_dish', current_day['lunch_side_dish']),
+                            lunch_drink=data[day_key].get('lunch_drink', current_day['lunch_drink']),
+                            dinner_dish=data[day_key].get('dinner_dish', current_day['dinner_dish']),
+                            dinner_drink=data[day_key].get('dinner_drink', current_day['dinner_drink'])
+                        )
+
+                        cursor.execute("""
+                            UPDATE diet_plans_day
+                            SET breakfast_dish = ?,
+                                breakfast_drink = ?,
+                                lunch_main_dish = ?,
+                                lunch_side_dish = ?,
+                                lunch_drink = ?,
+                                dinner_dish = ?,
+                                dinner_drink = ?
+                            WHERE id = ?
+                        """, (
+                            updated_day.breakfast_dish,
+                            updated_day.breakfast_drink,
+                            updated_day.lunch_main_dish,
+                            updated_day.lunch_side_dish,
+                            updated_day.lunch_drink,
+                            updated_day.dinner_dish,
+                            updated_day.dinner_drink,
+                            day_id
+                        ))
+
+                    except ValueError as e:
+                        conn.rollback()
+                        return jsonify({"error": f"Error en {day_key}: {str(e)}"}), 400
+
+            conn.commit()
+            return jsonify({"message": "Plan actualizado exitosamente"}), 200
+
+    except sqlite3.Error as e:
+        conn.rollback()
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
+
+@app.route('/delete_diet_plan/<int:plan_id>', methods=['DELETE'])
+def delete_diet_plan(plan_id):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT * FROM diet_plans_complete WHERE id = ?", (plan_id,))
+            plan_row = cursor.fetchone()
+
+            if not plan_row:
+                return jsonify({"error": "El plan con el ID proporcionado no existe"}), 404
+
+            try:
+                plan = DietPlanComplete(
+                    name=plan_row['name'],
+                    user_id=plan_row['user_id'],
+                    duration=plan_row['duration'],
+                    diet_type_id=plan_row['diet_type_id'],
+                    day1=plan_row['day1'],
+                    day2=plan_row['day2'],
+                    day3=plan_row['day3'],
+                    day4=plan_row['day4'],
+                    day5=plan_row['day5'],
+                    day6=plan_row['day6'],
+                    day7=plan_row['day7']
+                )
+            except ValueError as e:
+                return jsonify({"error": f"Datos inválidos en el plan: {str(e)}"}), 500
+
+            day_ids = [plan_row[f'day{i}'] for i in range(1, 8) if plan_row[f'day{i}'] is not None]
+
+            cursor.execute("DELETE FROM diet_plans_complete WHERE id = ?", (plan_id,))
+
+            if day_ids:
+                placeholders = ','.join(['?'] * len(day_ids))
+                cursor.execute(f"DELETE FROM diet_plans_day WHERE id IN ({placeholders})", day_ids)
+
+            conn.commit()
+
+            return jsonify({
+                "message": "Plan de dieta y días asociados eliminados exitosamente",
+                "plan_id": plan_id,
+                "deleted_days": day_ids
+            }), 200
+
+    except sqlite3.Error as e:
+        conn.rollback()
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
+
+# --------------------------
+# Endpoints de Cálculos Nutricionales
+# --------------------------
 
 @app.route('/calculate', methods=['POST'])
 def calculate_diet():
-    data = request.get_json()
-
-    if "values" not in data:
-        return jsonify({"error": "No values provided"}), 400
-
     try:
+        data = request.get_json()
+
+        if "values" not in data:
+            return jsonify({"error": "No values provided"}), 400
+
         values_str = data["values"]
-        print(f"Valor recibido como string: {values_str}")
         values_list = ast.literal_eval(values_str)
 
-        if not isinstance(values_list, list):
-            raise ValueError("El valor recibido no es una lista válida.")
+        if not isinstance(values_list, list) or len(values_list) < 10:
+            return jsonify({"error": "Lista de valores inválida"}), 400
 
-        values = []
-        for i in values_list:
-            print(f"Valor recibido: {i}, Tipo: {type(i)}")
-            values.append(float(i))
+        values = [float(i) for i in values_list]
 
-    except (ValueError, TypeError) as e:
-        print(f"Error al convertir: {e}")
-        return jsonify({"error": "All values must be numbers"}), 400
+        dieta = total_diet_generator(
+            carbohydrates=values[0],
+            sugar=values[1],
+            energy=[values[2], values[3]],
+            protein=values[4],
+            salt=values[5],
+            fat=values[6],
+            price=values[8],
+            person_type=int(values[9]),
+            person_preferences=1,
+            total_days=int(values[7])
+        )
 
-    carbohydrates = values[0]
-    sugar = values[1]
-    energy = [values[2], values[3]]
-    protein = values[4]
-    salt = values[5]
-    fat = values[6]
-    price = values[8]
-    person_type = int(values[9])
-    person_preferences = 1
-    total_days = int(values[7])
-
-    try:
-        dieta = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
-        if not dieta or len(dieta) < total_days:
+        if not dieta or len(dieta) < int(values[7]):
             return jsonify({"error": "No valid diet found"}), 404
 
         result = []
+        for day in dieta:
+            result.append({
+                "breakfast": f"{day[0][0].name}, {day[0][1].name}",
+                "lunch": f"{day[1][0].name}, {day[1][1].name}, {day[1][2].name}",
+                "dinner": f"{day[2][0].name}, {day[2][1].name}"
+            })
 
-        for i in range(total_days):
-            response = {
-                "breakfast": dieta[i][0][0].name + ", " + dieta[i][0][1].name,
-                "lunch": dieta[i][1][0].name + ", " + dieta[i][1][1].name + ", " + dieta[i][1][2].name,
-                "dinner": dieta[i][2][0].name + ", " + dieta[i][2][1].name
-            }
-            result.append(response)
-
-
-        print(f"Solución enviada: {result}")
         return jsonify(result)
 
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": f"Datos inválidos: {str(e)}"}), 400
     except Exception as e:
-        print(f"Error al generar la dieta: {e}")
-        return jsonify({"error": f"Internal server error: {e}"}), 500
+        return jsonify({"error": f"Error interno: {str(e)}"}), 500
+
 
 @app.route("/barplot", methods=["POST"])
 def barplot():
     data = request.get_json(force=True)
-    print("DEBUG - JSON recibido:", data)
     if not data or 'dieta' not in data:
         return jsonify({'error': 'Falta el parámetro "dieta"'}), 400
 
     dieta = data['dieta']
-
-    # Convertimos cada plato en la dieta en un objeto Plate
     diet_total = []
+
     for food_group in dieta:
         plates_group = []
         for plate_data in food_group:
-            # Creamos un objeto Plate para cada plato
-            plate = GraphData(plate_data, 1)  # Pasamos directamente el diccionario plate_data
+            plate = GraphData(plate_data, 1)
             plates_group.append(plate)
         diet_total.append(plates_group)
 
-    # Pasamos la dieta convertida a la función nutritional_values_total
     res = nutritional_values_total(diet_total)
 
-    # Devolvemos los resultados como lista
     valores = {
         "calorias": res[0],
         "carbohidratos": res[1],
@@ -106,6 +505,7 @@ def barplot():
     }
 
     return jsonify(valores)
+
 
 @app.route("/basal", methods=["POST"])
 def calculate_basal_metabolic_rate():
@@ -131,259 +531,27 @@ def calculate_basal_metabolic_rate():
 
     return jsonify({"result": result})
 
-@app.route("/maintenance", methods=["POST"])
-def calculate_maintenance_calories():
-    data = request.get_json()
-    weight = data.get("weight")
-    height = data.get("height")
-    age = data.get("age")
-    gender = data.get("gender")
-    physical_activity_level = data.get("physical_activity_level")
+# --------------------------
+# Funciones auxiliares
+# --------------------------
 
-    try:
-        w = float(weight)
-        h = float(height)
-        a = float(age)
-        pal = int(physical_activity_level)
-    except (ValueError, TypeError):
-        return jsonify({"result": -1})
+def select_user(email: str):
+    if not isinstance(email, str):
+        raise TypeError(f"Se esperaba un string, se recibió: {email}")
 
-    physical_activity_coefficients = [1.2, 1.375, 1.55, 1.725, 1.9]
+    sql = """SELECT * FROM users WHERE email = ?"""
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute(sql, (email,))
+        data = cursor.fetchone()
+        if data:
+            return User.of(data[1:])
+        return None
 
-    if 0 <= pal < len(physical_activity_coefficients):
-        if gender.lower() == "m":
-            result = physical_activity_coefficients[pal] * (66 + (13.7 * w) + (5 * h) - (6.8 * a))
-        elif gender.lower() == "f":
-            result = physical_activity_coefficients[pal] * (665 + (9.6 * w) + (1.8 * h) - (4.7 * a))
-        else:
-            result = 0
-    else:
-        result = 0
 
-    return jsonify({"result": result})
+# --------------------------
+# Punto de entrada principal
+# --------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8000)
-
-"""
-def obtain_restrictions():
-    carbohydrates, sugar, energy, protein, salt, fat = [], [], [], [], [], []
-
-    # Promedio -> [281.25, 406.25]
-    for i in range(2):
-        if i == 0:
-            carbohydrates.append(float(input("Introduce el mínimo de carbohidratos (g): ")))
-        else:
-            carbohydrates.append(float(input("Introduce el máximo de carbohidratos (g): ")))
-
-    # Promedio -> [31.5, 62.5]
-    for i in range(2):
-        if i == 0:
-            sugar.append(float(input("Introduce el mínimo de azucar (g): ")))
-        else:
-            sugar.append(float(input("Introduce el máximo de azucar (g): ")))
-
-    # Promedio -> [1800, 3000]
-    for i in range(2):
-        if i == 0:
-            energy.append(float(input("Introduce el mínimo de calorías (kcal): ")))
-        else:
-            energy.append(float(input("Introduce el máximo de calorías (kcal): ")))
-
-    # Promedio -> [62.5, 218.75]
-    for i in range(2):
-        if i == 0:
-            protein.append(float(input("Introduce el mínimo de proteína (g): ")))
-        else:
-            protein.append(float(input("Introduce el máximo de proteína (g): ")))
-
-    # Promedio -> [0, 5]
-    for i in range(2):
-        if i == 0:
-            salt.append(float(input("Introduce el mínimo de sal (g): ")))
-        else:
-            salt.append(float(input("Introduce el máximo de sal (g): ")))
-
-    # Promedio -> [55.56, 97.22]
-    for i in range(2):
-        if i == 0:
-            fat.append(float(input("Introduce el mínimo de grasa (g): ")))
-        else:
-            fat.append(float(input("Introduce el máximo de grasa (g): ")))
-
-    budget = float(input("Introduce el presupuesto máximo (euros): "))
-
-    return carbohydrates, sugar, energy, protein, salt, fat, budget
-
-
-carbohydrates_min = 250
-energy_min = 1800
-energy_max = 2200
-sugar_max = 50
-protein_min = 50
-salt_max = 5000.0
-fat_max = 90
-budget = 50
-solution = total_diet_generator(
-    carbohydrates_min,
-    sugar_max,
-    [energy_min, energy_max],
-    protein_min,
-    salt_max,
-    fat_max,
-    budget,
-    1, 1, 2
-)
-print("*")
-for day in solution:
-    print(day)
-
-
-carbohydrates_min = 200
-energy_min = 1600
-energy_max = 1800
-sugar_max = 40
-protein_min = 40
-salt_max = 4000.0
-fat_max = 80
-solution = total_diet_generator(
-    carbohydrates_min,
-    sugar_max,
-    [energy_min, energy_max],
-    protein_min,
-    salt_max,
-    fat_max,
-    budget,
-    2, 1, 3
-)
-
-print("**")
-for day in solution:
-    print(day)
-carbohydrates_min = 250
-energy_min = 1800
-energy_max = 2200
-sugar_max = 50
-protein_min = 50
-salt_max = 5000.0
-fat_max = 90
-budget = 30
-solution = total_diet_generator(
-    carbohydrates_min,
-    sugar_max,
-    [energy_min, energy_max],
-    protein_min,
-    salt_max,
-    fat_max,
-    budget,
-    3, 1, 4
-)
-print("***")
-for day in solution:
-    print(day)
-carbohydrates_min = 250
-energy_min = 1800
-energy_max = 2200
-sugar_max = 50
-protein_min = 50
-salt_max = 5000.0
-fat_max = 90
-budget = 50
-solution = total_diet_generator(
-    carbohydrates_min,
-    sugar_max,
-    [energy_min, energy_max],
-    protein_min,
-    salt_max,
-    fat_max,
-    budget,
-    4, 1, 5
-)
-print("****")
-for day in solution:
-    print(day)
-carbohydrates_min = 250
-energy_min = 2600
-energy_max = 2900
-sugar_max = 80
-protein_min = 100
-salt_max = 5000.0
-fat_max = 90
-budget = 50
-solution = total_diet_generator(
-    carbohydrates_min,
-    sugar_max,
-    [energy_min, energy_max],
-    protein_min,
-    salt_max,
-    fat_max,
-    budget,
-    5, 1, 2
-)
-
-print("*****")
-for day in solution:
-    print(day)
-mch_requirements = calculate_nutritional_requirements(60, 183, 21, "m", 2, "gain")
-erc_requirements = calculate_nutritional_requirements(70, 179, 24, "m", 3, "lose")
-ggn_requirements = calculate_nutritional_requirements(55, 170, 20, "m", 1, "maintain")
-
-
-print(mch_requirements)
-print(erc_requirements)
-print(ggn_requirements)
-
-solution = total_diet_generator(
-    mch_requirements[0],
-    mch_requirements[1],
-    mch_requirements[2],
-    mch_requirements[3],
-    mch_requirements[4],
-    mch_requirements[5],
-    30,
-    4,
-    1,
-    2
-)
-
-print("******")
-for day in solution:
-    print(day)
-solution = total_diet_generator(
-    erc_requirements[0],
-    erc_requirements[1],
-    erc_requirements[2],
-    erc_requirements[3],
-    erc_requirements[4],
-    erc_requirements[5],
-    30,
-    3,
-    1,
-    2
-)
-
-print("*******")
-for day in solution:
-    print(day)
-solution = total_diet_generator(
-    ggn_requirements[0],
-    ggn_requirements[1],
-    ggn_requirements[2],
-    ggn_requirements[3],
-    ggn_requirements[4],
-    ggn_requirements[5],
-    30,
-    2,
-    1,
-    4
-)
-
-print("********")
-for day in solution:
-    print(day)
-
-
-end_time = time.time() - start_time
-print(f"\nTiempo de ejecución {end_time}")
-
-"""
