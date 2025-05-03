@@ -19,7 +19,8 @@ class DietViewModel: ViewModel() {
         creationDate: String = currentDiet.creationDate,
         diets: List<DietDayViewModel> = currentDiet.diets,
         foodVariant: FoodVariant = currentDiet.foodVariant,
-        goal: Goal = currentDiet.goal
+        goal: Goal = currentDiet.goal,
+        dietId: String = currentDiet.dietId
     ) {
         currentDiet = DietModel(
             name = name,
@@ -28,7 +29,8 @@ class DietViewModel: ViewModel() {
             creationDate = creationDate,
             diets = diets,
             foodVariant = foodVariant,
-            goal = goal
+            goal = goal,
+            dietId = dietId
         )
     }
 

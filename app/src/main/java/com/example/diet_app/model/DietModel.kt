@@ -4,6 +4,7 @@ import com.example.diet_app.viewModel.DietDayViewModel
 
 class DietModel(
     var name: String = "",
+    var dietId: String = "",
     var userModel: UserModel = UserModel(),
     var duration: Int = 0,
     var creationDate: String = "",

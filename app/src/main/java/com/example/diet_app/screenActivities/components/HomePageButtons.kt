@@ -49,7 +49,9 @@ fun OptionGrid(navController: NavController) {
                 label = "Diet Calendar",
                 imageId = R.drawable.calendar,
                 backgroundColor = Color(0xFF5C6DFF), // color personalizado
-                onClick = { /* Acción temporal, no se hace nada por ahora */ }
+                onClick = {
+                    navController.navigate(Screen.Calendar.route)
+                }
             )
         }
 

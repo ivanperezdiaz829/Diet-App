@@ -13,12 +13,14 @@ class DietDayViewModel {
     fun updateDietDay(
         foods: List<FoodViewModel> = currentDietDay.foods,
         foodVariant: FoodVariant = currentDietDay.foodVariant,
-        goal: Goal = currentDietDay.goal
+        goal: Goal = currentDietDay.goal,
+        dietId: String = currentDietDay.dietId
     ) {
         currentDietDay = DietDayModel(
             foods = foods,
             foodVariant = foodVariant,
-            goal = goal
+            goal = goal,
+            dietId = dietId
         )
     }
 

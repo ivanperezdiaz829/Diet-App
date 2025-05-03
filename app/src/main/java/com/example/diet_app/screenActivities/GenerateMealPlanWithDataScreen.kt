@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.diet_app.screenActivities.components.BackButtonLeft
 import com.example.diet_app.viewModel.UserViewModel
 
@@ -19,10 +20,11 @@ import com.example.diet_app.viewModel.UserViewModel
 fun GenerateMealPlanWithDataScreen(
     userViewModel: UserViewModel,
     onNavigateBack: () -> Unit,
-    onNext: (Boolean) -> Unit
+    onNext: (Boolean) -> Unit,
+    navController: NavController
 ) {
 
-    // NAVIGATE BACK
+    BackButtonLeft(onNavigateBack)
 
     Column(
         modifier = Modifier
