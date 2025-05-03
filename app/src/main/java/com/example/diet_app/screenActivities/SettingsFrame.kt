@@ -14,6 +14,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,13 +29,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.diet_app.R
 import com.example.diet_app.model.Screen
-import com.example.diet_app.screenActivities.components.Header
 import com.example.diet_app.screenActivities.components.SettingsOption
 import com.example.diet_app.screenActivities.components.ToolBox
+import com.example.diet_app.viewModel.UserViewModel
 
 // Pantalla de configuración del usuario con botón de logout funcional
 @Composable
-fun SettingsScreen(navController: NavHostController) {
+fun SettingsScreen(
+    navController: NavHostController,
+    userViewModel: UserViewModel
+) {
+
+    var selectedTab by remember { mutableIntStateOf(0) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +71,7 @@ fun SettingsScreen(navController: NavHostController) {
 
         // Nombre de usuario
         Text(
-            text = "@3j1s",
+            text = "@" + userViewModel.getUser().name,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
