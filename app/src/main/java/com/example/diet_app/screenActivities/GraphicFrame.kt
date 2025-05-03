@@ -40,6 +40,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.diet_app.fetchNutritionalData
+import com.example.diet_app.model.GlobalData
 import com.example.diet_app.screenActivities.components.ToolBox
 
 @Composable
@@ -51,8 +52,8 @@ fun GraphicFrame(
     val scrollState = rememberScrollState()
     val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
 
-    LaunchedEffect(dietId) {
-        fetchNutritionalData(context, dietId) { data ->
+    LaunchedEffect(GlobalData.dietJson) {
+        fetchNutritionalData(context, GlobalData.dietJson) { data ->
             nutritionData.value = data
         }
     }

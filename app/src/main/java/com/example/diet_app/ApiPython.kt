@@ -447,3 +447,5 @@ fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Ma
         }
     })
 }
+
+
