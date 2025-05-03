@@ -1,6 +1,8 @@
 import re
 from datetime import date, datetime
-from DietAppAPI.configuration.config import *
+from PycharmProjects.DietApp.configuration.config import *
+
+
 
 class User:
 
