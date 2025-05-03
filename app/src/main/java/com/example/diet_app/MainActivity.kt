@@ -509,7 +509,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
-            GenerateMealPlanScreen(
+            GenerateMealPlanWithDataScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     if (it) {
