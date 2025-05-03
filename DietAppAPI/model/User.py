@@ -71,7 +71,7 @@ def validate_email(email):
 
 
 def validate_sex(sex):
-    if not isinstance(sex, int):
+    if not isinstance(sex, str):
         raise TypeError(f"Expected a string as sex value, received: {type(sex)}")
     if sex not in SEX_VALUES:
         raise ValueError("Sex value provided is not contemplated in our database\n"
