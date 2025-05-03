@@ -2,9 +2,8 @@ package com.example.diet_app
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.util.Log
-import android.widget.ImageView
+import com.example.diet_app.viewModel.FoodViewModel
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -19,6 +18,69 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+
+fun getPrefs(context: Context, name: String, userId: Int, dietTypeId: Int, duration: Int) : JSONObject {
+    var planJson = JSONObject()
+    for (i in 0 until duration) {
+        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val calendar = Calendar.getInstance()
+        val dateKey = sdf.format(calendar.time) + "_diet"
+        val dayString = prefs.getString(dateKey, null)
+       planJson = JSONObject().apply {
+            put("name", name)
+            put("user_id", userId)
+            put("duration", duration)
+            put("diet_type_id", dietTypeId)
+        }
+        if (dayString != null) {
+            val dayJsonRaw = JSONObject(dayString)
+
+            val dayJson = JSONObject().apply {
+                put("breakfast_dish", dayJsonRaw.getString("breakfast_dish"))
+                put("breakfast_drink", dayJsonRaw.getString("breakfast_drink"))
+                put("lunch_main_dish", dayJsonRaw.getString("lunch_main_dish"))
+                put("lunch_side_dish", dayJsonRaw.getString("lunch_side_dish"))
+                put("lunch_drink", dayJsonRaw.getString("lunch_drink"))
+                put("dinner_dish", dayJsonRaw.getString("dinner_dish"))
+                put("dinner_drink", dayJsonRaw.getString("dinner_drink"))
+            }
+
+
+
+            planJson.put("day${i + 1}", dayJson)
+        }
+    }
+    return planJson
+}
+
+fun parseFoodsFromJson(jsonObject: JSONObject): List<FoodViewModel> {
+    val foodList = mutableListOf<FoodViewModel>()
+    val dietaArray = jsonObject.getJSONArray("dieta")
+
+    for (i in 0 until dietaArray.length()) {
+        val dayArray = dietaArray.getJSONArray(i)
+        for (j in 0 until dayArray.length()) {
+            val foodJson = dayArray.getJSONObject(j)
+            val foodViewModel = FoodViewModel().apply {
+                updateFood(
+                    name = foodJson.getString("name"),
+                    protein = foodJson.getDouble("protein"),
+                    fats = foodJson.getDouble("fat"), // "fat" en JSON → "fats" en el modelo
+                    sugar = foodJson.getDouble("sugar"),
+                    salt = foodJson.getDouble("salt"),
+                    carbohydrates = foodJson.getDouble("carbohydrates"),
+                    calories = foodJson.getDouble("calories"),
+                    price = foodJson.getDouble("price")
+                    // foodVariants y foodTypes se omiten
+                )
+            }
+            foodList.add(foodViewModel)
+        }
+    }
+
+    return foodList
+}
 
 fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) -> Unit) {
     val client = OkHttpClient.Builder()
@@ -206,7 +268,7 @@ fun createUser(
     email: String,
     password: String,
     physicalActivity: String,
-    sex: String,
+    sex: Int,
     birthday: String,
     height: Int,
     weight: Int,
