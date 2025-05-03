@@ -3,6 +3,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,9 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.diet_app.R
 import com.example.diet_app.model.Screen
-import com.example.diet_app.screenActivities.components.DietView
 import com.example.diet_app.screenActivities.components.ToolBox
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.PrimaryGreen
@@ -43,7 +42,11 @@ import com.example.diet_app.viewModel.DietViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MealPlanScreen(navController: NavController) {
+fun DietPlansScreen(
+    navController: NavController,
+    diets: List<DietViewModel> // Lista de ViewModels
+    ) {
+
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Scaffold { paddingValues ->
@@ -56,7 +59,7 @@ fun MealPlanScreen(navController: NavController) {
                 {
                     // Título
                     Text(
-                        text = "Meal plan",
+                        text = "Your diets",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(bottom = 24.dp)
@@ -103,10 +106,12 @@ fun MealPlanScreen(navController: NavController) {
                         )
                     }
 
-                    // Contenido dinámico
                     when (selectedTab) {
-                        0 -> CurrentMealPlanContent(navController)
-                        1 -> OtherMealPlanContent(navController)
+                        0 -> CurrentDietContent(navController)
+                        1 -> OtherDietsContent(
+                            navController = navController,
+                            diets = diets // Pasa la lista de dietas
+                        )
                     }
                 }
         ToolBox(navController)
@@ -114,7 +119,7 @@ fun MealPlanScreen(navController: NavController) {
 }
 
 @Composable
-fun CurrentMealPlanContent(navController: NavController) {
+fun CurrentDietContent(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -130,7 +135,7 @@ fun CurrentMealPlanContent(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate(Screen.GenerateMealPlan.route)
+                navController.navigate(Screen.SelectTypeOfDietGeneration.route)
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = PrimaryGreen,
@@ -158,30 +163,30 @@ fun CurrentMealPlanContent(navController: NavController) {
 }
 
 @Composable
-fun OtherMealPlanContent(
+fun OtherDietsContent(
     navController: NavController,
+    diets: List<DietViewModel> // Lista de ViewModels
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        /*
-        Icon(
-            Icons.Filled.Info,
-            contentDescription = "Info",
-            tint = GrayGreen,
-            modifier = Modifier.size(48.dp))
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Other meal plans will appear here",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant)
-            */
-        DietView(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
-        DietView(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
-        DietView(onClick = {  }, diet = DietViewModel(), image = R.drawable.healthy_icon)
+        if (diets.isEmpty()) {
+            Text(
+                text = "No available diet plans",
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        } else {
+            diets.forEach { diet ->
+                DietView(
+                    navController = navController,
+                    dietViewModel = diet,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
     }
 }

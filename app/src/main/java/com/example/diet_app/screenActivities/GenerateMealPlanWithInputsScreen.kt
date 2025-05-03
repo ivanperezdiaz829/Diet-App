@@ -7,12 +7,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.diet_app.ui.theme.PrimaryGreen
 import com.example.diet_app.model.FoodVariant
+import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.sendDataToServer
 
 @Composable
-fun GenerateMealPlanWithInputsScreen(context: Context) {
+fun GenerateMealPlanWithInputsScreen(
+    context: Context,
+    onNavigateBack: () -> Unit,
+    onNext: () -> Unit
+) {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxSugar by remember { mutableStateOf("") }
     var minEnergy by remember { mutableStateOf("") }
@@ -28,7 +34,14 @@ fun GenerateMealPlanWithInputsScreen(context: Context) {
 
     // NAVIGATE BACK
 
-    Column(modifier = Modifier.padding(8.dp)) {
+    Column(modifier = Modifier
+        .statusBarsPadding()
+        .padding(horizontal = 16.dp)
+        .padding(vertical = 16.dp)
+    ) {
+
+        BackButton(onNavigateBack)
+
         Text("Planificador de Dieta", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 12.dp))
 
         if (formErrors.isNotEmpty()) {

@@ -28,7 +28,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.diet_app.R
+import com.example.diet_app.screenActivities.components.BackButtonLeft
 import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
 import com.example.diet_app.ui.theme.DarkGreen
@@ -36,6 +38,7 @@ import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.ui.theme.Typography
+import com.example.diet_app.viewModel.UserViewModel
 
 enum class DietGeneratorType {
     USER_DATA,    // Generador basado en datos del usuario
@@ -43,14 +46,22 @@ enum class DietGeneratorType {
 }
 
 @Composable
-fun DietGeneratorSelectionScreen() {
+fun DietGeneratorSelectionScreen(
+    navController: NavController,
+    userViewModel: UserViewModel,
+    onNavigateBack: () -> Unit,
+    onNext: (DietGeneratorType?) -> Unit
+) {
     var selectedGenerator by remember { mutableStateOf<DietGeneratorType?>(null) }
+
+    BackButtonLeft(
+        onNavigateBack = onNavigateBack
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .background(Color.White)
     ) {
         Column(
             modifier = Modifier
@@ -78,7 +89,9 @@ fun DietGeneratorSelectionScreen() {
 
             NextButton(
                 enabled = selectedGenerator != null,
-                onClick = { }
+                onClick = {
+                    onNext(selectedGenerator)
+                }
             )
         }
     }
