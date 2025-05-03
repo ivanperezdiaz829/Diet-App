@@ -475,6 +475,7 @@ fun createDiet(context: Context, name: String, userId: Int, dietTypeId: Int, onR
     }
 
     for (i in 0 until duration) {
+        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
         val dateKey = sdf.format(calendar.time) + "_diet"
         val dayString = prefs.getString(dateKey, null)
         if (dayString != null) {
@@ -538,6 +539,80 @@ fun createDiet(context: Context, name: String, userId: Int, dietTypeId: Int, onR
     })
 }
 
+fun getDietPlanById(planId: Int, context: Context, onResult: (String) -> Unit) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/get_diet_plan/$planId"
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            onResult("❌ Error de conexión: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+
+                    if (!response.isSuccessful) {
+                        val errorMsg = jsonResponse.optString("error", "Error desconocido")
+                        onResult("⚠️ Error al obtener plan: $errorMsg")
+                        return
+                    }
+
+                    val plan = jsonResponse.getJSONObject("plan")
+                    val days = jsonResponse.getJSONObject("days")
+
+                    val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+                    val editor = prefs.edit()
+
+                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val calendar = Calendar.getInstance()
+
+                    val output = StringBuilder()
+                    output.append("📋 *Plan:* ${plan.getString("name")} (ID: $planId)\n\n")
+
+                    for (i in 1..7) {
+                        val dayKey = "day$i"
+                        if (days.has(dayKey)) {
+                            val dateStr = sdf.format(calendar.time)
+                            val dayObj = days.getJSONObject(dayKey)
+
+                            val breakfast = "${dayObj.getString("breakfast_dish")} + ${dayObj.getString("breakfast_drink")}"
+                            val lunch = "${dayObj.getString("lunch_main_dish")}, ${dayObj.getString("lunch_side_dish")} + ${dayObj.getString("lunch_drink")}"
+                            val dinner = "${dayObj.getString("dinner_dish")} + ${dayObj.getString("dinner_drink")}"
+
+                            // Mostrar y guardar
+                            output.append("📅 *$dateStr*\n")
+                            output.append("🍳 Desayuno: $breakfast\n")
+                            output.append("🥗 Almuerzo: $lunch\n")
+                            output.append("🍽 Cena: $dinner\n\n")
+
+                            val dayJson = JSONObject().apply {
+                                put("breakfast", breakfast)
+                                put("lunch", lunch)
+                                put("dinner", dinner)
+                            }
+
+                            editor.putString("${dateStr}_diet", dayJson.toString())
+                            calendar.add(Calendar.DAY_OF_YEAR, 1)
+                        }
+                    }
+
+                    editor.apply()
+                    onResult(output.toString().trim())
+
+                } catch (e: Exception) {
+                    onResult("❌ Error al procesar JSON: ${e.message}")
+                }
+            }
+        }
+    })
+}
 
 
 
