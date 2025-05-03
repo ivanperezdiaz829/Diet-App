@@ -8,6 +8,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 from GenerarDieta2 import *
+from InfoForGraph import *
 
 #start_time = time.time()
 
@@ -50,8 +51,7 @@ def calculate_diet():
 
     try:
         dieta = total_diet_generator(carbohydrates, sugar, energy, protein, salt, fat, price, person_type, person_preferences, total_days)
-
-        if not dieta or len(dieta) < 3:
+        if not dieta or len(dieta) < total_days:
             return jsonify({"error": "No valid diet found"}), 404
 
         result = []
@@ -87,7 +87,7 @@ def barplot():
         plates_group = []
         for plate_data in food_group:
             # Creamos un objeto Plate para cada plato
-            plate = Plate(plate_data, 1)  # Pasamos directamente el diccionario plate_data
+            plate = GraphData(plate_data, 1)  # Pasamos directamente el diccionario plate_data
             plates_group.append(plate)
         diet_total.append(plates_group)
 

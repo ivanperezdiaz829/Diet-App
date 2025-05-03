@@ -2,19 +2,19 @@ class Plate:
 
     def __init__(self, row, mult):
         # Si los valores son None, los reemplazamos con 0 (o algún valor predeterminado adecuado)
-        self.name = row["name"]
-        self.calories = (row["calories"] if row["calories"] is not None else 0) * mult
-        self.carbohydrates = (row["carbohydrates"] if row["carbohydrates"] is not None else 0) * mult
-        self.protein = (row["protein"] if row["protein"] is not None else 0) * mult
-        self.fat = (row["fat"] if row["fat"] is not None else 0) * mult
-        self.sugar = (row["sugar"] if row["sugar"] is not None else 0) * mult
-        self.salt = (row["salt"] if row["salt"] is not None else 0) * mult
-        self.price = (row["price"] if row["price"] is not None else 0) * mult
-        self.food_type = row["food_type"] if row.get("food_type") is not None else ""
-        self.vegan = row["vegan"] if row.get("vegan") is not None else False
-        self.vegetarian = row["vegetarian"] if row.get("vegetarian") is not None else False
-        self.celiac = row["celiac"] if row.get("celiac") is not None else False
-        self.halal = row["halal"] if row.get("halal") is not None else False
+        self.name = row[1]
+        self.calories = row[3] * mult
+        self.carbohydrates = row[4] * mult
+        self.protein = row[5] * mult
+        self.fat = row[6] * mult
+        self.sugar = row[7] * mult
+        self.salt = row[8] * mult
+        self.price = row[9] * mult
+        self.food_type = row[10]
+        self.vegan = row[11]
+        self.vegetarian = row[12]
+        self.celiac = row[13]
+        self.halal = row[14]
 
     def __repr__(self):
         return self.name
