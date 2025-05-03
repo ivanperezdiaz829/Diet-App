@@ -46,6 +46,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.*
+import com.example.diet_app.screenActivities.components.DietViewScreen
 import com.example.diet_app.screenActivities.components.navigateSingleInStack
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
@@ -92,8 +93,9 @@ class MainActivity : ComponentActivity() {
                 context = LocalContext.current,
                 onResult = {}
             )*/
-
-            //DietApp(LocalContext.current, userViewModel, foodViewModel)
+            //DietForm(userViewModel, LocalContext.current)
+            DietApp(LocalContext.current, userViewModel, foodViewModel)
+            //DietInterface()
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
     }
@@ -598,7 +600,6 @@ fun DietForm(userViewModel: UserViewModel, context: Context) {
         InputField(label = "Proteina mínimas", value = minProtein) { minProtein= it }
         InputField(label = "Sal máxima (g)", value = maxSalt) { maxSalt = it }
         InputField(label = "Grasa máxima (g)", value = maxFat) { maxFat = it }
-        InputField(label = "Número de días", value = days) { days = it }
         InputField(label = "Presupuesto", value = budget) { budget = it }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -606,13 +607,13 @@ fun DietForm(userViewModel: UserViewModel, context: Context) {
         Button(onClick = {
             // Convertir todos los valores a Double, ignorando los que no sean válidos
             val numericValues = listOf(maxCarbohydrates, maxSugar,
-                minEnergy, maxEnergy, minProtein, maxSalt, maxFat, days, budget)
+                minEnergy, maxEnergy, minProtein, maxSalt, maxFat, budget)
                 .map { it.replace(",", ".") }  // Asegura el formato correcto de decimales
                 .mapNotNull { it.toDoubleOrNull() }  // Convierte String a Double si es válido
 
             Log.d("DietForm", "Valores convertidos a Double: $numericValues")
 
-            if (numericValues.size == 13) { // Asegurar que todos los valores sean numéricos
+            if (numericValues.size == 8) { // Asegurar que todos los valores sean numéricos
                 sendDataToServer(numericValues, context) { response ->
                     result = response
                 }
