@@ -12,6 +12,9 @@ import com.example.diet_app.ui.theme.PrimaryGreen
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.sendDataToServer
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 
 @Composable
 fun GenerateMealPlanWithInputsScreen(
@@ -38,6 +41,7 @@ fun GenerateMealPlanWithInputsScreen(
         .statusBarsPadding()
         .padding(horizontal = 16.dp)
         .padding(vertical = 16.dp)
+        .verticalScroll(rememberScrollState())
     ) {
 
         BackButton(onNavigateBack)
