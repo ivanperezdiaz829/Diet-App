@@ -1,5 +1,3 @@
-from enum import nonmember
-
 from Plates import *
 from SQLsentences import *
 
@@ -249,9 +247,9 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
             for dinner in dinners:
                 solution = [breakfast, lunch, dinner]
                 if validate_full_diet(solution, carbohydrates_min, sugar_max, energy_range, protein_min, salt_max, fat_max, price_max):
-                    if lunch[0] not in selected_lunches and lunch[1] not in selected_breakfasts and dinner[0] not in selected_dinners:
+                    if lunch[0] not in selected_lunches and breakfast[0] not in selected_breakfasts and dinner[0] not in selected_dinners:
                         selected_lunches.add(lunch[0])
-                        selected_breakfasts.add(lunch[1])
+                        selected_breakfasts.add(breakfasts[0])
                         selected_dinners.add(dinner[0])
                         conn.close()
                         total_carbs = 0
