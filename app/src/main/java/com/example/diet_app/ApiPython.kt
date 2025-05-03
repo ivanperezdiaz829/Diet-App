@@ -78,7 +78,7 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
                         stringBuilder.append("🍽 **Cena:** $dinner\n\n")
                          */
 
-                        // Guardar en SharedPreferences usando la fecha como clave
+                        // Guardar en SharedPreferences
                         val dietData = JSONObject().apply {
                             put("breakfast_dish", breakfastDish)
                             put("breakfast_drink", breakfastDrink)
@@ -512,11 +512,27 @@ fun createDiet(context: Context, name: String, userId: Int, dietTypeId: Int, onR
         }
 
         override fun onResponse(call: Call, response: Response) {
-            val res = response.body?.string()
-            if (response.isSuccessful) {
-                onResult("✅ Plan guardado correctamente: $res")
-            } else {
-                onResult("⚠️ Error al guardar el plan: $res")
+            response.body?.string()?.let { responseBody ->
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+
+                    if (response.isSuccessful) {
+                        val planId = jsonResponse.optInt("plan_id", -1)
+                        if (planId != -1) {
+                            Log.d("DietSubmit", "✅ Plan creado con ID: $planId")
+                            onResult("✅ Plan creado exitosamente con ID: $planId")
+                        } else {
+                            onResult("⚠️ Plan creado pero no se recibió plan_id")
+                        }
+                    } else {
+                        val error = jsonResponse.optString("error", "Error desconocido")
+                        onResult("⚠️ Error al crear plan: $error")
+                    }
+
+                } catch (e: Exception) {
+                    Log.e("DietSubmit", "❌ Error al procesar la respuesta: ${e.message}")
+                    onResult("❌ Error al procesar la respuesta del servidor")
+                }
             }
         }
     })
