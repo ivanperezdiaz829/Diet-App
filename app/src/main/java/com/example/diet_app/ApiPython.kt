@@ -59,23 +59,34 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
 
                     for (i in 0 until jsonArray.length()) {
                         val dayData = jsonArray.getJSONObject(i)
-                        val breakfast = dayData.getString("breakfast")
-                        val lunch = dayData.getString("lunch")
-                        val dinner = dayData.getString("dinner")
+                        val breakfastDish = dayData.getString("breakfast_dish")
+                        val breakfastDrink = dayData.getString("breakfast_drink")
+
+                        val lunchMain = dayData.getString("lunch_main_dish")
+                        val lunchSide = dayData.getString("lunch_side_dish")
+                        val lunchDrink = dayData.getString("lunch_drink")
+
+                        val dinnerDish = dayData.getString("dinner_dish")
+                        val dinnerDrink = dayData.getString("dinner_drink")
 
                         val dateString = sdf.format(calendar.time) // fecha actual
 
-                        // Construir texto para mostrar
+                        /* Construir texto para mostrar
                         stringBuilder.append("📅 *$dateString*\n")
                         stringBuilder.append("🍳 **Desayuno:** $breakfast\n")
                         stringBuilder.append("🥗 **Almuerzo:** $lunch\n")
                         stringBuilder.append("🍽 **Cena:** $dinner\n\n")
+                         */
 
                         // Guardar en SharedPreferences usando la fecha como clave
                         val dietData = JSONObject().apply {
-                            put("breakfast", breakfast)
-                            put("lunch", lunch)
-                            put("dinner", dinner)
+                            put("breakfast_dish", breakfastDish)
+                            put("breakfast_drink", breakfastDrink)
+                            put("lunch_main_dish", lunchMain)
+                            put("lunch_side_dish", lunchSide)
+                            put("lunch_drink", lunchDrink)
+                            put("dinner_dish", dinnerDish)
+                            put("dinner_drink", dinnerDrink)
                         }
                         editor.putString("${dateString}_diet", dietData.toString())
 
@@ -447,5 +458,71 @@ fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Ma
         }
     })
 }
+
+fun createDiet(context: Context, name: String, userId: Int, dietTypeId: Int, onResult: (String) -> Unit) {
+    val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+    val client = OkHttpClient()
+
+    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val calendar = Calendar.getInstance()
+
+    val duration = 7
+    val planJson = JSONObject().apply {
+        put("name", name)
+        put("user_id", userId)
+        put("duration", duration)
+        put("diet_type_id", dietTypeId)
+    }
+
+    for (i in 0 until duration) {
+        val dateKey = sdf.format(calendar.time) + "_diet"
+        val dayString = prefs.getString(dateKey, null)
+        if (dayString != null) {
+            val dayJsonRaw = JSONObject(dayString)
+
+            val dayJson = JSONObject().apply {
+                put("breakfast_dish", dayJsonRaw.getString("breakfast_dish"))
+                put("breakfast_drink", dayJsonRaw.getString("breakfast_drink"))
+                put("lunch_main_dish", dayJsonRaw.getString("lunch_main_dish"))
+                put("lunch_side_dish", dayJsonRaw.getString("lunch_side_dish"))
+                put("lunch_drink", dayJsonRaw.getString("lunch_drink"))
+                put("dinner_dish", dayJsonRaw.getString("dinner_dish"))
+                put("dinner_drink", dayJsonRaw.getString("dinner_drink"))
+            }
+
+            planJson.put("day${i + 1}", dayJson)
+        } else {
+            onResult("❌ No se encontró dieta guardada para el día ${i + 1}")
+            return
+        }
+
+        calendar.add(Calendar.DAY_OF_YEAR, 1)
+    }
+
+    val body = planJson.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url("http://10.0.2.2:8000/create_diet_plan")
+        .post(body)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            onResult("❌ Error de red: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            val res = response.body?.string()
+            if (response.isSuccessful) {
+                onResult("✅ Plan guardado correctamente: $res")
+            } else {
+                onResult("⚠️ Error al guardar el plan: $res")
+            }
+        }
+    })
+}
+
+
+
 
 
