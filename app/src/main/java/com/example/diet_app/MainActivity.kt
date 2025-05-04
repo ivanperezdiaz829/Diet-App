@@ -47,8 +47,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.diet_app.model.FoodModel
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.GlobalData
+import com.example.diet_app.model.Goal
 import com.example.diet_app.model.Screen
 import com.example.diet_app.model.getGoalInt
 import com.example.diet_app.model.getSexInt
@@ -155,6 +157,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
+            var dietViewModel = DietViewModel()
             /*
             createUser(
                 email = "frikazoA2@gmail.es",
@@ -172,7 +175,7 @@ class MainActivity : ComponentActivity() {
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
             // In your ViewModel or Activity
-            DietApp(LocalContext.current, userViewModel, foodViewModel)
+            DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
             /*
             DietInterface(
                 navController = rememberNavController(),
@@ -188,7 +191,7 @@ class MainActivity : ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: FoodViewModel) {
+fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: FoodViewModel, dietViewModel: DietViewModel) {
     // Usamos NavController para manejar la navegación
     val navController = rememberNavController()
 
@@ -338,39 +341,20 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
         composable(route = Screen.Meals.route
         ) {
 
-            var diets: List<DietViewModel> = mutableListOf<DietViewModel>()
+            var diets: MutableList<DietViewModel> = mutableListOf<DietViewModel>()
 
             getUserDietPlansComplete(
                 7,
                 applicationContext,
-                diets as MutableList<DietViewModel>,
+                diets,
                 onResult = { result ->
                     result.onSuccess {
-                        updatedList ->
-                        diets = updatedList
+                            updatedList ->
+                        GlobalData.dietsList = updatedList
+                        diets = updatedList as MutableList<DietViewModel>
                     }
                 }
             )
-
-            for (diet  in diets) {
-                for (i in 0 until diet.getDiet().duration) {
-                    var day = diet.getDayByIndex(i)
-                }
-                var dietDays = mutableListOf<DietDayViewModel>()
-                for (day in diet.getDiet().dietsId) {
-                    getPlanCompleteDays(day, applicationContext, dietDays, onResult = {
-                        result ->
-                        result.onSuccess {
-                            updatedList ->
-                            dietDays = updatedList as MutableList<DietDayViewModel>
-                        }
-                    })
-                }
-                diet.updateDiet(diets = dietDays)
-
-            }
-
-            var diets2: List<DietViewModel> = emptyList()
 
             DietPlansScreen(
                 navController,
@@ -480,7 +464,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 }
             )
         }
-
 
         composable(route = Screen.FoodList.route,
         ) {
@@ -687,24 +670,41 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 }
             )
         ) { entry ->
-            // Esto es clave: así se obtiene el argumento correctamente
-            var diets = mutableListOf<DietDayViewModel>()
             val dietId = entry.arguments?.getString("dietId") ?: ""
-            getPlanCompleteDays(
-                dietId.toInt(),
+
+            var diets: MutableList<DietViewModel> = mutableListOf<DietViewModel>()
+            getUserDietPlansComplete(
+                7,
                 applicationContext,
                 diets,
                 onResult = { result ->
                     result.onSuccess {
                             updatedList ->
-                        diets = updatedList as MutableList<DietDayViewModel>
+                        GlobalData.dietsList = updatedList
+                        diets = updatedList as MutableList<DietViewModel>
                     }
                 }
             )
+
             DietInterface(
-                dietViewModel = GlobalData.mainDiet,
+                diets = diets,
                 navController = navController,// Pasa el ID a tu pantalla
             )
+
+            /*
+            getPlanCompleteDays(
+                dietViewModel.getDiet().dietId.toInt(),
+                applicationContext,
+                diets,
+                onResult = { result ->
+                    result.onSuccess {
+                            updatedList ->
+                        diets = updatedList
+                    }
+                }
+            )*/
+            // Esto es clave: así se obtiene el argumento correctamente
+            Log.d("Ruta de mierda", dietId)
         }
 
         composable(
@@ -1185,4 +1185,20 @@ fun printAllFoodIds(dietDays: List<DietDayViewModel>, tag: String = "FoodIds") {
         val foodIds = dayViewModel.getDiet().foodsId.joinToString(", ")
         Log.d(tag, "Día ${index + 1} - IDs de comidas: [$foodIds]")
     }
+}
+
+fun getDiet(dietId: String): DietViewModel {
+    var foodTypes = setOf(FoodType.LIGHT_MEAL, FoodType.MAIN_DISH, FoodType.SIDE_DISH, FoodType.DRINK, FoodType.DESSERT)
+    var food1 = FoodViewModel()
+    food1.updateFood(name = "comida1", foodTypes = foodTypes)
+    var food2 = FoodViewModel()
+    food2.updateFood(name = "comida2", foodTypes = foodTypes)
+    var food3 = FoodViewModel()
+    food3.updateFood(name = "comida3", foodTypes = foodTypes)
+    var foodList = listOf(food1, food2, food3)
+    var dayDietViewModel = DietDayViewModel()
+    dayDietViewModel.updateDietDay(foods = foodList)
+    var dietViewModel = DietViewModel()
+    dietViewModel.updateDiet(name = "tus muertos", duration = 7, dietId = dietId, goal = Goal.GAIN_WEIGHT, diets = listOf(dayDietViewModel))
+    return dietViewModel
 }
