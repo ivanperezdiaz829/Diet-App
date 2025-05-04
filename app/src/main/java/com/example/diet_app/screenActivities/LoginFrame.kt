@@ -171,15 +171,6 @@ private fun LoginCard(
             // Form content
             AnimatedContent(targetState = isLogin, label = "FormSwitch") { login ->
                 Column {
-                    if (!login) {
-                        CustomTextField(
-                            label = "Name",
-                            value = name,
-                            onValueChange = { name = it },
-                            isError = showError,
-                            errorMessage = errorMessage
-                        )
-                    }
 
                     CustomTextField(
                         label = "Email or Username",
@@ -199,14 +190,11 @@ private fun LoginCard(
 
                     Button(
                         onClick = {
-                            if (username.isEmpty() || password.isEmpty() || (!login && name.isEmpty())) {
-                                errorMessage = "All fields are required"
-                                showError = true
-                            } else if (!isLogin && !Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
+                            if (!isLogin && !Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
                                 errorMessage = "Please enter a valid email address"
                                 showError = true
-                            } else if (!isLogin && password.length < 6) {
-                                errorMessage = "Password must be at least 6 characters long"
+                            } else if (!isLogin && password.length < 8) {
+                                errorMessage = "Password must be at least 8 characters long"
                                 showError = true
                             } else {
                                 errorMessage = ""

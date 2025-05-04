@@ -150,7 +150,7 @@ class MainActivity : ComponentActivity() {
 }
 """.trimIndent()
         setContent {
-            val foodViewModel = FoodViewModel()
+            var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
             /*
             createUser(
@@ -165,10 +165,10 @@ class MainActivity : ComponentActivity() {
                 onResult = {}
             )*/
 
-            getDietPlanById(4, LocalContext.current, onResult = {})
-
-            //DietApp(LocalContext.current, userViewModel, foodViewModel)
+            //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
+
+            DietApp(LocalContext.current, userViewModel, foodViewModel)
             /*
             DietInterface(
                 navController = rememberNavController(),
@@ -189,7 +189,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.Login.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -211,6 +211,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             onSkip = { navController.navigate("welcome") },
             onNavigateBack = { navController.popBackStack() },
             onNext = {
+                Log.d("CurrentUser", userViewModel.getUser().toString())
                 /*
                 createUser(
                     email = userViewModel.getUser().email,
@@ -1070,11 +1071,12 @@ fun fetchAllUsers() {
 
 fun printUserInfo(userViewModel: UserViewModel) {
     Log.d("Resumen: ",
-        "Nombre: ${userViewModel.getUser().name},\n" +
+        " Email: ${userViewModel.getUser().email},\n" +
+        " Contraseña: ${userViewModel.getUser().password},\n " +
         " Edad: ${userViewModel.getUser().age},\n" +
         " Sexo: ${userViewModel.getUser().sex},\n" +
-        " Altura: ${userViewModel.getUser().height}\n" +
-        " Peso: ${userViewModel.getUser().currentWeight}\n" +
+        " Altura: ${userViewModel.getUser().height},\n" +
+        " Peso: ${userViewModel.getUser().currentWeight},\n" +
         " Objetivo de dieta: ${userViewModel.getUser().goal}"
     )
 }
