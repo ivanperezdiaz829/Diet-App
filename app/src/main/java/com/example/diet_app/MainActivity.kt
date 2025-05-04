@@ -149,6 +149,7 @@ class MainActivity : ComponentActivity() {
   ]
 }
 """.trimIndent()
+
         setContent {
             var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
@@ -156,14 +157,16 @@ class MainActivity : ComponentActivity() {
             createUser(
                 email = "frikazoA2@gmail.es",
                 password = "superSeguro.123",
-                physicalActivity = "STAY_HEALTHY",
+                physicalActivity = 4,
+                goal = 1,
                 sex = 1,
                 birthday = "1995-06-15",
                 height = 168,
                 weight = 60,
                 context = LocalContext.current,
                 onResult = {}
-            )*/
+            )
+            */
 
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
@@ -212,22 +215,22 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             onNavigateBack = { navController.popBackStack() },
             onNext = {
                 Log.d("CurrentUser", userViewModel.getUser().toString())
-                /*
+                userViewModel.updateUser(goal = it)
+
                 createUser(
                     email = userViewModel.getUser().email,
                     password = userViewModel.getUser().password,
-                    physicalActivity = userViewModel.getUser().goal.toString(),
+                    physicalActivity = 4,
                     sex = 0,
                     birthday = "1995-06-15",
                     height = userViewModel.getUser().height,
                     weight = userViewModel.getUser().currentWeight.toInt(),
                     context = applicationContext,
-                    onResult = {}
+                    onResult = {},
+                    goal = 1
                 )
-                userViewModel.updateUser(goal = it)
                 navController.navigate(Screen.Home.route)
-                printUserInfo(userViewModel)
-                */
+
 
             },
         )}
