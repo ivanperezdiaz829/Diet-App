@@ -1,5 +1,6 @@
 package com.example.diet_app.screenActivities
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -7,9 +8,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.diet_app.screenActivities.components.BackButtonLeft
+import com.example.diet_app.updateUserPassword
 import com.example.diet_app.viewModel.UserViewModel
 import com.example.ui.components.*
 
@@ -20,22 +23,23 @@ fun ChangePasswordScreen(
     onNavigateBack: () -> Unit,
     onNext: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    // Estados para el diálogo de error
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
-    // Función mejorada de validación
     fun validatePassword(): Boolean {
         return when {
-            newPassword.isEmpty() || confirmPassword.isEmpty() -> {
-                errorMessage = "Por favor, completa ambos campos"
+            currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty() -> {
+                errorMessage = "Por favor, completa todos los campos"
                 false
             }
             newPassword.length < 8 -> {
-                errorMessage = "La contraseña debe tener al menos 8 caracteres"
+                errorMessage = "La nueva contraseña debe tener al menos 8 caracteres"
                 false
             }
             newPassword != confirmPassword -> {
@@ -59,16 +63,16 @@ fun ChangePasswordScreen(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                TitleSection()
-            }
-
+            TitleSection()
             UsernameText(userViewModel.getUser().email)
             ChangePasswordTitle()
             PasswordRequirementText()
+
+            PasswordField(
+                label = "Contraseña actual",
+                password = currentPassword,
+                onValueChange = { currentPassword = it }
+            )
             PasswordField(
                 label = "Nueva contraseña",
                 password = newPassword,
@@ -79,28 +83,36 @@ fun ChangePasswordScreen(
                 password = confirmPassword,
                 onValueChange = { confirmPassword = it }
             )
-            ForgotPasswordLink { }
 
             ChangePasswordButton {
                 if (validatePassword()) {
-                    onNext() // Solo navega si la validación es exitosa
+                    updateUserPassword(
+                        id = userViewModel.getUser().id,
+                        currentPassword = currentPassword,
+                        newPassword = newPassword,
+                        context = context,
+                        onResult = {
+                            onNext() // Solo navega si la API responde con éxito
+                        },
+                        onError = {
+                            errorMessage = it
+                            showErrorDialog = true
+                        }
+                    )
                 } else {
-                    showErrorDialog = true // Muestra el error
+                    showErrorDialog = true
                 }
             }
         }
     }
 
-    // Diálogo de error
     if (showErrorDialog) {
         AlertDialog(
             onDismissRequest = { showErrorDialog = false },
-            title = { Text("Error en la contraseña") },
+            title = { Text("Error") },
             text = { Text(errorMessage) },
             confirmButton = {
-                TextButton(
-                    onClick = { showErrorDialog = false }
-                ) {
+                TextButton(onClick = { showErrorDialog = false }) {
                     Text("Entendido")
                 }
             }

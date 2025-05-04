@@ -726,7 +726,6 @@ fun updateUserPassword(
 ) {
     val client = OkHttpClient()
 
-    // Crear el JSON manualmente
     val json = JSONObject().apply {
         put("current_password", currentPassword)
         put("new_password", newPassword)
@@ -744,7 +743,9 @@ fun updateUserPassword(
         override fun onFailure(call: Call, e: IOException) {
             val msg = "Error de red: ${e.message}"
             Log.e("updateUserPassword", msg)
-            onError(msg)
+            (context as? Activity)?.runOnUiThread {
+                onError(msg)
+            }
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -753,15 +754,20 @@ fun updateUserPassword(
                 if (!response.isSuccessful) {
                     val msg = "Error HTTP ${response.code}: $responseBody"
                     Log.e("updateUserPassword", msg)
-                    onError(msg)
+                    (context as? Activity)?.runOnUiThread {
+                        onError(msg)
+                    }
                 } else {
                     Log.d("updateUserPassword", "Respuesta: $responseBody")
-                    onResult(responseBody ?: "Contraseña actualizada exitosamente")
+                    (context as? Activity)?.runOnUiThread {
+                        onResult(responseBody ?: "Contraseña actualizada exitosamente")
+                    }
                 }
             }
         }
     })
 }
+
 
 fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Map<String, Float>) -> Unit) {
     val client = OkHttpClient()

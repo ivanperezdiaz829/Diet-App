@@ -414,11 +414,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 userViewModel,
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
-
-                    // Aquí llamar a API para cambiar contraseña
-
-                    navController.navigateAndClearStack(Screen.Welcome.route) }
-                )
+                    navController.navigateAndClearStack(Screen.Welcome.route)
+                })
         }
 
         composable(route = Screen.FoodList.route,
