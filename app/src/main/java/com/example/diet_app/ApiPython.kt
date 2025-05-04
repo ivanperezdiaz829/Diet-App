@@ -549,6 +549,7 @@ fun deleteUserByEmail(
         }
     })
 }
+
 fun updateUserPhysicalData(
     id: Int,
     updatedFields: Map<String, Any>,
@@ -589,6 +590,53 @@ fun updateUserPhysicalData(
                 } else {
                     Log.d("updateUserPhysicalData", "Respuesta: $responseBody")
                     onResult(responseBody ?: "Actualización exitosa sin cuerpo")
+                }
+            }
+        }
+    })
+}
+
+fun updateUserPassword(
+    id: Int,
+    currentPassword: String,
+    newPassword: String,
+    context: Context,
+    onResult: (String) -> Unit,
+    onError: (String) -> Unit = {}
+) {
+    val client = OkHttpClient()
+
+    // Crear el JSON manualmente
+    val json = JSONObject().apply {
+        put("current_password", currentPassword)
+        put("new_password", newPassword)
+    }
+
+    val mediaType = "application/json; charset=utf-8".toMediaType()
+    val requestBody = json.toString().toRequestBody(mediaType)
+
+    val request = Request.Builder()
+        .url("http://10.0.2.2:8000/update_user_password/$id")
+        .patch(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            val msg = "Error de red: ${e.message}"
+            Log.e("updateUserPassword", msg)
+            onError(msg)
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.use {
+                val responseBody = response.body?.string()
+                if (!response.isSuccessful) {
+                    val msg = "Error HTTP ${response.code}: $responseBody"
+                    Log.e("updateUserPassword", msg)
+                    onError(msg)
+                } else {
+                    Log.d("updateUserPassword", "Respuesta: $responseBody")
+                    onResult(responseBody ?: "Contraseña actualizada exitosamente")
                 }
             }
         }
