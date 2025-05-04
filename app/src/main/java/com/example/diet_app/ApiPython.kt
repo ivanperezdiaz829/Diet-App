@@ -362,10 +362,13 @@ fun getUserDietPlansComplete(
 fun getPlanCompleteDays(
     planCompleteId: Int,
     context: Context,
-    onResult: (String) -> Unit
+    dietDayViewModels: MutableList<DietDayViewModel>,
+    onResult: (Result<List<DietDayViewModel>>) -> Unit
 ) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/get_diet_plan_days_by_complete/$planCompleteId"
+
+    Log.d("DietDayAPI", "Fetching days for plan ID: $planCompleteId")
 
     val request = Request.Builder()
         .url(url)
@@ -374,25 +377,71 @@ fun getPlanCompleteDays(
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            Log.e("getPlanCompleteDays", "Error de red: ${e.message}")
-            onResult("Error de red: ${e.message}")
+            Log.e("DietDayAPI", "Network error", e)
+            (context as? Activity)?.runOnUiThread {
+                onResult(Result.failure(e))
+            }
         }
 
         override fun onResponse(call: Call, response: Response) {
-            response.use {
+            try {
+                Log.d("DietDayAPI", "Response received. Code: ${response.code}")
+
                 if (!response.isSuccessful) {
-                    Log.e("getPlanCompleteDays", "Respuesta no exitosa: ${response.code}")
-                    onResult("Error: Código ${response.code}")
-                    return
+                    throw IOException("HTTP error: ${response.code}")
                 }
 
                 val responseData = response.body?.string()
-                if (responseData != null) {
-                    Log.d("getPlanCompleteDays", "Datos recibidos: $responseData")
-                    onResult(responseData)
-                } else {
-                    Log.e("getPlanCompleteDays", "Respuesta vacía")
-                    onResult("Error: Respuesta vacía")
+                    ?: throw IOException("Empty server response")
+
+                Log.d("DietDayAPI", "Raw data: $responseData")
+
+                val jsonArray = JSONArray(responseData)
+                dietDayViewModels.clear()
+
+                for (i in 0 until jsonArray.length()) {
+                    val dayJson = jsonArray.getJSONObject(i)
+                    Log.d("DietDayAPI", "Processing day ${i + 1}/${jsonArray.length()}")
+
+                    // Extract day ID
+                    val dayId = dayJson.getInt("id")
+                    Log.d("DietDayAPI", "Day ID: $dayId")
+
+                    // Extract food IDs from all fields except 'id'
+                    val foodIds = mutableListOf<Int>()
+                    val keys = dayJson.keys()
+                    while (keys.hasNext()) {
+                        val key = keys.next()
+                        if (key != "id" && dayJson.optInt(key, -1) != -1) {
+                            foodIds.add(dayJson.getInt(key))
+                            Log.d("DietDayAPI", "Found food ID: ${dayJson.getInt(key)} in field $key")
+                        }
+                    }
+
+                    Log.d("DietDayAPI", "Food IDs found: $foodIds")
+
+                    // Create and configure DietDayViewModel
+                    val dietDayViewModel = DietDayViewModel().apply {
+                        updateDietDay(
+                            dietId = dayId,
+                            foodsId = foodIds
+                            // Other parameters keep default values
+                        )
+                    }
+
+                    dietDayViewModels.add(dietDayViewModel)
+                    Log.d("DietDayAPI", "Added day with ID: $dayId")
+                }
+
+                (context as? Activity)?.runOnUiThread {
+                    Log.d("DietDayAPI", "Processing complete. Days found: ${dietDayViewModels.size}")
+                    onResult(Result.success(dietDayViewModels))
+                }
+
+            } catch (e: Exception) {
+                Log.e("DietDayAPI", "Processing error", e)
+                (context as? Activity)?.runOnUiThread {
+                    onResult(Result.failure(e))
                 }
             }
         }

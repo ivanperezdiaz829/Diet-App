@@ -172,37 +172,6 @@ class MainActivity : ComponentActivity() {
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
             // In your ViewModel or Activity
-
-            val dietList = mutableListOf<DietViewModel>()
-
-            getUserDietPlansComplete(
-                user_id = 7, // Aquí usamos la variable local userId
-                context = this,
-                dietViewModels = dietList
-            ) { result ->
-                when {
-                    result.isSuccess -> {
-                        val diets = result.getOrNull() ?: emptyList()
-                        Log.d(TAG, "Carga exitosa. ${diets.size} dietas encontradas")
-
-                        diets.forEachIndexed { index, diet ->
-                            Log.d(TAG, """
-                            Dieta ${index + 1}:
-                            Nombre: ${diet.getDiet().name}
-                            Duración: ${diet.getDiet().duration} días
-                            Tipo: ${diet.getDiet().foodVariant}
-                            IDs de días: ${diet.getDiet().dietsId}
-                        """.trimIndent())
-                        }
-                    }
-                    result.isFailure -> {
-                        val error = result.exceptionOrNull()
-                        Log.e(TAG, "Error cargando dietas: ${error?.message}")
-                        Toast.makeText(this, "Error: ${error?.message}", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-
             //DietApp(LocalContext.current, userViewModel, foodViewModel)
             /*
             DietInterface(
@@ -1137,6 +1106,14 @@ fun printFoodInfo(foodViewModel: FoodViewModel) {
         "Food Types: ${foodViewModel.getFood().foodTypes}"
     )
 }
+
+fun printAllFoodIds(dietDays: List<DietDayViewModel>, tag: String = "FoodIds") {
+    dietDays.forEachIndexed { index, dayViewModel ->
+        val foodIds = dayViewModel.getDiet().foodsId.joinToString(", ")
+        Log.d(tag, "Día ${index + 1} - IDs de comidas: [$foodIds]")
+    }
+}
+
 
 fun getDietViewModelById(id: String): DietViewModel {
     // Implementa tu lógica para obtener el ViewModel correcto
