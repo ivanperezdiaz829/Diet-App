@@ -45,10 +45,10 @@ class FoodViewModel : ViewModel() {
     fun toJson(): JSONObject {
         return JSONObject().apply {
             put("name", food.name)
-            put("protein", food.protein)
+            put("proteins", food.protein)
             put("fats", food.fats)
             put("sugar", food.sugar)
-            put("salt", food.salt)
+            put("sodium", food.salt)
             put("carbohydrates", food.carbohydrates)
             put("calories", food.calories)
             put("price", food.price)
@@ -74,23 +74,20 @@ class FoodViewModel : ViewModel() {
             val viewModel = FoodViewModel()
             viewModel.updateFood(
                 name = json.getString("name"),
-                protein = json.getDouble("protein"),
+                protein = json.getDouble("proteins"),
                 fats = json.getDouble("fats"),
                 sugar = json.getDouble("sugar"),
-                salt = json.getDouble("salt"),
+                salt = json.getDouble("sodium"),
                 carbohydrates = json.getDouble("carbohydrates"),
                 calories = json.getDouble("calories"),
                 price = json.getDouble("price"),
-                foodVariants = json.getJSONArray("foodVariants").let { array ->
-                    (0 until array.length()).map { i ->
-                        FoodVariant.valueOf(array.getString(i))
-                    }.toSet()
+                foodVariants = mutableSetOf<FoodVariant>().apply {
+                    if (json.optInt("vegan", 0) == 1) add(FoodVariant.VEGAN)
+                    if (json.optInt("vegetarian", 0) == 1) add(FoodVariant.VEGETARIAN)
+                    if (json.optInt("celiac", 0) == 1) add(FoodVariant.CELIAC)
+                    if (json.optInt("halal", 0) == 1) add(FoodVariant.HALAL)
                 },
-                foodTypes = json.getJSONArray("foodTypes").let { array ->
-                    (0 until array.length()).map { i ->
-                        FoodType.valueOf(array.getString(i))
-                    }.toSet()
-                }
+                foodTypes = setOf(FoodType.fromTypeId(json.getInt("type"))) // Ahora funciona
             )
             return viewModel
         }

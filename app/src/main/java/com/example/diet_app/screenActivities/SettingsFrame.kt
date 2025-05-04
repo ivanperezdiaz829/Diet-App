@@ -37,7 +37,8 @@ import com.example.diet_app.viewModel.UserViewModel
 @Composable
 fun SettingsScreen(
     navController: NavHostController,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    onLogout: () -> Unit
 ) {
 
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -53,7 +54,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(30.dp)) // Ajusta el valor según lo necesites
 
         Text(
-            text = "Settings",
+            text = "Ajustes",
             fontSize = 30.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
@@ -81,13 +82,13 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(30.dp)) // Ajusta el valor según lo necesites
 
         // Opción: Cambiar contraseña
-        SettingsOption(text = "Change your password", R.drawable.security_icon) {
+        SettingsOption(text = "Modificar contraseña", R.drawable.security_icon) {
             navController.navigate(Screen.Password.route)
             // Acción al tocar cambiar contraseña
         }
 
         // Opción: Editar datos
-        SettingsOption(text = "Edit your data", R.drawable.data_icon) {
+        SettingsOption(text = "Modificar tus datos", R.drawable.data_icon) {
             // Acción al tocar editar datos
         }
 
@@ -96,15 +97,14 @@ fun SettingsScreen(
         // Botón de cerrar sesión
         Button(
             onClick = {
-                // Acción al presionar "Log out"
-                // Aquí puedes poner la lógica de logout, como limpiar datos, navegar al login, etc.
+                onLogout()
             },
             colors = ButtonDefaults.buttonColors(Color(0xFF4CAF50)), // Verde
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
-            Text("Log out", color = Color.White, fontSize = 16.sp)
+            Text("Cerrar sesión", color = Color.White, fontSize = 16.sp)
         }
     }
         ToolBox(navController)

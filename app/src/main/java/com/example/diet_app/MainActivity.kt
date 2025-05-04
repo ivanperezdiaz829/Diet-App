@@ -59,9 +59,6 @@ import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
 
-    private val foodViewModel: FoodViewModel by viewModels()
-    private val userViewModel: UserViewModel by viewModels()
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,6 +150,8 @@ class MainActivity : ComponentActivity() {
 }
 """.trimIndent()
         setContent {
+            val foodViewModel = FoodViewModel()
+            var userViewModel = UserViewModel()
             /*
             createUser(
                 email = "frikazoA2@gmail.es",
@@ -591,7 +590,14 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.Settings.route
         ) {
-            SettingsScreen(navController, userViewModel)
+            SettingsScreen(
+                navController,
+                userViewModel,
+                onLogout = {
+                    // userViewModel = UserViewModel()
+                    navController.navigateAndClearStack(Screen.Welcome.route)
+                }
+            )
         }
 
         // Así debe quedar tu composable (copia exactamente esto)
