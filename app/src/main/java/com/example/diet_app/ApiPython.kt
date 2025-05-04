@@ -331,7 +331,7 @@ fun getUserDietPlansComplete(
 
                     Log.d("DietAPI", "Tipo de dieta mapeado: $foodVariant")
 
-                    val dietViewModel = DietViewModel().apply {
+                    var dietViewModel = DietViewModel().apply {
                         updateDiet(
                             dietId = dietJson.getString("id"),
                             name = dietJson.getString("name"),
@@ -364,7 +364,7 @@ fun getPlanCompleteDays(
     planCompleteId: Int,
     context: Context,
     dietDayViewModels: MutableList<DietDayViewModel>,
-    onResult: (Result<List<DietDayViewModel>>) -> Unit
+    onResult: (Result<MutableList<DietDayViewModel>>) -> Unit
 ) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/get_diet_plan_days_by_complete/$planCompleteId"

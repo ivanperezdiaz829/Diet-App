@@ -44,7 +44,7 @@ import com.example.diet_app.viewModel.DietViewModel
 @Composable
 fun DietPlansScreen(
     navController: NavController,
-    diets: List<DietViewModel> // Lista de ViewModels
+    diets: MutableList<DietViewModel> // Lista de ViewModels
     ) {
 
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -165,7 +165,7 @@ fun CurrentDietContent(navController: NavController) {
 @Composable
 fun OtherDietsContent(
     navController: NavController,
-    diets: List<DietViewModel> // Lista de ViewModels
+    diets: MutableList<DietViewModel> // Lista de ViewModels
 ) {
     Column(
         modifier = Modifier

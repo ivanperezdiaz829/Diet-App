@@ -20,6 +20,8 @@ object GlobalData {
 
     var dietsList by mutableStateOf(listOf<DietViewModel>())
 
+    var dietsDayList by mutableStateOf(listOf<DietDayViewModel>())
+
     val dietJson = """
 {
   "dieta": [
