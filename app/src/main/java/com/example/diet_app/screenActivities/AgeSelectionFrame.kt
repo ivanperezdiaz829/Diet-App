@@ -156,7 +156,7 @@ fun AgeSelectionScreen(
 }
 
 // Función para mostrar el DatePickerDialog con cálculo de edad y mes en inglés
-private fun showDatePicker(
+fun showDatePicker(
     context: android.content.Context,
     onDateSelected: (String, Int) -> Unit
 ) {

@@ -3,6 +3,7 @@ package com.example.diet_app.viewModel
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.privacysandbox.ads.adservices.adid.AdId
 import com.example.diet_app.model.DietDayModel
 import com.example.diet_app.model.DietModel
 import com.example.diet_app.model.FoodModel
@@ -43,6 +44,10 @@ class DietViewModel: ViewModel() {
 
     fun getDiet(): DietModel {
         return currentDiet
+    }
+
+    fun getDayByIndex(index: Int): DietDayViewModel? {
+        return currentDiet.diets.getOrNull(index)
     }
 
     // En DietViewModel

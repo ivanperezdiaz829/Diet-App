@@ -3,6 +3,7 @@ package com.example.diet_app
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.Composable
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.Sex
@@ -871,7 +872,6 @@ fun updateUserPassword(
         }
     })
 }
-
 
 fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Map<String, Float>) -> Unit) {
     val client = OkHttpClient()

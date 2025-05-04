@@ -172,7 +172,7 @@ class MainActivity : ComponentActivity() {
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
             // In your ViewModel or Activity
-            //DietApp(LocalContext.current, userViewModel, foodViewModel)
+            DietApp(LocalContext.current, userViewModel, foodViewModel)
             /*
             DietInterface(
                 navController = rememberNavController(),
@@ -193,7 +193,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -338,10 +338,45 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
         composable(route = Screen.Meals.route
         ) {
 
+            var diets: List<DietViewModel> = mutableListOf<DietViewModel>()
+
+            getUserDietPlansComplete(
+                7,
+                applicationContext,
+                diets as MutableList<DietViewModel>,
+                onResult = { result ->
+                    result.onSuccess {
+                        updatedList ->
+                        diets = updatedList
+                    }
+                }
+            )
+
+            for (diet  in diets) {
+                for (i in 0 until diet.getDiet().duration) {
+                    var day = diet.getDayByIndex(i)
+                }
+                var dietDays = mutableListOf<DietDayViewModel>()
+                for (day in diet.getDiet().dietsId) {
+                    getPlanCompleteDays(day, applicationContext, dietDays, onResult = {
+                        result ->
+                        result.onSuccess {
+                            updatedList ->
+                            dietDays = updatedList as MutableList<DietDayViewModel>
+                        }
+                    })
+                }
+                diet.updateDiet(diets = dietDays)
+
+            }
+
+            var diets2: List<DietViewModel> = emptyList()
+
             DietPlansScreen(
                 navController,
-                diets = listOf(GlobalData.mainDiet)
+                diets = diets
             )
+
         }
 
         composable(route = Screen.Welcome.route,
@@ -419,6 +454,33 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     navController.navigateAndClearStack(Screen.Welcome.route)
                 })
         }
+
+        composable(
+            route = Screen.PhsysicalData.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            UpdatePhysicalDataScreen(
+                navController = navController,
+                userViewModel = userViewModel,
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    updateUserPhysicalData(userViewModel.getUser().id.toInt(), it, applicationContext, onResult = {}, onError = {})
+                    navController.navigateAndClearStack(Screen.Welcome.route)
+                }
+            )
+        }
+
 
         composable(route = Screen.FoodList.route,
         ) {
@@ -626,10 +688,21 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         ) { entry ->
             // Esto es clave: así se obtiene el argumento correctamente
+            var diets = mutableListOf<DietDayViewModel>()
             val dietId = entry.arguments?.getString("dietId") ?: ""
-            var dietViewModel = getDietViewModelById(dietId)
+            getPlanCompleteDays(
+                dietId.toInt(),
+                applicationContext,
+                diets,
+                onResult = { result ->
+                    result.onSuccess {
+                            updatedList ->
+                        diets = updatedList as MutableList<DietDayViewModel>
+                    }
+                }
+            )
             DietInterface(
-                dietViewModel = dietViewModel,
+                dietViewModel = GlobalData.mainDiet,
                 navController = navController,// Pasa el ID a tu pantalla
             )
         }
@@ -1112,23 +1185,4 @@ fun printAllFoodIds(dietDays: List<DietDayViewModel>, tag: String = "FoodIds") {
         val foodIds = dayViewModel.getDiet().foodsId.joinToString(", ")
         Log.d(tag, "Día ${index + 1} - IDs de comidas: [$foodIds]")
     }
-}
-
-
-fun getDietViewModelById(id: String): DietViewModel {
-    // Implementa tu lógica para obtener el ViewModel correcto
-    // Esto puede venir de tu repositorio o ViewModel principal
-    var foodViewModel = FoodViewModel()
-    var foodViewModel2 = FoodViewModel()
-    var foodViewModel3 = FoodViewModel()
-    foodViewModel.updateFood(name = "Croissant", foodTypes = setOf(FoodType.LIGHT_MEAL))
-    foodViewModel2.updateFood(name = "Rice", foodTypes = setOf(FoodType.MAIN_DISH))
-    foodViewModel3.updateFood(name = "Sandwich", foodTypes = setOf(FoodType.LIGHT_MEAL, FoodType.SIDE_DISH))
-    var dietViewModel = DietViewModel()
-    var dietDayViewModel = DietDayViewModel()
-    var dietDayViewModel2 = DietDayViewModel()
-    dietDayViewModel.updateDietDay(foods = listOf(foodViewModel, foodViewModel2, foodViewModel3))
-    dietDayViewModel2.updateDietDay(foods = listOf(foodViewModel3, foodViewModel2, foodViewModel))
-    dietViewModel.updateDiet(name = "Dieta 1", duration = 2, diets = listOf(dietDayViewModel, dietDayViewModel2), dietId = "1")
-    return dietViewModel
 }
