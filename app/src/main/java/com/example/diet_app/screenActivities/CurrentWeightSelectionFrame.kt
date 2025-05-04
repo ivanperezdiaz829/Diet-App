@@ -42,9 +42,7 @@ fun CurrentWeightSelectionScreen(
     onSkip: () -> Unit,
     onNext: (Double) -> Unit
 ) {
-    var currentWeight1 by remember { mutableStateOf("") } // Valor del primer TextField
-    var currentWeight2 by remember { mutableStateOf("") } // Valor del segundo TextField
-    var lastFocusedField by remember { mutableStateOf("") } // Último campo en el que escribiste
+    var currentWeight by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -64,95 +62,50 @@ fun CurrentWeightSelectionScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            TitleSection("Your ", "current weight","We will use this data to give you a better diet type for you")
+            TitleSection("Your ", "current weight", "We will use this data to give you a better diet type for you")
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            Row(
+            Box(
                 modifier = Modifier
-                    .padding(24.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .width(157.dp)
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(LightGray),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
+                TextField(
+                    value = currentWeight,
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() }) {
+                            currentWeight = newValue
+                        }
+                    },
+                    label = { Text("Your current weight") },
+                    textStyle = androidx.compose.ui.text.TextStyle(
+                        fontSize = 64.sp,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 150.sp
+                    ),
+                    singleLine = true,
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Color.Black
+                    ),
                     modifier = Modifier
                         .width(157.dp)
                         .height(180.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(if (lastFocusedField === "Field1") DarkOverlay else LightGray),
-                    contentAlignment = Alignment.Center
-                ){
-                    // Primer TextField
-                    TextField(
-                        value = currentWeight1,
-                        onValueChange = { newValue ->
-                            if (newValue.all { it.isDigit() }) { // Verifica que solo sean números
-                                currentWeight1 = newValue // Actualiza el valor escrito
-                                lastFocusedField = "Field1" // Guarda cuál fue el último TextField usado
-                            }
-                        },
-                        label = { Text("Your current weight min") },
-                        textStyle = androidx.compose.ui.text.TextStyle(
-                            fontSize = 64.sp, // Tamaño de texto más grande
-                            textAlign = TextAlign.Center,
-                            lineHeight = 150.sp // Ajusta la altura de línea según sea necesario
-                        ),
-                        singleLine = true,
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.Transparent, // Fondo transparente del TextField
-                            focusedIndicatorColor = Color.Transparent, // Elimina la línea del indicador cuando está enfocado
-                            unfocusedIndicatorColor = Color.Transparent, // Elimina la línea del indicador cuando no está enfocado
-                            cursorColor = Color.Black // Color del cursor
-                        ),
-                        modifier = Modifier
-                            .width(157.dp)
-                            .height(180.dp)
-                            .background(Color.Transparent)
-
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .width(157.dp)
-                        .height(180.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(if (lastFocusedField === "Field2") DarkOverlay else LightGray),
-                    contentAlignment = Alignment.Center
-                ){
-
-                    TextField(
-                        value = currentWeight2,
-                        onValueChange = {  newValue ->
-                            if (newValue.all { it.isDigit() }) { // Verifica que solo sean números
-                                currentWeight2 = newValue // Actualiza el valor escrito
-                                lastFocusedField = "Field2" // Guarda cuál fue el último TextField usado
-                            }
-                        },
-                        label = { Text("Your current weight max") },
-                        textStyle = androidx.compose.ui.text.TextStyle(
-                            fontSize = 64.sp, // Tamaño de texto más grande
-                            textAlign = TextAlign.Center,
-                            lineHeight = 150.sp // Ajusta la altura de línea según sea necesario
-                        ),
-                        singleLine = true,
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.Transparent, // Fondo transparente del TextField
-                            focusedIndicatorColor = Color.Transparent, // Elimina la línea del indicador cuando está enfocado
-                            unfocusedIndicatorColor = Color.Transparent, // Elimina la línea del indicador cuando no está enfocado
-                            cursorColor = Color.Black // Color del cursor
-                        ),
-                        modifier = Modifier
-                            .width(157.dp)
-                            .height(180.dp)
-                            .background(Color.Transparent)
-                    )
-                }
+                        .background(Color.Transparent)
+                )
             }
+
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                enabled = currentWeight1.isNotEmpty() && currentWeight2.isNotEmpty() && currentWeight1.toInt() <= currentWeight2.toInt() && currentWeight1.toInt()>=30 && currentWeight2.toInt()<=300,
-                onClick = { onNext((currentWeight1.toDouble() + currentWeight2.toDouble()) / 2) }
+                enabled = currentWeight.isNotEmpty() && currentWeight.toInt() in 30..300,
+                onClick = { onNext(currentWeight.toDouble()) }
             )
         }
     }
