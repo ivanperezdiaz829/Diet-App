@@ -16,6 +16,7 @@ import org.json.JSONObject
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -520,6 +521,75 @@ fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Ma
         }
     })
 }
+
+fun getPlateById(context: Context, date: Date, onResult: (String) -> Unit) {
+    val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val dateKey = "${sdf.format(date)}_diet"
+
+    val dayJsonString = prefs.getString(dateKey, null)
+
+    if (dayJsonString == null) {
+        onResult("⚠️ No hay dieta guardada para ese día.")
+        return
+    }
+
+    val dayJson = JSONObject(dayJsonString)
+    val plateIds = listOf(
+        dayJson.getString("breakfast_dish"),
+        dayJson.getString("breakfast_drink"),
+        dayJson.getString("lunch_main_dish"),
+        dayJson.getString("lunch_side_dish"),
+        dayJson.getString("lunch_drink"),
+        dayJson.getString("dinner_dish"),
+        dayJson.getString("dinner_drink")
+    )
+
+    val client = OkHttpClient()
+    val resultBuilder = StringBuilder()
+
+    var remaining = plateIds.size
+
+    for (id in plateIds) {
+        val request = Request.Builder()
+            .url("http://10.0.2.2:8000/get_plate/$id")
+            .get()
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                synchronized(resultBuilder) {
+                    resultBuilder.append("❌ Error cargando plato $id: ${e.message}\n")
+                    checkFinish()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                synchronized(resultBuilder) {
+                    val body = response.body?.string()
+                    if (response.isSuccessful && body != null) {
+                        val json = JSONObject(body)
+                        val plate = json.getJSONObject("plate")
+                        val name = plate.getString("name")
+                        val calories = plate.getDouble("calories")
+                        resultBuilder.append("🍽 $name - ${calories} kcal\n")
+                    } else {
+                        resultBuilder.append("⚠️ Plato $id no encontrado.\n")
+                    }
+                    checkFinish()
+                }
+            }
+
+            fun checkFinish() {
+                remaining--
+                if (remaining == 0) {
+                    onResult(resultBuilder.toString().trim())
+                }
+            }
+        })
+    }
+}
+
 
 fun createDiet(context: Context, name: String, userId: Int, dietTypeId: Int, onResult: (String) -> Unit) {
     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
