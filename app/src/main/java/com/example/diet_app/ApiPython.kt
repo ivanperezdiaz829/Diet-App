@@ -135,13 +135,6 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
 
                             val dateString = sdf.format(calendar.time) // fecha actual
 
-                            /* Construir texto para mostrar
-                            stringBuilder.append("📅 *$dateString*\n")
-                            stringBuilder.append("🍳 **Desayuno:** $breakfast\n")
-                            stringBuilder.append("🥗 **Almuerzo:** $lunch\n")
-                            stringBuilder.append("🍽 **Cena:** $dinner\n\n")
-                             */
-
                             // Guardar en SharedPreferences
                             val dietData = JSONObject().apply {
                                 put("breakfast_dish", breakfastDish)
@@ -736,6 +729,71 @@ fun getDietPlanById(planId: Int, context: Context, onResult: (String) -> Unit) {
 
                 } catch (e: Exception) {
                     onResult("❌ Error al procesar JSON: ${e.message}")
+                }
+            }
+        }
+    })
+}
+
+fun deleteDiet(planId: Int, context: Context, onResult: (String) -> Unit) {
+    val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .build()
+
+    val url = "http://10.0.2.2:8000/delete_diet_plan/$planId"
+
+    Log.d("DietDelete", "Intentando eliminar plan con ID: $planId")
+
+    val request = Request.Builder()
+        .url(url)
+        .delete() // Método HTTP DELETE
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            (context as? Activity)?.runOnUiThread {
+                onResult("❌ Error de conexión: ${e.message}")
+            }
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                Log.d("DietDelete", "Respuesta del servidor: $responseBody")
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+
+                    if (response.isSuccessful) {
+                        // Limpiar SharedPreferences si la eliminación fue exitosa
+                        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+                        val editor = prefs.edit()
+                        editor.clear()
+                        editor.apply()
+
+                        val message = jsonResponse.getString("message")
+                        val deletedDays = jsonResponse.getJSONArray("deleted_days")
+
+                        Log.d("DietDelete", "Plan eliminado: $message, Días afectados: $deletedDays")
+
+                        (context as? Activity)?.runOnUiThread {
+                            onResult("✅ $message\nDías eliminados: ${deletedDays.length()}")
+                        }
+                    } else {
+                        val error = jsonResponse.getString("error")
+                        (context as? Activity)?.runOnUiThread {
+                            onResult("⚠️ $error")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("DietDelete", "Error al procesar JSON: ${e.message}")
+                    (context as? Activity)?.runOnUiThread {
+                        onResult("⚠️ Error al procesar la respuesta del servidor")
+                    }
+                }
+            } ?: run {
+                (context as? Activity)?.runOnUiThread {
+                    onResult("⚠️ Respuesta vacía del servidor")
                 }
             }
         }
