@@ -2,6 +2,7 @@ package com.example.diet_app
 
 import DietPlansScreen
 import GenerateMealPlanWithInputsScreen
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Button
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -169,8 +171,8 @@ class MainActivity : ComponentActivity() {
             */
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
-
-            DietApp(LocalContext.current, userViewModel, foodViewModel)
+            // In your ViewModel or Activity
+            //DietApp(LocalContext.current, userViewModel, foodViewModel)
             /*
             DietInterface(
                 navController = rememberNavController(),
@@ -1131,6 +1133,14 @@ fun printFoodInfo(foodViewModel: FoodViewModel) {
         "Food Types: ${foodViewModel.getFood().foodTypes}"
     )
 }
+
+fun printAllFoodIds(dietDays: List<DietDayViewModel>, tag: String = "FoodIds") {
+    dietDays.forEachIndexed { index, dayViewModel ->
+        val foodIds = dayViewModel.getDiet().foodsId.joinToString(", ")
+        Log.d(tag, "Día ${index + 1} - IDs de comidas: [$foodIds]")
+    }
+}
+
 
 fun getDietViewModelById(id: String): DietViewModel {
     // Implementa tu lógica para obtener el ViewModel correcto

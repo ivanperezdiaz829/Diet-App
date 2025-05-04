@@ -3,8 +3,11 @@ package com.example.diet_app
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.Sex
+import com.example.diet_app.viewModel.DietDayViewModel
+import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
 import okhttp3.Call
@@ -262,15 +265,17 @@ fun calculateMaintenanceCalories(
     })
 }
 
+// 1. Primero, modifica la función para usar Result de Kotlin correctamente
 fun getUserDietPlansComplete(
     user_id: Int,
     context: Context,
-    onResult: (String) -> Unit
+    dietViewModels: MutableList<DietViewModel>,
+    onResult: (Result<List<DietViewModel>>) -> Unit // Usamos el Result de Kotlin
 ) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/get_diet_plans_by_user/$user_id"
 
-    Log.d("getUserDietPlansComplete", "Esperando datos")
+    Log.d("DietAPI", "Iniciando solicitud para user_id: $user_id")
 
     val request = Request.Builder()
         .url(url)
@@ -279,25 +284,75 @@ fun getUserDietPlansComplete(
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            Log.e("getUserDietPlansComplete", "Error en la solicitud: ${e.message}")
-            onResult("Error: ${e.message}")
+            Log.e("DietAPI", "Error en la solicitud", e)
+            (context as? Activity)?.runOnUiThread {
+                onResult(Result.failure(e))
+            }
         }
 
         override fun onResponse(call: Call, response: Response) {
-            response.use {
+            try {
+                Log.d("DietAPI", "Respuesta recibida. Código: ${response.code}")
+
                 if (!response.isSuccessful) {
-                    Log.e("getUserDietPlansComplete", "Respuesta no exitosa: ${response.code}")
-                    onResult("Error: Código ${response.code}")
-                    return
+                    throw IOException("Error HTTP: ${response.code}")
                 }
 
                 val responseData = response.body?.string()
-                if (responseData != null) {
-                    Log.d("getUserDietPlansComplete", "Datos recibidos: $responseData")
-                    onResult(responseData)
-                } else {
-                    Log.e("getUserDietPlansComplete", "Respuesta vacía")
-                    onResult("Error: Respuesta vacía")
+                    ?: throw IOException("Respuesta vacía del servidor")
+
+                Log.d("DietAPI", "Datos brutos: $responseData")
+
+                val jsonArray = JSONArray(responseData)
+                dietViewModels.clear()
+
+                for (i in 0 until jsonArray.length()) {
+                    val dietJson = jsonArray.getJSONObject(i)
+                    Log.d("DietAPI", "Procesando dieta ${i + 1}/${jsonArray.length()}")
+
+                    // Extraer días
+                    val dayIds = (1..7).mapNotNull { dayNum ->
+                        dietJson.optInt("day$dayNum", -1).takeIf { it != -1 }
+                            .also { if (it != null) Log.d("DietAPI", "Encontrado day$dayNum: $it") }
+                    }
+
+                    Log.d("DietAPI", "IDs de días encontrados: $dayIds")
+
+                    // Mapear tipo de dieta
+                    val foodVariant = when (val typeId = dietJson.getInt("diet_type_id")) {
+                        1 -> FoodVariant.REGULAR
+                        2 -> FoodVariant.VEGAN
+                        3 -> FoodVariant.VEGETARIAN
+                        4 -> FoodVariant.CELIAC
+                        5 -> FoodVariant.HALAL
+                        else -> throw IllegalArgumentException("Tipo de dieta no válido: $typeId")
+                    }
+
+                    Log.d("DietAPI", "Tipo de dieta mapeado: $foodVariant")
+
+                    val dietViewModel = DietViewModel().apply {
+                        updateDiet(
+                            dietId = dietJson.getString("id"),
+                            name = dietJson.getString("name"),
+                            duration = dietJson.getInt("duration"),
+                            foodVariant = foodVariant,
+                            dietsId = dayIds
+                        )
+                    }
+
+                    dietViewModels.add(dietViewModel)
+                    Log.d("DietAPI", "Dieta añadida: ${dietJson.getString("name")}")
+                }
+
+                (context as? Activity)?.runOnUiThread {
+                    Log.d("DietAPI", "Procesamiento completado. Dietas encontradas: ${dietViewModels.size}")
+                    onResult(Result.success(dietViewModels))
+                }
+
+            } catch (e: Exception) {
+                Log.e("DietAPI", "Error procesando respuesta", e)
+                (context as? Activity)?.runOnUiThread {
+                    onResult(Result.failure(e))
                 }
             }
         }
@@ -307,10 +362,13 @@ fun getUserDietPlansComplete(
 fun getPlanCompleteDays(
     planCompleteId: Int,
     context: Context,
-    onResult: (String) -> Unit
+    dietDayViewModels: MutableList<DietDayViewModel>,
+    onResult: (Result<List<DietDayViewModel>>) -> Unit
 ) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/get_diet_plan_days_by_complete/$planCompleteId"
+
+    Log.d("DietDayAPI", "Fetching days for plan ID: $planCompleteId")
 
     val request = Request.Builder()
         .url(url)
@@ -319,25 +377,71 @@ fun getPlanCompleteDays(
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            Log.e("getPlanCompleteDays", "Error de red: ${e.message}")
-            onResult("Error de red: ${e.message}")
+            Log.e("DietDayAPI", "Network error", e)
+            (context as? Activity)?.runOnUiThread {
+                onResult(Result.failure(e))
+            }
         }
 
         override fun onResponse(call: Call, response: Response) {
-            response.use {
+            try {
+                Log.d("DietDayAPI", "Response received. Code: ${response.code}")
+
                 if (!response.isSuccessful) {
-                    Log.e("getPlanCompleteDays", "Respuesta no exitosa: ${response.code}")
-                    onResult("Error: Código ${response.code}")
-                    return
+                    throw IOException("HTTP error: ${response.code}")
                 }
 
                 val responseData = response.body?.string()
-                if (responseData != null) {
-                    Log.d("getPlanCompleteDays", "Datos recibidos: $responseData")
-                    onResult(responseData)
-                } else {
-                    Log.e("getPlanCompleteDays", "Respuesta vacía")
-                    onResult("Error: Respuesta vacía")
+                    ?: throw IOException("Empty server response")
+
+                Log.d("DietDayAPI", "Raw data: $responseData")
+
+                val jsonArray = JSONArray(responseData)
+                dietDayViewModels.clear()
+
+                for (i in 0 until jsonArray.length()) {
+                    val dayJson = jsonArray.getJSONObject(i)
+                    Log.d("DietDayAPI", "Processing day ${i + 1}/${jsonArray.length()}")
+
+                    // Extract day ID
+                    val dayId = dayJson.getInt("id")
+                    Log.d("DietDayAPI", "Day ID: $dayId")
+
+                    // Extract food IDs from all fields except 'id'
+                    val foodIds = mutableListOf<Int>()
+                    val keys = dayJson.keys()
+                    while (keys.hasNext()) {
+                        val key = keys.next()
+                        if (key != "id" && dayJson.optInt(key, -1) != -1) {
+                            foodIds.add(dayJson.getInt(key))
+                            Log.d("DietDayAPI", "Found food ID: ${dayJson.getInt(key)} in field $key")
+                        }
+                    }
+
+                    Log.d("DietDayAPI", "Food IDs found: $foodIds")
+
+                    // Create and configure DietDayViewModel
+                    val dietDayViewModel = DietDayViewModel().apply {
+                        updateDietDay(
+                            dietId = dayId,
+                            foodsId = foodIds
+                            // Other parameters keep default values
+                        )
+                    }
+
+                    dietDayViewModels.add(dietDayViewModel)
+                    Log.d("DietDayAPI", "Added day with ID: $dayId")
+                }
+
+                (context as? Activity)?.runOnUiThread {
+                    Log.d("DietDayAPI", "Processing complete. Days found: ${dietDayViewModels.size}")
+                    onResult(Result.success(dietDayViewModels))
+                }
+
+            } catch (e: Exception) {
+                Log.e("DietDayAPI", "Processing error", e)
+                (context as? Activity)?.runOnUiThread {
+                    onResult(Result.failure(e))
                 }
             }
         }

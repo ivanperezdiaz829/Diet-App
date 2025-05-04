@@ -15,6 +15,7 @@ class FoodViewModel : ViewModel() {
 
     fun updateFood(
         name: String = food.name,
+        foodId: Int = food.foodId,
         protein: Double = food.protein,
         fats: Double = food.fats,
         sugar: Double = food.sugar,
@@ -27,6 +28,7 @@ class FoodViewModel : ViewModel() {
     ) {
         food = FoodModel(
             name = name,
+            foodId = foodId,
             protein = protein,
             fats = fats,
             sugar = sugar,

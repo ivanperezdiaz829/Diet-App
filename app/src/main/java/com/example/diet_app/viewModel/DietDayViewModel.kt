@@ -19,13 +19,15 @@ class DietDayViewModel {
         foods: List<FoodViewModel> = currentDietDay.foods,
         foodVariant: FoodVariant = currentDietDay.foodVariant,
         goal: Goal = currentDietDay.goal,
-        dietId: String = currentDietDay.dietId
+        dietId: Int = currentDietDay.dietId,
+        foodsId: List<Int> = currentDietDay.foodsId
     ) {
         currentDietDay = DietDayModel(
             foods = foods,
             foodVariant = foodVariant,
             goal = goal,
-            dietId = dietId
+            dietId = dietId,
+            foodsId = foodsId
         )
     }
 
@@ -46,6 +48,7 @@ class DietDayViewModel {
         }
     }
 
+    /*
     fun loadFromStorage(
         context: Context,
         date: Date,
@@ -63,5 +66,5 @@ class DietDayViewModel {
             )
             onLoaded(this)
         }
-    }
+    }*/
 }

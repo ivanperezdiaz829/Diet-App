@@ -78,6 +78,7 @@ fun DietInterface(
 
     LaunchedEffect(selectedDay) {
         val date = Date() // Cambia la fecha si es necesario
+        /*
         dietViewModel.getDiet().diets.getOrNull(selectedDay - 1)?.let { dietDayViewModel ->
             dietDayViewModel.loadFromStorage(
                 context = context,
@@ -89,6 +90,7 @@ fun DietInterface(
                 foodsForSelectedDay = loadedDay.getDiet().foods
             }
         }
+        */
     }
 
     Column(

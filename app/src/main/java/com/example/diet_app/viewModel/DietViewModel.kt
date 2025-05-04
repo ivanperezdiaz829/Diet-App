@@ -23,6 +23,7 @@ class DietViewModel: ViewModel() {
         duration: Int = currentDiet.duration,
         creationDate: String = currentDiet.creationDate,
         diets: List<DietDayViewModel> = currentDiet.diets,
+        dietsId: List<Int> = currentDiet.dietsId,
         foodVariant: FoodVariant = currentDiet.foodVariant,
         goal: Goal = currentDiet.goal,
         dietId: String = currentDiet.dietId
@@ -35,7 +36,8 @@ class DietViewModel: ViewModel() {
             diets = diets,
             foodVariant = foodVariant,
             goal = goal,
-            dietId = dietId
+            dietId = dietId,
+            dietsId = dietsId
         )
     }
 
