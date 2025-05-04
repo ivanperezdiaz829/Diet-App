@@ -153,10 +153,6 @@ def test_user_authentication():
 
     return user_data.get("id")  # Devuelve el ID del usuario para usar en otras pruebas
 
-if __name__ == "__main__":
-    user_id = test_user_authentication()
-    print(f"\nID de usuario obtenido: {user_id}")
-
 def test_diet_plan_endpoints():
     """Prueba los endpoints de planes de dieta"""
     print("\n" + "=" * 50)
@@ -217,6 +213,47 @@ def test_diet_plan_endpoints():
 
     return plan_id
 
+def test_get_diet_plan_days_by_complete(plan_id):
+    """Prueba obtener todos los diet_plan_day a partir de un diet_plans_complete"""
+    print("\n" + "=" * 50)
+    print(f" TEST: DÍAS DE PLAN COMPLETO ID {plan_id} ".center(50, "="))
+    print("=" * 50)
+
+    response = requests.get(f"{BASE_URL}/get_diet_plan_days_by_complete/{plan_id}")
+    print_response(response)
+
+    if response.status_code == 200:
+        days = response.json()
+        print(f"✔ Se recuperaron {len(days)} día(s):")
+        for d in days:
+            pprint(d)
+    elif response.status_code == 404:
+        print("❌ Plan completo no encontrado.")
+    else:
+        print("❌ Error inesperado.")
+
+
+def test_get_existing_diet_plans_for_user_7():
+    """Prueba obtener todos los diet plans del usuario con ID 7"""
+    print("\n" + "=" * 50)
+    print(" TEST: OBTENER PLANES DE USUARIO 7 ".center(50, "="))
+    print("=" * 50)
+
+    # 1. Obtener todos los planes del usuario 7
+    print("\n1. Consultando planes del usuario con ID 7...")
+    response = requests.get(f"{BASE_URL}/get_diet_plans_by_user/7")
+    print_response(response)
+
+    assert response.status_code == 200, "❌ Error al obtener planes por user_id"
+
+    plans = response.json()
+
+    if plans:
+        print(f"\n✔ Se encontraron {len(plans)} plan(es) para el usuario 7.")
+        for plan in plans:
+            print(f"- Plan ID: {plan['id']}, Nombre: {plan['name']}")
+    else:
+        print("\n⚠ No se encontraron planes para el usuario 7.")
 
 def test_user_crud_operations():
     """Prueba completa de CRUD para usuarios"""
@@ -381,7 +418,9 @@ def main():
     """Función principal"""
     print("INICIANDO PRUEBAS DE LA API".center(50, "="))
 
-    test_user_authentication()
+    test_get_diet_plan_days_by_complete(3)
+    test_get_diet_plan_days_by_complete(4)
+    test_get_diet_plan_days_by_complete(5)
 
 
     print("\n" + "PRUEBAS COMPLETADAS".center(50, "="))

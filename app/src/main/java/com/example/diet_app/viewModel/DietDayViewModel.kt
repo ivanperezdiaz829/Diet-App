@@ -1,5 +1,7 @@
 package com.example.diet_app.viewModel
 
+import android.content.Context
+import com.example.diet_app.getPlateById
 import com.example.diet_app.model.DietDayModel
 import com.example.diet_app.model.DietModel
 import com.example.diet_app.model.FoodModel
@@ -8,6 +10,7 @@ import com.example.diet_app.model.Goal
 import com.example.diet_app.model.UserModel
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Date
 
 class DietDayViewModel {
     private var currentDietDay: DietDayModel = DietDayModel()
@@ -40,6 +43,25 @@ class DietDayViewModel {
             })
             put("dietId", currentDietDay.dietId)
             // Añade más campos según necesites
+        }
+    }
+
+    fun loadFromStorage(
+        context: Context,
+        date: Date,
+        foodVariant: FoodVariant = FoodVariant.REGULAR,
+        goal: Goal = Goal.STAY_HEALTHY,
+        dietId: String = "generated-${System.currentTimeMillis()}",
+        onLoaded: (DietDayViewModel) -> Unit
+    ) {
+        getPlateById(context, date) { foodList ->
+            updateDietDay(
+                foods = foodList,
+                foodVariant = foodVariant,
+                goal = goal,
+                dietId = dietId
+            )
+            onLoaded(this)
         }
     }
 }

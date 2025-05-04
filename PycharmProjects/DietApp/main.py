@@ -376,6 +376,46 @@ def create_diet_plan():
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+@app.route('/get_diet_plans_by_user/<int:user_id>', methods=['GET'])
+def get_diet_plans_by_user(user_id):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT id, name, user_id, duration, diet_type_id,
+                       day1, day2, day3, day4, day5, day6, day7
+                FROM diet_plans_complete
+                WHERE user_id = ?
+            """, (user_id,))
+            rows = cursor.fetchall()
+
+            if not rows:
+                return jsonify([]), 200  # Lista vacía si no hay planes
+
+            plans = []
+            for row in rows:
+                plan = {
+                    "id": row[0],
+                    "name": row[1],
+                    "user_id": row[2],
+                    "duration": row[3],
+                    "diet_type_id": row[4],
+                    "day1": row[5],
+                    "day2": row[6],
+                    "day3": row[7],
+                    "day4": row[8],
+                    "day5": row[9],
+                    "day6": row[10],
+                    "day7": row[11],
+                }
+                plans.append(plan)
+
+            return jsonify(plans), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+
+
 @app.route('/get_diet_plan/<int:plan_id>', methods=['GET'])
 def get_diet_plan(plan_id):
     try:
@@ -408,6 +448,57 @@ def get_diet_plan(plan_id):
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+@app.route('/get_diet_plan_days_by_complete/<int:complete_plan_id>', methods=['GET'])
+def get_diet_plan_days_by_complete(complete_plan_id):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+
+            # Obtener los IDs de día desde diet_plans_complete
+            cursor.execute("""
+                SELECT day1, day2, day3, day4, day5, day6, day7
+                FROM diet_plans_complete
+                WHERE id = ?
+            """, (complete_plan_id,))
+            row = cursor.fetchone()
+
+            if not row:
+                return jsonify({"error": "Plan de dieta completo no encontrado"}), 404
+
+            day_ids = [day_id for day_id in row if day_id is not None]
+
+            if not day_ids:
+                return jsonify([]), 200  # No hay días definidos
+
+            # Obtener los datos de cada día
+            placeholders = ','.join(['?'] * len(day_ids))
+            cursor.execute(f"""
+                SELECT id, breakfast_dish, breakfast_drink,
+                       lunch_main_dish, lunch_side_dish, lunch_drink,
+                       dinner_dish, dinner_drink
+                FROM diet_plans_day
+                WHERE id IN ({placeholders})
+            """, day_ids)
+            day_rows = cursor.fetchall()
+
+            days = []
+            for r in day_rows:
+                day = {
+                    "id": r[0],
+                    "breakfast_dish": r[1],
+                    "breakfast_drink": r[2],
+                    "lunch_main_dish": r[3],
+                    "lunch_side_dish": r[4],
+                    "lunch_drink": r[5],
+                    "dinner_dish": r[6],
+                    "dinner_drink": r[7],
+                }
+                days.append(day)
+
+            return jsonify(days), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
 
 @app.route('/update_diet_plan/<int:plan_id>', methods=['PATCH'])
 def update_diet_plan(plan_id):

@@ -523,7 +523,7 @@ fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Ma
     })
 }
 
-fun getPlateById(context: Context, date: Date, onResult: (String) -> Unit) {
+fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -> Unit) {
     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val dateKey = "${sdf.format(date)}_diet"
@@ -531,7 +531,7 @@ fun getPlateById(context: Context, date: Date, onResult: (String) -> Unit) {
     val dayJsonString = prefs.getString(dateKey, null)
 
     if (dayJsonString == null) {
-        onResult("⚠️ No hay dieta guardada para ese día.")
+        onResult(emptyList())
         return
     }
 
@@ -547,7 +547,7 @@ fun getPlateById(context: Context, date: Date, onResult: (String) -> Unit) {
     )
 
     val client = OkHttpClient()
-    val resultBuilder = StringBuilder()
+    val foodViewModels = mutableListOf<FoodViewModel>()
 
     var remaining = plateIds.size
 
@@ -559,32 +559,28 @@ fun getPlateById(context: Context, date: Date, onResult: (String) -> Unit) {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                synchronized(resultBuilder) {
-                    resultBuilder.append("❌ Error cargando plato $id: ${e.message}\n")
-                    checkFinish()
+                synchronized(foodViewModels) {
+                    remaining--
+                    if (remaining == 0) {
+                        onResult(foodViewModels)
+                    }
                 }
             }
 
             override fun onResponse(call: Call, response: Response) {
-                synchronized(resultBuilder) {
+                synchronized(foodViewModels) {
                     val body = response.body?.string()
                     if (response.isSuccessful && body != null) {
-                        val json = JSONObject(body)
-                        val plate = json.getJSONObject("plate")
-                        val name = plate.getString("name")
-                        val calories = plate.getDouble("calories")
-                        resultBuilder.append("🍽 $name - ${calories} kcal\n")
-                    } else {
-                        resultBuilder.append("⚠️ Plato $id no encontrado.\n")
+                        val plateJson = JSONObject(body).getJSONObject("plate")
+                        try {
+                            val viewModel = FoodViewModel.fromJson(plateJson)
+                            foodViewModels.add(viewModel)
+                        } catch (e: Exception) {
+                            Log.e("PlateParse", "Error parseando plate: ${e.message}")
+                        }
                     }
-                    checkFinish()
-                }
-            }
-
-            fun checkFinish() {
-                remaining--
-                if (remaining == 0) {
-                    onResult(resultBuilder.toString().trim())
+                    remaining--
+                    if (remaining == 0) onResult(foodViewModels)
                 }
             }
         })
