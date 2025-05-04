@@ -19,7 +19,7 @@ import com.example.diet_app.sendDataToServer
 fun GenerateMealPlanWithInputsScreen(
     context: Context,
     onNavigateBack: () -> Unit,
-    onNext: () -> Unit
+    onNext: (List<Double>) -> Unit
 ) {
     var minCarbohydrates by remember { mutableStateOf("") }
     var maxSugar by remember { mutableStateOf("") }
@@ -96,9 +96,9 @@ fun GenerateMealPlanWithInputsScreen(
                         budget.toDouble(),
                         selectedDiet.ordinal.toDouble()
                     )
-                    sendDataToServer(formData, context) {
-                        onNext()
-                    }
+
+                    onNext(formData)
+
                     emptyList<FormError>()
                 } else {
                     result.errors

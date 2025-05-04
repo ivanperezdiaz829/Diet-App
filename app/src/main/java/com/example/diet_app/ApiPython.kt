@@ -113,56 +113,57 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
                 Log.d("DietForm", "Respuesta del servidor: $responseBody")
                 try {
                     val jsonArray = JSONArray(responseBody)
-                    val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
-                    val editor = prefs.edit()
-                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                    val calendar = Calendar.getInstance() // hoy
+                    (context as? Activity)?.runOnUiThread {
+                        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+                        val editor = prefs.edit()
+                        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        val calendar = Calendar.getInstance()
 
-                    val stringBuilder = StringBuilder()
+                        val stringBuilder = StringBuilder()
 
-                    for (i in 0 until jsonArray.length()) {
-                        val dayData = jsonArray.getJSONObject(i)
-                        val breakfastDish = dayData.getString("breakfast_dish")
-                        val breakfastDrink = dayData.getString("breakfast_drink")
+                        for (i in 0 until jsonArray.length()) {
+                            val dayData = jsonArray.getJSONObject(i)
+                            val breakfastDish = dayData.getString("breakfast_dish")
+                            val breakfastDrink = dayData.getString("breakfast_drink")
 
-                        val lunchMain = dayData.getString("lunch_main_dish")
-                        val lunchSide = dayData.getString("lunch_side_dish")
-                        val lunchDrink = dayData.getString("lunch_drink")
+                            val lunchMain = dayData.getString("lunch_main_dish")
+                            val lunchSide = dayData.getString("lunch_side_dish")
+                            val lunchDrink = dayData.getString("lunch_drink")
 
-                        val dinnerDish = dayData.getString("dinner_dish")
-                        val dinnerDrink = dayData.getString("dinner_drink")
+                            val dinnerDish = dayData.getString("dinner_dish")
+                            val dinnerDrink = dayData.getString("dinner_drink")
 
-                        val dateString = sdf.format(calendar.time) // fecha actual
+                            val dateString = sdf.format(calendar.time) // fecha actual
 
-                        /* Construir texto para mostrar
-                        stringBuilder.append("📅 *$dateString*\n")
-                        stringBuilder.append("🍳 **Desayuno:** $breakfast\n")
-                        stringBuilder.append("🥗 **Almuerzo:** $lunch\n")
-                        stringBuilder.append("🍽 **Cena:** $dinner\n\n")
-                         */
+                            /* Construir texto para mostrar
+                            stringBuilder.append("📅 *$dateString*\n")
+                            stringBuilder.append("🍳 **Desayuno:** $breakfast\n")
+                            stringBuilder.append("🥗 **Almuerzo:** $lunch\n")
+                            stringBuilder.append("🍽 **Cena:** $dinner\n\n")
+                             */
 
-                        // Guardar en SharedPreferences
-                        val dietData = JSONObject().apply {
-                            put("breakfast_dish", breakfastDish)
-                            put("breakfast_drink", breakfastDrink)
-                            put("lunch_main_dish", lunchMain)
-                            put("lunch_side_dish", lunchSide)
-                            put("lunch_drink", lunchDrink)
-                            put("dinner_dish", dinnerDish)
-                            put("dinner_drink", dinnerDrink)
+                            // Guardar en SharedPreferences
+                            val dietData = JSONObject().apply {
+                                put("breakfast_dish", breakfastDish)
+                                put("breakfast_drink", breakfastDrink)
+                                put("lunch_main_dish", lunchMain)
+                                put("lunch_side_dish", lunchSide)
+                                put("lunch_drink", lunchDrink)
+                                put("dinner_dish", dinnerDish)
+                                put("dinner_drink", dinnerDrink)
+                            }
+                            editor.putString("${dateString}_diet", dietData.toString())
+                            calendar.add(Calendar.DAY_OF_YEAR, 1)
                         }
-                        editor.putString("${dateString}_diet", dietData.toString())
 
-                        // Avanzar al día siguiente
-                        calendar.add(Calendar.DAY_OF_YEAR, 1)
+                        editor.apply()
+                        onResult(stringBuilder.toString().trim())
                     }
-
-                    editor.apply()
-                    onResult(stringBuilder.toString().trim())
-
                 } catch (e: Exception) {
                     Log.e("DietForm", "Error al procesar JSON: ${e.message}")
-                    onResult("⚠️ Error al procesar la respuesta del servidor")
+                    (context as? Activity)?.runOnUiThread {
+                        onResult("⚠️ Error al procesar la respuesta del servidor")
+                    }
                 }
             }
         }

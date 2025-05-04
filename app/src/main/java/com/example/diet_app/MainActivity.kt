@@ -672,10 +672,15 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 context = applicationContext,
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
+                    /*
                     val planJson = getPrefs(applicationContext, "name", 0, 0, 7)
                     val foodList = parseFoodsFromJson(planJson)
                     Log.d("FoodList", foodList.toString())
                     navController.navigate(Screen.Home.route)
+                    */
+                    sendDataToServer(it, applicationContext, onResult = {})
+                    navController.navigate(Screen.Home.route)
+
                 }
             )
         }
