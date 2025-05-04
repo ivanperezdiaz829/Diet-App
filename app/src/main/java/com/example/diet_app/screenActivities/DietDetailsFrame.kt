@@ -27,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -50,6 +52,7 @@ import com.example.diet_app.ui.theme.Typography
 import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,12 +64,31 @@ fun DietInterface(
     var selectedDay by remember { mutableIntStateOf(1) }
     var selectedFood by remember { mutableStateOf<FoodViewModel?>(null) }
 
+    var foodsForSelectedDay by remember { mutableStateOf<List<FoodViewModel>>(emptyList()) }
+
     // Mostrar diálogo si hay comida seleccionada
     selectedFood?.let { food ->
         FoodDetailDialog(
             foodViewModel = food,
             onDismiss = { selectedFood = null }
         )
+    }
+
+    val context = LocalContext.current
+
+    LaunchedEffect(selectedDay) {
+        val date = Date() // Cambia la fecha si es necesario
+        dietViewModel.getDiet().diets.getOrNull(selectedDay - 1)?.let { dietDayViewModel ->
+            dietDayViewModel.loadFromStorage(
+                context = context,
+                date = date,
+                foodVariant = dietViewModel.getDiet().foodVariant,
+                goal = dietViewModel.getDiet().goal,
+                dietId = dietViewModel.getDiet().dietId
+            ) { loadedDay ->
+                foodsForSelectedDay = loadedDay.getDiet().foods
+            }
+        }
     }
 
     Column(
@@ -139,6 +161,7 @@ fun DietInterface(
 
         DayDiet(
             dayDietDayViewModel = dietViewModel.getDiet().diets[selectedDay - 1],
+            foods = foodsForSelectedDay, // Usamos la lista de alimentos
             onFoodSelected = { food ->
                 selectedFood = food // Actualizamos la comida seleccionada
             }
@@ -272,13 +295,14 @@ fun MealCard(
 @Composable
 fun DayDiet(
     dayDietDayViewModel: DietDayViewModel,
+    foods: List<FoodViewModel>,
     onFoodSelected: (FoodViewModel) -> Unit // Nuevo parámetro
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        for (food in dayDietDayViewModel.getDiet().foods) {
+        for (food in foods) {
             MealCard(
                 food = food,
                 onDetailsClick = onFoodSelected // Pasamos el callback
