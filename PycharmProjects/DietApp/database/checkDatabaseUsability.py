@@ -116,8 +116,8 @@ def test_user_crud_operations():
     print("=" * 50)
     # Datos de prueba ajustados a 0/1 para sexo
     user1_data = {
-        "email": "glotona@test.com",
-        "password": "Glotona1*",
+        "email": "glotona@hotmail.com",
+        "password": "Glotona2*",
         "physical_activity": 1,
         "sex": 0,  # 0 = femenino
         "birthday": "1990-01-01",
@@ -274,6 +274,8 @@ def main():
 
     # Ejecutar pruebas
     test_user_crud_operations()
+    test_plate_obtention()
+    test_diet_plan_endpoints()
 
     print("\n" + "PRUEBAS COMPLETADAS".center(50, "="))
 
