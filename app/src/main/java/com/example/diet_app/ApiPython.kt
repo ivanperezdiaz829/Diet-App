@@ -259,6 +259,48 @@ fun calculateMaintenanceCalories(
     })
 }
 
+fun getUserDietPlansComplete(
+    user_id: Int,
+    context: Context,
+    onResult: (String) -> Unit
+) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/get_diet_plans_by_user/$user_id"
+
+    Log.d("getUserDietPlansComplete", "Esperando datos")
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("getUserDietPlansComplete", "Error en la solicitud: ${e.message}")
+            onResult("Error: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.use {
+                if (!response.isSuccessful) {
+                    Log.e("getUserDietPlansComplete", "Respuesta no exitosa: ${response.code}")
+                    onResult("Error: Código ${response.code}")
+                    return
+                }
+
+                val responseData = response.body?.string()
+                if (responseData != null) {
+                    Log.d("getUserDietPlansComplete", "Datos recibidos: $responseData")
+                    onResult(responseData)
+                } else {
+                    Log.e("getUserDietPlansComplete", "Respuesta vacía")
+                    onResult("Error: Respuesta vacía")
+                }
+            }
+        }
+    })
+}
+
 fun createUser(
     email: String,
     password: String,
