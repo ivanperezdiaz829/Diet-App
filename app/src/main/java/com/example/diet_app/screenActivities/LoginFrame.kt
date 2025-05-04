@@ -2,6 +2,7 @@ package com.example.diet_app.screenActivities
 
 import android.content.Context
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +24,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.diet_app.R
+import com.example.diet_app.authenticateUser
+import com.example.diet_app.model.Goal
 import com.example.diet_app.viewModel.UserViewModel
 
 
@@ -52,7 +55,8 @@ fun LoginScreen(
                         userViewModel
                     )
                 }
-            }
+            },
+            applicationContext = applicationContext
         )
     }
 }
@@ -60,7 +64,8 @@ fun LoginScreen(
 @Composable
 private fun LoginCard(
     userViewModel: UserViewModel,
-    onLoginResult: (Boolean) -> Unit
+    onLoginResult: (Boolean) -> Unit,
+    applicationContext: Context
 ) {
     var isLogin by remember { mutableStateOf(true) }
     var username by remember { mutableStateOf("") }
@@ -192,6 +197,7 @@ private fun LoginCard(
 
                     Button(
                         onClick = {
+
                             if (!isLogin && !Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
                                 errorMessage = "Please enter a valid email address"
                                 showError = true
@@ -199,13 +205,40 @@ private fun LoginCard(
                                 errorMessage = "Password must be at least 8 characters long"
                                 showError = true
                             } else {
+
                                 errorMessage = ""
                                 showError = false
 
                                 // Update ViewModel with user data
                                 if (isLogin) {
                                     // For login, we might just verify credentials later
-                                    userViewModel.updateUser(email = username, password = password)
+                                    authenticateUser(
+                                        email = username,
+                                        password = password,
+                                        context = applicationContext,
+                                        userViewModel = userViewModel
+                                    ) { result ->
+                                        when {
+                                            result.isSuccess -> {
+                                                Toast.makeText(
+                                                    applicationContext,
+                                                    "Usuario autenticado\n" +
+                                                            "Bienvenido ${userViewModel.getUser().email}!",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+
+                                                onLoginResult(!login)
+                                            }
+                                            result.isFailure -> {
+                                                Toast.makeText(
+                                                    applicationContext,
+                                                    "Fallo de autenticación",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+                                    }
+
                                 } else {
                                     // For registration, set the initial user data
                                     userViewModel.updateUser(
@@ -213,9 +246,9 @@ private fun LoginCard(
                                         email = username,
                                         password = password
                                     )
+                                    onLoginResult(!login)
                                 }
 
-                                onLoginResult(!login)
                             }
                         },
                         modifier = Modifier

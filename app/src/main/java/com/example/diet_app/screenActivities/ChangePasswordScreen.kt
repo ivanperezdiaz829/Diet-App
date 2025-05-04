@@ -66,7 +66,7 @@ fun ChangePasswordScreen(
                 TitleSection()
             }
 
-            UsernameText(userViewModel.getUser().name)
+            UsernameText(userViewModel.getUser().email)
             ChangePasswordTitle()
             PasswordRequirementText()
             PasswordField(

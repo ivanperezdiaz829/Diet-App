@@ -35,6 +35,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.google.firebase.firestore.FirebaseFirestore
@@ -169,7 +170,7 @@ class MainActivity : ComponentActivity() {
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
 
-            //DietApp(LocalContext.current, userViewModel, foodViewModel)
+            DietApp(LocalContext.current, userViewModel, foodViewModel)
             /*
             DietInterface(
                 navController = rememberNavController(),
@@ -190,7 +191,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.Login.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -373,7 +374,18 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 applicationContext,
                 userViewModel,
                 onLoginSuccess = {
-                    userViewModel.updateUser(name = it.getUser().name)
+                    userViewModel.updateUser(
+                        name = it.getUser().name,
+                        email = it.getUser().email,
+                        password = it.getUser().password,
+                        id = it.getUser().id,
+                        age = it.getUser().age,
+                        sex = it.getUser().sex,
+                        height = it.getUser().height,
+                        currentWeight = it.getUser().currentWeight,
+                        goal = it.getUser().goal,)
+                    GlobalData.login(userViewModel)
+                    printUserInfo(userViewModel)
                     navController.navigate(Screen.Home.route)
                 },
                 onRegisterSuccess = {
@@ -1072,7 +1084,7 @@ fun fetchAllUsers() {
 fun printUserInfo(userViewModel: UserViewModel) {
     Log.d("Resumen: ",
         " Email: ${userViewModel.getUser().email},\n" +
-        " Contraseña: ${userViewModel.getUser().password},\n " +
+        " Contraseña: ${userViewModel.getUser().password},\n" +
         " Edad: ${userViewModel.getUser().age},\n" +
         " Sexo: ${userViewModel.getUser().sex},\n" +
         " Altura: ${userViewModel.getUser().height},\n" +

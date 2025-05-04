@@ -26,7 +26,7 @@ fun TitleSection() {
 @Composable
 fun UsernameText(username: String) {
     Text(
-        text = "@$username",
+        text = username,
         color = Color.Gray,
         fontSize = 22.sp,
         modifier = Modifier.padding(bottom = 12.dp)

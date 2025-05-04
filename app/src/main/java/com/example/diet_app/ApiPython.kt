@@ -461,7 +461,8 @@ fun authenticateUser(
     email: String,
     password: String,
     context: Context,
-    onResult: (Result<UserViewModel>) -> Unit
+    userViewModel: UserViewModel, // Recibimos el ViewModel como parámetro
+    onResult: (Result<Boolean>) -> Unit // Ahora devuelve Boolean indicando éxito/fallo
 ) {
     val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
@@ -504,30 +505,29 @@ fun authenticateUser(
                         // Mapeo de valores numéricos a enums
                         val receivedSex = when (userJson.optInt("sex", 1)) {
                             0 -> Sex.Female
-                            else -> Sex.Male // Valor por defecto
+                            else -> Sex.Male // Valor por defecto si no es 0
                         }
 
-                        val receivedGoal = when (userJson.optInt("goal", 2)) {
+                        val receivedGoal = when (userJson.optInt("goal", 1)) {
                             0 -> Goal.LOSE_WEIGHT
-                            1 -> Goal.GAIN_WEIGHT
+                            1 -> Goal.STAY_HEALTHY
+                            2 -> Goal.GAIN_WEIGHT
                             else -> Goal.STAY_HEALTHY // Valor por defecto
                         }
 
-                        // Creamos y configuramos el UserViewModel
-                        val userViewModel = UserViewModel().apply {
-                            updateUser(
-                                id = userJson.optInt("id"),
-                                name = userJson.optString("name", ""),
-                                email = userJson.optString("email", ""),
-                                password = "", // No guardamos la contraseña
-                                age = userJson.optString("age", ""),
-                                sex = receivedSex,
-                                height = userJson.optInt("height"),
-                                currentWeight = userJson.optDouble("current_weight"),
-                                goal = receivedGoal
-                                // foodList se inicializa como emptyList() por defecto
-                            )
-                        }
+                        // Actualizamos el UserViewModel recibido
+                        userViewModel.updateUser(
+                            id = userJson.optInt("id"),
+                            name = userJson.optString("name", ""),
+                            email = userJson.optString("email", ""),
+                            password = "", // No guardamos la contraseña en el ViewModel
+                            age = userJson.optString("birthday", ""),
+                            sex = receivedSex,
+                            height = userJson.optInt("height"),
+                            currentWeight = userJson.optDouble("weight"),
+                            goal = receivedGoal
+                            // Mantenemos foodList como estaba
+                        )
 
                         Log.d("UserAuth", """
                             Usuario autenticado: 
@@ -542,11 +542,13 @@ fun authenticateUser(
                             putInt("user_id", userViewModel.getUser().id)
                             putString("user_name", userViewModel.getUser().name)
                             putString("user_email", userViewModel.getUser().email)
+                            putInt("user_sex", userJson.optInt("sex", 1))
+                            putInt("user_goal", userJson.optInt("goal", 1))
                             apply()
                         }
 
                         (context as? Activity)?.runOnUiThread {
-                            onResult(Result.success(userViewModel))
+                            onResult(Result.success(true))
                         }
                     } else {
                         val errorResponse = JSONObject(responseBody)
@@ -799,8 +801,6 @@ fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Ma
         }
     })
 }
-
-
 
 fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -> Unit) {
     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)

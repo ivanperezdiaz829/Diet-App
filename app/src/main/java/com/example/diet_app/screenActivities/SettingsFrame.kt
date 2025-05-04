@@ -72,7 +72,7 @@ fun SettingsScreen(
 
         // Nombre de usuario
         Text(
-            text = "@" + userViewModel.getUser().name,
+            text = userViewModel.getUser().email,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
