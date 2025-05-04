@@ -301,6 +301,97 @@ fun getUserDietPlansComplete(
     })
 }
 
+fun getPlanCompleteDays(
+    planCompleteId: Int,
+    context: Context,
+    onResult: (String) -> Unit
+) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/get_diet_plan_days_by_complete/$planCompleteId"
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("getPlanCompleteDays", "Error de red: ${e.message}")
+            onResult("Error de red: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.use {
+                if (!response.isSuccessful) {
+                    Log.e("getPlanCompleteDays", "Respuesta no exitosa: ${response.code}")
+                    onResult("Error: Código ${response.code}")
+                    return
+                }
+
+                val responseData = response.body?.string()
+                if (responseData != null) {
+                    Log.d("getPlanCompleteDays", "Datos recibidos: $responseData")
+                    onResult(responseData)
+                } else {
+                    Log.e("getPlanCompleteDays", "Respuesta vacía")
+                    onResult("Error: Respuesta vacía")
+                }
+            }
+        }
+    })
+}
+
+fun getPlatesWithIds(
+    platesIds: List<Int>,
+    context: Context,
+    onResult: (String) -> Unit,
+) {
+    if (platesIds.size != 7) {
+        val errorMsg = "La lista debe contener exactamente 7 IDs de platos."
+        Log.e("getPlatesWithId", errorMsg)
+        return
+    }
+
+    val client = OkHttpClient()
+    val baseUrl = "http://10.0.2.2:8000/get_plate/"
+    val platesResults = mutableListOf<String>()
+
+    for (id in platesIds) {
+        val request = Request.Builder()
+            .url("$baseUrl$id")
+            .get()
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                val msg = "Error de red al obtener el plato con ID $id: ${e.message}"
+                Log.e("getPlatesWithId", msg)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) {
+                        val msg = "Error HTTP ${response.code} para el plato ID $id"
+                        Log.e("getPlatesWithId", msg)
+                    } else {
+                        val body = response.body?.string()
+                        if (body != null) {
+                            Log.d("getPlatesWithId", "Plato ID $id recibido: $body")
+                            platesResults.add(body)
+                            onResult(body)
+                        } else {
+                            val msg = "Respuesta vacía para el plato ID $id"
+                            Log.e("getPlatesWithId", msg)
+                        }
+                    }
+                }
+            }
+        })
+    }
+}
+
+
+
 fun createUser(
     email: String,
     password: String,
@@ -559,6 +650,8 @@ fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Ma
         }
     })
 }
+
+
 
 fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -> Unit) {
     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
