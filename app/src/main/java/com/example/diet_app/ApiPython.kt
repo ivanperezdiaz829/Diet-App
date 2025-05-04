@@ -393,8 +393,6 @@ fun getPlatesWithIds(
     }
 }
 
-
-
 fun createUser(
     email: String,
     password: String,
@@ -669,61 +667,46 @@ fun deleteUserByEmail(
         }
     })
 }
-
-fun updateUserByEmail(
-    email: String,
+fun updateUserPhysicalData(
+    id: Int,
     updatedFields: Map<String, Any>,
     context: Context,
-    onResult: (String) -> Unit
+    onResult: (String) -> Unit,
+    onError: (String) -> Unit = {}
 ) {
     val client = OkHttpClient()
-    val url = "http://10.0.2.2:8000/update_user/$email"
 
+    // Convertimos el Map a un JSONObject
     val json = JSONObject()
     for ((key, value) in updatedFields) {
         json.put(key, value)
     }
 
-    Log.d("UpdateUser", "Datos actualizados enviados: $json")
-
-    val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+    val mediaType = "application/json; charset=utf-8".toMediaType()
+    val requestBody = json.toString().toRequestBody(mediaType)
 
     val request = Request.Builder()
-        .url(url)
+        .url("http://10.0.2.2:8000/update_user_physical/$id")
         .patch(requestBody)
         .build()
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            Log.e("UpdateUser", "Fallo en la conexión: ${e.message}")
-            onResult("Error al conectar con el servidor: ${e.message}")
+            val msg = "Error de red: ${e.message}"
+            Log.e("updateUserPhysicalData", msg)
+            onError(msg)
         }
 
         override fun onResponse(call: Call, response: Response) {
-            response.body?.string()?.let { responseBody ->
-                Log.d("UpdateUser", "Respuesta del servidor: $responseBody")
-                try {
-                    val jsonResponse = JSONObject(responseBody)
-                    if (response.isSuccessful) {
-                        val message = jsonResponse.getString("message")
-                        val user = jsonResponse.getJSONObject("user")
-                        val userInfo = buildString {
-                            append("Email: ${user.getString("email")}\n")
-                            append("⚖Peso: ${user.getDouble("weight")} kg\n")
-                            append("Peso objetivo: ${user.getDouble("target_weight")} kg\n")
-                            append("Altura: ${user.getDouble("height")} cm\n")
-                            append("Sexo: ${user.getString("sex")}\n")
-                            append("Nacimiento: ${user.getString("birthday")}\n")
-                            append("Actividad: ${user.getInt("physical_activity")}")
-                        }
-                        onResult("$message\n\n$userInfo")
-                    } else {
-                        val error = jsonResponse.optString("error", "❗ Error desconocido")
-                        onResult("Error: $error")
-                    }
-                } catch (e: Exception) {
-                    Log.e("UpdateUser", "Error procesando JSON: ${e.message}")
-                    onResult("Error al procesar la respuesta del servidor")
+            response.use {
+                val responseBody = response.body?.string()
+                if (!response.isSuccessful) {
+                    val msg = "Error HTTP ${response.code}: $responseBody"
+                    Log.e("updateUserPhysicalData", msg)
+                    onError(msg)
+                } else {
+                    Log.d("updateUserPhysicalData", "Respuesta: $responseBody")
+                    onResult(responseBody ?: "Actualización exitosa sin cuerpo")
                 }
             }
         }
