@@ -132,4 +132,8 @@ object GlobalData {
     fun login(userViewModel: UserViewModel) {
         this.userViewModel = userViewModel
     }
+
+    fun mainDietUpdate(dietViewModel: DietViewModel){
+        mainDiet = dietViewModel
+    }
 }

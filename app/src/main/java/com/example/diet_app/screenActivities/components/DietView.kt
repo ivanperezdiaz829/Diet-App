@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.diet_app.R
+import com.example.diet_app.model.GlobalData
 import com.example.diet_app.model.Screen
 import com.example.diet_app.viewModel.DietViewModel
 
@@ -28,6 +29,7 @@ fun DietView(
             .fillMaxWidth()
             .clickable {
                 // Navegación simplificada
+                GlobalData.mainDietUpdate(dietViewModel)
                 navController.navigate(Screen.DietInterface.createRoute(dietViewModel.getDiet().dietId))
             },
         shape = RoundedCornerShape(12.dp)
