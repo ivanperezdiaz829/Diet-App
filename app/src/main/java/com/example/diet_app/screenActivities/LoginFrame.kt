@@ -1,5 +1,6 @@
 package com.example.diet_app.screenActivities
 
+import android.content.Context
 import android.util.Patterns
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
@@ -27,6 +28,7 @@ import com.example.diet_app.viewModel.UserViewModel
 
 @Composable
 fun LoginScreen(
+    applicationContext: Context,
     userViewModel: UserViewModel,
     onLoginSuccess: (UserViewModel) -> Unit,
     onRegisterSuccess: (UserViewModel) -> Unit

@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Button
 import android.util.Log
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -36,7 +35,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.google.firebase.firestore.FirebaseFirestore
@@ -57,7 +55,6 @@ import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
-import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
 
@@ -169,11 +166,10 @@ class MainActivity : ComponentActivity() {
                 onResult = {}
             )
             */
-
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
 
-            DietApp(LocalContext.current, userViewModel, foodViewModel)
+            //DietApp(LocalContext.current, userViewModel, foodViewModel)
             /*
             DietInterface(
                 navController = rememberNavController(),
@@ -194,7 +190,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -218,6 +214,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             onNext = {
                 Log.d("CurrentUser", userViewModel.getUser().toString())
                 userViewModel.updateUser(goal = it)
+                GlobalData.login(userViewModel)
                 createUser(
                     email = userViewModel.getUser().email,
                     password = userViewModel.getUser().password,
@@ -373,6 +370,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             }
         ) {
             LoginScreen(
+                applicationContext,
                 userViewModel,
                 onLoginSuccess = {
                     userViewModel.updateUser(name = it.getUser().name)
@@ -413,7 +411,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.FoodList.route,
         ) {
-            FoodListViewScreen(navController, listOf(GlobalData.food1, GlobalData.food2, GlobalData.food3))
+            FoodListViewScreen(navController, GlobalData.foodList)
         }
 
         composable(route = Screen.AddFood.route,

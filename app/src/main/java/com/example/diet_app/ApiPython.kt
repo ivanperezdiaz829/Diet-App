@@ -3,7 +3,10 @@ package com.example.diet_app
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import com.example.diet_app.model.Goal
+import com.example.diet_app.model.Sex
 import com.example.diet_app.viewModel.FoodViewModel
+import com.example.diet_app.viewModel.UserViewModel
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -456,6 +459,121 @@ fun createUser(
     return ""
 }
 
+fun authenticateUser(
+    email: String,
+    password: String,
+    context: Context,
+    onResult: (Result<UserViewModel>) -> Unit
+) {
+    val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .build()
+
+    val url = "http://10.0.2.2:8000/get_user_by_credentials"
+
+    val json = JSONObject().apply {
+        put("email", email)
+        put("password", password)
+    }
+
+    Log.d("UserAuth", "Intentando autenticar usuario: $email")
+
+    val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("UserAuth", "Error de conexión: ${e.message}")
+            (context as? Activity)?.runOnUiThread {
+                onResult(Result.failure(Exception("Error de conexión: ${e.message}")))
+            }
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                try {
+                    Log.d("UserAuth", "Respuesta del servidor: $responseBody")
+
+                    if (response.isSuccessful) {
+                        val userJson = JSONObject(responseBody)
+
+                        // Mapeo de valores numéricos a enums
+                        val receivedSex = when (userJson.optInt("sex", 1)) {
+                            0 -> Sex.Female
+                            else -> Sex.Male // Valor por defecto
+                        }
+
+                        val receivedGoal = when (userJson.optInt("goal", 2)) {
+                            0 -> Goal.LOSE_WEIGHT
+                            1 -> Goal.GAIN_WEIGHT
+                            else -> Goal.STAY_HEALTHY // Valor por defecto
+                        }
+
+                        // Creamos y configuramos el UserViewModel
+                        val userViewModel = UserViewModel().apply {
+                            updateUser(
+                                id = userJson.optInt("id"),
+                                name = userJson.optString("name", ""),
+                                email = userJson.optString("email", ""),
+                                password = "", // No guardamos la contraseña
+                                age = userJson.optString("age", ""),
+                                sex = receivedSex,
+                                height = userJson.optInt("height"),
+                                currentWeight = userJson.optDouble("current_weight"),
+                                goal = receivedGoal
+                                // foodList se inicializa como emptyList() por defecto
+                            )
+                        }
+
+                        Log.d("UserAuth", """
+                            Usuario autenticado: 
+                            Nombre: ${userViewModel.getUser().name}
+                            Sexo: ${userViewModel.getUser().sex}
+                            Objetivo: ${userViewModel.getUser().goal}
+                        """.trimIndent())
+
+                        // Guardar datos básicos en SharedPreferences
+                        val prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                        prefs.edit().apply {
+                            putInt("user_id", userViewModel.getUser().id)
+                            putString("user_name", userViewModel.getUser().name)
+                            putString("user_email", userViewModel.getUser().email)
+                            apply()
+                        }
+
+                        (context as? Activity)?.runOnUiThread {
+                            onResult(Result.success(userViewModel))
+                        }
+                    } else {
+                        val errorResponse = JSONObject(responseBody)
+                        val errorMsg = errorResponse.optString("error", "Error desconocido")
+                        Log.e("UserAuth", "Error en autenticación: $errorMsg")
+
+                        (context as? Activity)?.runOnUiThread {
+                            onResult(Result.failure(Exception(errorMsg)))
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("UserAuth", "Error al procesar respuesta: ${e.message}")
+                    (context as? Activity)?.runOnUiThread {
+                        onResult(Result.failure(Exception("Error al procesar la respuesta del servidor")))
+                    }
+                }
+            } ?: run {
+                (context as? Activity)?.runOnUiThread {
+                    onResult(Result.failure(Exception("Respuesta vacía del servidor")))
+                }
+            }
+        }
+    })
+}
+
 fun getUserByEmail(
     email: String,
     context: Context,
@@ -716,7 +834,6 @@ fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -
         })
     }
 }
-
 
 fun createDiet(context: Context, name: String, userId: Int, dietTypeId: Int, onResult: (String) -> Unit) {
     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
