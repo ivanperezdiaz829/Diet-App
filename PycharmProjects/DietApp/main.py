@@ -571,9 +571,13 @@ def calculate_diet():
         result = []
         for day in dieta:
             result.append({
-                "breakfast": f"{day[0][0].name}, {day[0][1].name}",
-                "lunch": f"{day[1][0].name}, {day[1][1].name}, {day[1][2].name}",
-                "dinner": f"{day[2][0].name}, {day[2][1].name}"
+                "breakfast_dish": day[0][0].plate_id,
+                "breakfast_drink": day[0][1].plate_id,
+                "lunch_main_dish": day[1][0].plate_id,
+                "lunch_side_dish": day[1][1].plate_id,
+                "lunch_drink": day[1][2].plate_id,
+                "dinner_dish": day[2][0].plate_id,
+                "dinner_drink": day[2][1].plate_id
             })
 
         return jsonify(result)
