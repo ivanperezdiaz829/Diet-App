@@ -726,6 +726,7 @@ fun getDietPlanById(planId: Int, context: Context, onResult: (String) -> Unit) {
 
                     editor.apply()
                     onResult(output.toString().trim())
+                    Log.d("DietGet", output.toString().trim())
 
                 } catch (e: Exception) {
                     onResult("❌ Error al procesar JSON: ${e.message}")

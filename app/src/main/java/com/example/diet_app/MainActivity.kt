@@ -164,7 +164,10 @@ class MainActivity : ComponentActivity() {
                 context = LocalContext.current,
                 onResult = {}
             )*/
-            DietApp(LocalContext.current, userViewModel, foodViewModel)
+
+            getDietPlanById(4, LocalContext.current, onResult = {})
+
+            //DietApp(LocalContext.current, userViewModel, foodViewModel)
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
             /*
             DietInterface(
