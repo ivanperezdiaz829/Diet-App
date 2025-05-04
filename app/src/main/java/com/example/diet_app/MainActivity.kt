@@ -165,7 +165,6 @@ class MainActivity : ComponentActivity() {
                 context = LocalContext.current,
                 onResult = {}
             )*/
-
             DietApp(LocalContext.current, userViewModel, foodViewModel)
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
             /*
@@ -395,7 +394,16 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
-            ChangePasswordScreen(navController, userViewModel)
+            ChangePasswordScreen(
+                navController,
+                userViewModel,
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+
+                    // Aquí llamar a API para cambiar contraseña
+
+                    navController.navigateAndClearStack(Screen.Welcome.route) }
+                )
         }
 
         composable(route = Screen.FoodList.route,

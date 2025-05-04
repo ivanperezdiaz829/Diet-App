@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TitleSection() {
     Text(
-        text = "Settings",
+        text = "Ajustes",
         fontSize = 36.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier.padding(bottom = 20.dp)
@@ -36,7 +36,7 @@ fun UsernameText(username: String) {
 @Composable
 fun ChangePasswordTitle() {
     Text(
-        text = "Change Password",
+        text = "Cambiar contraseña",
         fontWeight = FontWeight.SemiBold,
         fontSize = 28.sp,
         modifier = Modifier.padding(bottom = 12.dp)
@@ -46,7 +46,7 @@ fun ChangePasswordTitle() {
 @Composable
 fun PasswordRequirementText() {
     Text(
-        text = "Your new password should have a minimum of 6 characters",
+        text = "Tu contraseña debe tener al menos 8 caracteres.",
         color = Color.Gray,
         fontSize = 20.sp,
         modifier = Modifier.padding(bottom = 24.dp)
@@ -68,7 +68,7 @@ fun PasswordField(label: String, password: String, onValueChange: (String) -> Un
 @Composable
 fun ForgotPasswordLink(onClick: () -> Unit) {
     Text(
-        text = "Forgot Password?",
+        text = "¿Olvidaste la contraseña?",
         color = Color.Blue,
         fontSize = 18.sp,
         modifier = Modifier
@@ -86,6 +86,6 @@ fun ChangePasswordButton(onClick: () -> Unit) {
             .padding(top = 24.dp),
         colors = ButtonDefaults.buttonColors(Color(0xFF4CAF50))
     ) {
-        Text("Change Password", color = Color.White, fontSize = 20.sp)
+        Text("Cambiar contraseña", color = Color.White, fontSize = 20.sp)
     }
 }
