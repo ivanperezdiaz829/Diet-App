@@ -102,7 +102,7 @@ private fun GoalOptions(
 }
 
 @Composable
-private fun GoalOption(
+fun GoalOption(
     goal: Goal,
     text: String,
     imageUrl: String,

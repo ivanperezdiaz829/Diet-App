@@ -92,7 +92,7 @@ fun ChangePasswordScreen(
                         newPassword = newPassword,
                         context = context,
                         onResult = {
-                            onNext() // Solo navega si la API responde con éxito
+                            onNext()
                         },
                         onError = {
                             errorMessage = it

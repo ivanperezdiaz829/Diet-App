@@ -455,6 +455,33 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 })
         }
 
+        composable(
+            route = Screen.PhsysicalData.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            UpdatePhysicalDataScreen(
+                navController = navController,
+                userViewModel = userViewModel,
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    updateUserPhysicalData(userViewModel.getUser().id.toInt(), it, applicationContext, onResult = {}, onError = {})
+                    navController.navigateAndClearStack(Screen.Welcome.route)
+                }
+            )
+        }
+
+
         composable(route = Screen.FoodList.route,
         ) {
             FoodListViewScreen(navController, GlobalData.foodList)

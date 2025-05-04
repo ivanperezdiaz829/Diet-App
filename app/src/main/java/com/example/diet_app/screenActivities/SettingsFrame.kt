@@ -89,6 +89,7 @@ fun SettingsScreen(
 
         // Opción: Editar datos
         SettingsOption(text = "Modificar tus datos", R.drawable.data_icon) {
+            navController.navigate(Screen.PhsysicalData.route)
             // Acción al tocar editar datos
         }
 
