@@ -2,6 +2,7 @@ class Plate:
 
     def __init__(self, row, mult):
         # Si los valores son None, los reemplazamos con 0 (o algún valor predeterminado adecuado)
+        self.plate_id = row[0]
         self.name = row[1]
         self.calories = row[3] * mult
         self.carbohydrates = row[4] * mult

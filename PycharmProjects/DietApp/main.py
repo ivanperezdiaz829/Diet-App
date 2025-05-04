@@ -1,20 +1,14 @@
 from flask import Flask, request, jsonify, send_file
 from Graphs import *
 from ObtainTotals import *
-import time
 import ast
-from io import BytesIO
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pandas as pd
-from GenerarDieta2 import *
 from InfoForGraph import *
-import sqlite3
 import os
-
+from werkzeug.security import generate_password_hash, check_password_hash
+import sqlite3
+import re
 from model.User import User, validate_email
 from configuration.config import DB_PATH, PHYSICAL_ACTIVITY_LEVELS, SEX_VALUES
-from database.database_utils import create_database
 from model.DietPlanDay import DietPlanDay
 from model.DietPlanComplete import DietPlanComplete
 
@@ -28,113 +22,227 @@ if not os.path.exists(DB_PATH):
 SEX_DICT = {value: i for i, value in enumerate(SEX_VALUES)}
 
 
+@app.route('/get_plate/<string:plate_id>', methods=['GET'])  # Cambiamos a string para capturar cualquier valor
+def get_plate(plate_id):
+    try:
+        # Primero validamos que el plate_id sea numérico
+        try:
+            plate_id_int = int(plate_id)
+        except ValueError:
+            return jsonify({"error": "El ID debe ser un número entero válido"}), 400
+
+        # Ahora continuamos con la lógica original
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            # Obtener el plato principal
+            cursor.execute("SELECT * FROM plates WHERE id = ?", (plate_id_int,))
+            plate_row = cursor.fetchone()
+
+            if not plate_row:
+                return jsonify({"error": "Plato no encontrado"}), 404
+
+            # Obtener información adicional del tipo de plato
+            type_info = {}
+            if plate_row['type']:
+                cursor.execute("SELECT * FROM plate_type WHERE id = ?", (plate_row['type'],))
+                type_row = cursor.fetchone()
+                if type_row:
+                    type_info = dict(type_row)
+
+            # Convertir a diccionario y ajustar campos booleanos
+            plate_data = dict(plate_row)
+            boolean_fields = ['vegan', 'vegetarian', 'celiac', 'halal']
+            for field in boolean_fields:
+                plate_data[field] = bool(plate_data[field])
+
+            return jsonify({
+                "plate": plate_data,
+                "type_info": type_info if type_info else None
+            }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
+
 # --------------------------
 # Endpoints de Usuarios
 # --------------------------
-
 @app.route('/create_user', methods=['POST'])
 def create_user():
     try:
         data = request.get_json()
-        user = User.from_dict(data)
+
+        # Validar campos requeridos
+        required_fields = ['email', 'password', 'physical_activity', 'sex',
+                           'birthday', 'height', 'weight', 'goal']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Campo requerido faltante: {field}"}), 400
+
+        # Validaciones adicionales
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
+            return jsonify({"error": "Formato de email inválido"}), 400
+
+        if len(data['password']) < 8:
+            return jsonify({"error": "La contraseña debe tener al menos 8 caracteres"}), 400
+
+        # Hashear contraseña
+        hashed_password = generate_password_hash(data['password'])
 
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO users(email, password, physical_activity, sex, birthday, height, weight)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, user.get_values())
+                INSERT INTO users (
+                    email, password, physical_activity, sex, 
+                    birthday, height, weight, goal
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                data['email'],
+                hashed_password,
+                data['physical_activity'],
+                data['sex'],
+                data['birthday'],
+                data['height'],
+                data['weight'],
+                data['goal']
+            ))
+            user_id = cursor.lastrowid
             conn.commit()
 
-        return jsonify({
-            "message": "Usuario creado exitosamente",
-            "user": user.to_dict()
-        }), 201
+            return jsonify({
+                "message": "Usuario creado exitosamente",
+                "user_id": user_id
+            }), 201
 
-    except (TypeError, ValueError) as e:
-        return jsonify({"error": str(e)}), 400
-    except sqlite3.DatabaseError as e:
-        return jsonify({"error": str(e)}), 500
+    except sqlite3.IntegrityError as e:
+        if "UNIQUE constraint failed" in str(e):
+            return jsonify({"error": "El email ya está registrado"}), 409
+        return jsonify({"error": f"Error de integridad: {str(e)}"}), 400
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
 
-@app.route('/get_user/<string:email>', methods=['GET'])
-def get_user(email):
+@app.route('/get_user/<int:user_id>', methods=['GET'])
+def get_user(user_id):
     try:
-        user = select_user(email)
-        if not user:
-            return jsonify({"error": "No existe un usuario con el email proporcionado"}), 404
-        return jsonify({
-            "message": "Usuario encontrado",
-            "user": user.to_dict()
-        })
-    except (ValueError, TypeError) as e:
-        return jsonify({"error": str(e)}), 400
-    except sqlite3.DatabaseError as e:
-        return jsonify({"error": str(e)}), 500
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            cursor.execute("""
+                SELECT id, email, physical_activity, sex, 
+                       birthday, height, weight, goal
+                FROM users WHERE id = ?
+            """, (user_id,))
+
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({"error": "Usuario no encontrado"}), 404
+
+            return jsonify(dict(user)), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
 
-@app.route('/delete_user/<string:email>', methods=['DELETE'])
-def delete_user(email):
+@app.route('/update_user_physical/<int:user_id>', methods=['PATCH'])
+def update_user_physical(user_id):
     try:
-        user = select_user(email)
-        if not user:
-            return jsonify({"error": "El usuario con el email proporcionado no existe"}), 404
+        data = request.get_json()
+
+        # Campos actualizables
+        updatable_fields = ['physical_activity', 'sex', 'birthday', 'height', 'weight', 'goal']
+        update_data = {k: data[k] for k in updatable_fields if k in data}
+
+        if not update_data:
+            return jsonify({"error": "No se proporcionaron datos para actualizar"}), 400
 
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM users WHERE email=?", (email,))
+
+            # Verificar que el usuario existe
+            cursor.execute("SELECT 1 FROM users WHERE id = ?", (user_id,))
+            if not cursor.fetchone():
+                return jsonify({"error": "Usuario no encontrado"}), 404
+
+            # Construir query dinámica
+            set_clause = ", ".join([f"{field} = ?" for field in update_data.keys()])
+            query = f"UPDATE users SET {set_clause} WHERE id = ?"
+
+            cursor.execute(query, (*update_data.values(), user_id))
             conn.commit()
 
-        return jsonify({
-            "message": "Usuario eliminado exitosamente",
-            "user": user.to_dict()
-        })
-    except (TypeError, ValueError) as e:
-        return jsonify({"error": str(e)}), 400
-    except sqlite3.DatabaseError as e:
-        return jsonify({"error": str(e)}), 500
+            return jsonify({"message": "Datos físicos actualizados exitosamente"}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 400
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
 
-@app.route('/update_user/<string:email>', methods=['PATCH'])
-def update_user(email):
+@app.route('/update_user_password/<int:user_id>', methods=['PATCH'])
+def update_user_password(user_id):
     try:
-        user = select_user(email)
-        if not user:
-            return jsonify({'error': f'El usuario con email {email} no existe'}), 400
-
         data = request.get_json()
-        fields = []
-        values = []
 
-        for field in data.keys():
-            if field not in User.get_fields():
-                raise ValueError(f"Campo no permitido: {field}")
-            fields.append(f"{field} = ?")
-            values.append(data[field])
+        # Validar campos requeridos
+        if 'current_password' not in data or 'new_password' not in data:
+            return jsonify({"error": "Se requieren current_password y new_password"}), 400
 
-        if fields:
-            sql = f"UPDATE users SET {', '.join(fields)} WHERE email = ?"
-            values.append(email)
+        # Validar longitud de nueva contraseña
+        if len(data['new_password']) < 8:
+            return jsonify({"error": "La nueva contraseña debe tener al menos 8 caracteres"}), 400
 
-            with sqlite3.connect(DB_PATH) as conn:
-                cursor = conn.cursor()
-                cursor.execute(sql, tuple(values))
-                conn.commit()
-                user = select_user(email)
-                if user:
-                    return jsonify({
-                        "message": "Usuario actualizado exitosamente",
-                        "user": user.to_dict()
-                    })
-                return jsonify({"error": "El usuario no existe"}), 404
-        return jsonify({"message": "No se proporcionaron datos para actualizar"}), 400
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row  # Para acceso por nombre de columna
+            cursor = conn.cursor()
 
-    except (ValueError, TypeError) as e:
-        return jsonify({"error": str(e)}), 400
-    except sqlite3.DatabaseError as e:
-        return jsonify({'error': str(e)}), 500
+            # Obtener contraseña actual
+            cursor.execute("SELECT password FROM users WHERE id = ?", (user_id,))
+            result = cursor.fetchone()
 
+            if not result:
+                return jsonify({"error": "Usuario no encontrado"}), 404
 
+            # Verificar contraseña actual (acceso corregido)
+            stored_password = result['password']  # Acceso por nombre de columna
+            if not check_password_hash(stored_password, data['current_password']):
+                return jsonify({"error": "Contraseña actual incorrecta"}), 401
+
+            # Actualizar contraseña
+            new_hashed = generate_password_hash(data['new_password'])
+            cursor.execute("UPDATE users SET password = ? WHERE id = ?", (new_hashed, user_id))
+            conn.commit()
+
+            return jsonify({"message": "Contraseña actualizada exitosamente"}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
+@app.route('/delete_user/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+
+            # Verificar existencia
+            cursor.execute("SELECT 1 FROM users WHERE id = ?", (user_id,))
+            if not cursor.fetchone():
+                return jsonify({"error": "Usuario no encontrado"}), 404
+
+            cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+            conn.commit()
+
+            return jsonify({"message": "Usuario eliminado exitosamente"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 # --------------------------
 # Endpoints de Planes de Dieta
 # --------------------------
