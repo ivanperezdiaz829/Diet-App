@@ -2,6 +2,7 @@ package com.example.diet_app
 
 import DietPlansScreen
 import GenerateMealPlanWithInputsScreen
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Button
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -169,8 +171,39 @@ class MainActivity : ComponentActivity() {
             */
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
+            // In your ViewModel or Activity
 
-            DietApp(LocalContext.current, userViewModel, foodViewModel)
+            val dietList = mutableListOf<DietViewModel>()
+
+            getUserDietPlansComplete(
+                user_id = 7, // Aquí usamos la variable local userId
+                context = this,
+                dietViewModels = dietList
+            ) { result ->
+                when {
+                    result.isSuccess -> {
+                        val diets = result.getOrNull() ?: emptyList()
+                        Log.d(TAG, "Carga exitosa. ${diets.size} dietas encontradas")
+
+                        diets.forEachIndexed { index, diet ->
+                            Log.d(TAG, """
+                            Dieta ${index + 1}:
+                            Nombre: ${diet.getDiet().name}
+                            Duración: ${diet.getDiet().duration} días
+                            Tipo: ${diet.getDiet().foodVariant}
+                            IDs de días: ${diet.getDiet().dietsId}
+                        """.trimIndent())
+                        }
+                    }
+                    result.isFailure -> {
+                        val error = result.exceptionOrNull()
+                        Log.e(TAG, "Error cargando dietas: ${error?.message}")
+                        Toast.makeText(this, "Error: ${error?.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            //DietApp(LocalContext.current, userViewModel, foodViewModel)
             /*
             DietInterface(
                 navController = rememberNavController(),

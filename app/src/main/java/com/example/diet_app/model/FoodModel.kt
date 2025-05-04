@@ -2,6 +2,7 @@ package com.example.diet_app.model
 
 class FoodModel(
     var name: String = "",
+    var foodId: Int = 0,
     var protein: Double = 0.0,
     var fats: Double = 0.0,
     var sugar: Double = 0.0,
