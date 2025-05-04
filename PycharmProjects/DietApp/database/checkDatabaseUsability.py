@@ -47,6 +47,115 @@ def generate_user_data():
         "weight": random.uniform(50.0, 100.0)
     }
 
+def print_response(response):
+    """Muestra la respuesta de la API de forma legible"""
+    print(f"Status Code: {response.status_code}")
+    try:
+        print("Response Body:")
+        print(json.dumps(response.json(), indent=2))
+    except ValueError:
+        print("No JSON response")
+
+def test_user_authentication():
+    """Prueba el endpoint de autenticación de usuario"""
+    print("\n" + "=" * 50)
+    print(" TESTING USER AUTHENTICATION ".center(50, "="))
+    print("=" * 50)
+
+    # Credenciales de prueba (ajusta según tu base de datos)
+    TEST_EMAIL = "gloton@hotmail.com"
+    TEST_PASSWORD = "Glotoner2*"
+    INVALID_PASSWORD = "wrongpass"
+    NON_EXISTENT_EMAIL = "noexiste@ejemplo.com"
+
+    # 1. Caso exitoso - Credenciales válidas
+    print("\n1. Probando credenciales válidas...")
+    data = {
+        "email": TEST_EMAIL,
+        "password": TEST_PASSWORD
+    }
+    response = requests.post(
+        f"{BASE_URL}/get_user_by_credentials",
+        headers=HEADERS,
+        data=json.dumps(data)
+    )
+    print_response(response)
+
+    if response.status_code != 200:
+        print("Error en autenticación válida, abortando pruebas...")
+        return None
+
+    user_data = response.json()
+    print("\nDatos de usuario obtenidos:")
+    for key, value in user_data.items():
+        print(f"{key}: {value}")
+
+    # 2. Caso error - Contraseña incorrecta
+    print("\n2. Probando contraseña incorrecta...")
+    data = {
+        "email": TEST_EMAIL,
+        "password": INVALID_PASSWORD
+    }
+    response = requests.post(
+        f"{BASE_URL}/get_user_by_credentials",
+        headers=HEADERS,
+        data=json.dumps(data)
+    )
+    print_response(response)
+
+    # 3. Caso error - Usuario no existe
+    print("\n3. Probando email no existente...")
+    data = {
+        "email": NON_EXISTENT_EMAIL,
+        "password": TEST_PASSWORD
+    }
+    response = requests.post(
+        f"{BASE_URL}/get_user_by_credentials",
+        headers=HEADERS,
+        data=json.dumps(data)
+    )
+    print_response(response)
+
+    # 4. Caso error - Campos faltantes
+    print("\n4. Probando falta de campos requeridos...")
+    # Caso sin password
+    data = {"email": TEST_EMAIL}
+    response = requests.post(
+        f"{BASE_URL}/get_user_by_credentials",
+        headers=HEADERS,
+        data=json.dumps(data)
+    )
+    print_response(response)
+
+    # Caso sin email
+    data = {"password": TEST_PASSWORD}
+    response = requests.post(
+        f"{BASE_URL}/get_user_by_credentials",
+        headers=HEADERS,
+        data=json.dumps(data)
+    )
+    print_response(response)
+
+    # 5. Verificar que la contraseña no se devuelve
+    print("\n5. Verificando que la contraseña no está en la respuesta...")
+    data = {
+        "email": TEST_EMAIL,
+        "password": TEST_PASSWORD
+    }
+    response = requests.post(
+        f"{BASE_URL}/get_user_by_credentials",
+        headers=HEADERS,
+        data=json.dumps(data)
+    )
+    user_data = response.json()
+    assert "password" not in user_data, "ERROR: La contraseña está incluida en la respuesta"
+    print("OK: La contraseña no está incluida en la respuesta")
+
+    return user_data.get("id")  # Devuelve el ID del usuario para usar en otras pruebas
+
+if __name__ == "__main__":
+    user_id = test_user_authentication()
+    print(f"\nID de usuario obtenido: {user_id}")
 
 def test_diet_plan_endpoints():
     """Prueba los endpoints de planes de dieta"""
@@ -116,10 +225,10 @@ def test_user_crud_operations():
     print("=" * 50)
     # Datos de prueba ajustados a 0/1 para sexo
     user1_data = {
-        "email": "glotona@hotmail.com",
-        "password": "Glotona2*",
+        "email": "gloton@hotmail.com",
+        "password": "Glotoner2*",
         "physical_activity": 1,
-        "sex": 0,  # 0 = femenino
+        "sex": 1,  # 0 = femenino
         "birthday": "1990-01-01",
         "height": 165,
         "weight": 60,
@@ -272,10 +381,8 @@ def main():
     """Función principal"""
     print("INICIANDO PRUEBAS DE LA API".center(50, "="))
 
-    # Ejecutar pruebas
-    test_user_crud_operations()
-    test_plate_obtention()
-    test_diet_plan_endpoints()
+    test_user_authentication()
+
 
     print("\n" + "PRUEBAS COMPLETADAS".center(50, "="))
 
