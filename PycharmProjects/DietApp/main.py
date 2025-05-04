@@ -125,6 +125,41 @@ def create_user():
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+@app.route('/get_user_by_credentials', methods=['POST'])
+def get_user_by_credentials():
+    try:
+        data = request.get_json()
+
+        # Validación de campos requeridos
+        if 'email' not in data or 'password' not in data:
+            return jsonify({"error": "Email y contraseña son requeridos"}), 400
+
+        email = data['email']
+        password = data['password']
+
+        # Validar formato del email
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            return jsonify({"error": "Formato de email inválido"}), 400
+
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row  # Permite acceder por nombres de columna
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+            user = cursor.fetchone()
+
+            if not user:
+                return jsonify({"error": "Usuario no encontrado"}), 404
+
+            if not check_password_hash(user["password"], password):
+                return jsonify({"error": "Contraseña incorrecta"}), 401
+
+            # Construir respuesta excluyendo la contraseña
+            user_data = {key: user[key] for key in user.keys() if key != "password"}
+
+            return jsonify(user_data), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
 @app.route('/get_user/<int:user_id>', methods=['GET'])
 def get_user(user_id):
