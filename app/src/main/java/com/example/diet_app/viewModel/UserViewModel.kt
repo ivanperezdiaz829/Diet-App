@@ -9,6 +9,7 @@ class UserViewModel : ViewModel() {
     private var currentUser: UserModel = UserModel() // Inicialización por defecto
 
     fun updateUser(
+        id: Int = currentUser.id,
         name: String = currentUser.name,
         email: String = currentUser.email,
         password: String = currentUser.password,
@@ -20,6 +21,7 @@ class UserViewModel : ViewModel() {
         foodList: List<FoodViewModel> = currentUser.foodList
     ) {
         currentUser = UserModel(
+            id = id,
             name = name,
             email = email,
             password = password,

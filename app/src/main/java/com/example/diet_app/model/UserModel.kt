@@ -3,6 +3,7 @@ package com.example.diet_app.model
 import com.example.diet_app.viewModel.FoodViewModel
 
 class UserModel(
+    var id: Int = 0,
     var name: String = "",
     var email: String = "",
     var password: String = "",
