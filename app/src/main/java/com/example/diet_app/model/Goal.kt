@@ -5,3 +5,11 @@ enum class Goal {
     GAIN_WEIGHT,
     STAY_HEALTHY
 }
+
+fun getGoalInt(goal: Goal): Int {
+    return when (goal) {
+        Goal.LOSE_WEIGHT -> 0
+        Goal.GAIN_WEIGHT -> 1
+        Goal.STAY_HEALTHY -> 2
+    }
+}

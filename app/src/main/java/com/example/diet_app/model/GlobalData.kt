@@ -2,13 +2,18 @@ package com.example.diet_app.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
+import com.example.diet_app.viewModel.UserViewModel
 
 object GlobalData {
     // Almacena los ViewModels de comida
+
+    var userViewModel by mutableStateOf(UserViewModel())
+
     var food1 by mutableStateOf(FoodViewModel().apply {
         updateFood(name = "Croissant", foodTypes = setOf(FoodType.LIGHT_MEAL))
     })
@@ -125,6 +130,9 @@ object GlobalData {
             diets = listOf(day1, day2),
             dietId = "1"
         )
+
+
+
     }
 
     // Función para resetear datos

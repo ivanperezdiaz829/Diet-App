@@ -6,7 +6,7 @@ class UserModel(
     var name: String = "",
     var email: String = "",
     var password: String = "",
-    var age: Int = 0,
+    var age: String = "",
     var sex: Sex = Sex.Male,
     var height: Int = 0,
     var currentWeight: Double = 0.0,

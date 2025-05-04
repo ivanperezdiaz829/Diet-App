@@ -1,6 +1,7 @@
 package com.example.diet_app.screenActivities
 
 import android.app.DatePickerDialog
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,7 +50,7 @@ import com.example.diet_app.screenActivities.components.TitleSection
 fun AgeSelectionScreen(
     onNavigateBack: () -> Unit,
     onSkip: () -> Unit,
-    onNext: (Int) -> Unit
+    onNext: (String) -> Unit
 ) {
     val context = LocalContext.current
     var selectedDate by remember { mutableStateOf("") }
@@ -134,6 +135,7 @@ fun AgeSelectionScreen(
                             .size(24.dp)
                             .clickable {
                                 showDatePicker(context) { date, calculatedAge ->
+                                    Log.d("AgeSelectionScreen", "Fecha seleccionada: $date, Edad calculada: $calculatedAge")
                                     selectedDate = date // Actualiza la fecha
                                     age = calculatedAge // Actualiza la edad
                                 }
@@ -146,7 +148,7 @@ fun AgeSelectionScreen(
 
             NextButton(
                 enabled = selectedDate.isNotEmpty() && age >= 18,
-                onClick = { onNext(age) }
+                onClick = { onNext(formatDate(selectedDate)) }
             )
 
         }
@@ -177,4 +179,42 @@ private fun showDatePicker(
         },
         currentYear, currentMonth, currentDay
     ).show()
+}
+
+fun formatDate(inputDate: String): String {
+    try {
+        // Dividir la fecha en partes: "May / 4 / 1975" -> ["May", "4", "1975"]
+        val parts = inputDate.split(" / ").map { it.trim() }
+        if (parts.size != 3) throw IllegalArgumentException("Formato de fecha incorrecto")
+
+        val monthStr = parts[0]  // "May"
+        val dayStr = parts[1]    // "4"
+        val yearStr = parts[2]    // "1975"
+
+        // Convertir el mes a número (1-12)
+        val monthNumber = when (monthStr.lowercase()) {
+            "jan", "january" -> 1
+            "feb", "february" -> 2
+            "mar", "march" -> 3
+            "apr", "april" -> 4
+            "may" -> 5
+            "jun", "june" -> 6
+            "jul", "july" -> 7
+            "aug", "august" -> 8
+            "sep", "september" -> 9
+            "oct", "october" -> 10
+            "nov", "november" -> 11
+            "dec", "december" -> 12
+            else -> throw IllegalArgumentException("Mes no válido: $monthStr")
+        }
+
+        // Convertir día a 2 dígitos ("4" -> "04")
+        val dayFormatted = dayStr.padStart(2, '0')
+        // Convertir mes a 2 dígitos ("5" -> "05")
+        val monthFormatted = monthNumber.toString().padStart(2, '0')
+
+        return "$yearStr-$monthFormatted-$dayFormatted"
+    } catch (e: Exception) {
+        throw IllegalArgumentException("Fecha en formato incorrecto: $inputDate", e)
+    }
 }

@@ -12,7 +12,7 @@ class UserViewModel : ViewModel() {
         name: String = currentUser.name,
         email: String = currentUser.email,
         password: String = currentUser.password,
-        age: Int = currentUser.age,
+        age: String = currentUser.age,
         sex: Sex = currentUser.sex,
         height: Int = currentUser.height,
         currentWeight: Double = currentUser.currentWeight,

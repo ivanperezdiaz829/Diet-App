@@ -49,6 +49,8 @@ import androidx.navigation.navArgument
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.GlobalData
 import com.example.diet_app.model.Screen
+import com.example.diet_app.model.getGoalInt
+import com.example.diet_app.model.getSexInt
 import com.example.diet_app.screenActivities.*
 import com.example.diet_app.screenActivities.components.navigateAndClearStack
 import com.example.diet_app.viewModel.DietDayViewModel
@@ -216,22 +218,19 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             onNext = {
                 Log.d("CurrentUser", userViewModel.getUser().toString())
                 userViewModel.updateUser(goal = it)
-
                 createUser(
                     email = userViewModel.getUser().email,
                     password = userViewModel.getUser().password,
                     physicalActivity = 4,
-                    sex = 0,
-                    birthday = "1995-06-15",
+                    sex = getSexInt(userViewModel.getUser().sex),
+                    birthday = userViewModel.getUser().age,
                     height = userViewModel.getUser().height,
                     weight = userViewModel.getUser().currentWeight.toInt(),
                     context = applicationContext,
+                    goal = getGoalInt(userViewModel.getUser().goal),
                     onResult = {},
-                    goal = 1
                 )
                 navController.navigate(Screen.Home.route)
-
-
             },
         )}
 
