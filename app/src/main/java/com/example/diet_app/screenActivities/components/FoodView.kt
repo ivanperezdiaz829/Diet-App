@@ -56,11 +56,11 @@ fun FoodViewScreen(
 
             for (foodType in food.getFood().foodTypes) {
                 val id = when (foodType) {
-                    FoodType.LIGHT_MEAL -> R.drawable.sun_day_morning
-                    FoodType.MAIN_DISH -> R.drawable.sun_day_midday
-                    FoodType.SIDE_DISH -> R.drawable.sun_day_afternoon
-                    FoodType.DRINK -> R.drawable.bebida
-                    FoodType.DESSERT -> R.drawable.postre
+                    FoodType.PLATO_LIGERO -> R.drawable.sun_day_morning
+                    FoodType.PLATO_PRINCIPAL -> R.drawable.sun_day_midday
+                    FoodType.PLATO_SECUNDARIO -> R.drawable.sun_day_afternoon
+                    FoodType.BEBIDA -> R.drawable.bebida
+                    FoodType.POSTRE -> R.drawable.postre
                 }
 
                 Image(

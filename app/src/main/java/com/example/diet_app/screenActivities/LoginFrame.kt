@@ -138,7 +138,7 @@ private fun LoginCard(
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Text(
-                            text = "Log In",
+                            text = "Iniciar sesión",
                             fontSize = 15.sp,
                             color = if (isLogin) selectedTextColor else unselectedTextColor
                         )
@@ -167,7 +167,7 @@ private fun LoginCard(
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Text(
-                            text = "Sign Up",
+                            text = "Registrarse",
                             fontSize = 15.sp,
                             color = if (!isLogin) selectedTextColor else unselectedTextColor
                         )
@@ -180,7 +180,7 @@ private fun LoginCard(
                 Column {
 
                     CustomTextField(
-                        label = "Email or Username",
+                        label = "Correo electrónico",
                         value = username,
                         onValueChange = { username = it },
                         isError = showError,
@@ -188,7 +188,7 @@ private fun LoginCard(
                     )
 
                     CustomTextField(
-                        label = "Password",
+                        label = "Contraseña",
                         value = password,
                         onValueChange = { password = it },
                         isError = showError,
@@ -259,7 +259,7 @@ private fun LoginCard(
                         shape = RoundedCornerShape(15.dp)
                     ) {
                         Text(
-                            text = if (login) "Log In" else "Sign Up",
+                            text = if (login) "Iniciar sesión" else "Registrarse",
                             fontSize = 15.sp,
                             fontFamily = FontFamily.Default,
                             color = Color.White
@@ -272,7 +272,7 @@ private fun LoginCard(
 
             // Divider
             Text(
-                text = "OR",
+                text = "O",
                 fontSize = 15.sp,
                 color = Color(0xFF929292),
                 modifier = Modifier.align(Alignment.CenterHorizontally)

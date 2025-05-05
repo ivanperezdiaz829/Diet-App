@@ -76,12 +76,12 @@ fun FoodListViewScreen(
 
             //BackButtonLeft(onNavigateBack = { navController.popBackStack() })
 
-            TitleSection("Your ", "foods", "You can add your favorite foods")
+            TitleSection("Tus ", "comidas", "Puedes añadir tus comidas preferidas ")
 
             Spacer(modifier = Modifier.padding(20.dp))
 
             if (foods.isEmpty()) {
-                Text("No foods added yet")
+                Text("No hay comidas añadidas")
             } else {
                 for (food in foods) {
                     FoodViewScreen(

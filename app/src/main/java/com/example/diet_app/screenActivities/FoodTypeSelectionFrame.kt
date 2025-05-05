@@ -1,6 +1,5 @@
 package com.example.diet_app.screenActivities
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,8 +24,6 @@ import com.example.diet_app.ui.theme.GrayGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.R
 import com.example.diet_app.model.FoodType
-import com.example.diet_app.printFoodInfo
-import com.example.diet_app.viewModel.FoodViewModel
 
 @Composable
 fun FoodTypeSelectionScreen(
@@ -92,27 +89,27 @@ private fun FoodOptions(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         FoodOption(
-            foodType = FoodType.LIGHT_MEAL,
+            foodType = FoodType.PLATO_LIGERO,
             text = "Light Meal",
             imageId = R.drawable.sun_day_morning,
-            isSelected = selectedFoodTypes.contains(FoodType.LIGHT_MEAL),
-            onClick = { onFoodTypeSelected(FoodType.LIGHT_MEAL) }
+            isSelected = selectedFoodTypes.contains(FoodType.PLATO_LIGERO),
+            onClick = { onFoodTypeSelected(FoodType.PLATO_LIGERO) }
         )
 
         FoodOption(
-            foodType = FoodType.MAIN_DISH,
+            foodType = FoodType.PLATO_PRINCIPAL,
             text = "Main Dish",
             imageId = R.drawable.sun_day_midday,
-            isSelected = selectedFoodTypes.contains(FoodType.MAIN_DISH),
-            onClick = { onFoodTypeSelected(FoodType.MAIN_DISH) }
+            isSelected = selectedFoodTypes.contains(FoodType.PLATO_PRINCIPAL),
+            onClick = { onFoodTypeSelected(FoodType.PLATO_PRINCIPAL) }
         )
 
         FoodOption(
-            foodType = FoodType.SIDE_DISH,
+            foodType = FoodType.PLATO_SECUNDARIO,
             text = "Side Dish",
             imageId = R.drawable.sun_day_afternoon,
-            isSelected = selectedFoodTypes.contains(FoodType.SIDE_DISH),
-            onClick = { onFoodTypeSelected(FoodType.SIDE_DISH) }
+            isSelected = selectedFoodTypes.contains(FoodType.PLATO_SECUNDARIO),
+            onClick = { onFoodTypeSelected(FoodType.PLATO_SECUNDARIO) }
         )
     }
 }

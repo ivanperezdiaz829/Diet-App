@@ -48,7 +48,7 @@ fun GoalSelectionScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            TitleSection("What is your", "goal?", "We will use this data to give you a better diet type for you")
+            TitleSection("¿Cual es tu", "objetivo?", "Usaremos estos datos para darte una mejor dieta")
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -76,27 +76,27 @@ private fun GoalOptions(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         GoalOption(
-            goal = Goal.LOSE_WEIGHT,
-            text = "Lose weight",
+            goal = Goal.PERDER_PESO,
+            text = "Perder peso",
             imageUrl = "https://cdn.builder.io/api/v1/image/assets/TEMP/22f57b9e5c369652cc2b4e79fc4c97e853dbdb68",
-            isSelected = selectedGoal == Goal.LOSE_WEIGHT,
-            onClick = { onGoalSelected(Goal.LOSE_WEIGHT) }
+            isSelected = selectedGoal == Goal.PERDER_PESO,
+            onClick = { onGoalSelected(Goal.PERDER_PESO) }
         )
 
         GoalOption(
-            goal = Goal.GAIN_WEIGHT,
-            text = "Gain weight",
+            goal = Goal.GANAR_PESO,
+            text = "Ganar peso",
             imageUrl = "https://cdn.builder.io/api/v1/image/assets/TEMP/a9ad78ccc95ba11fe58f424876d7434ad938c4ea",
-            isSelected = selectedGoal == Goal.GAIN_WEIGHT,
-            onClick = { onGoalSelected(Goal.GAIN_WEIGHT) }
+            isSelected = selectedGoal == Goal.GANAR_PESO,
+            onClick = { onGoalSelected(Goal.GANAR_PESO) }
         )
 
         GoalOption(
-            goal = Goal.STAY_HEALTHY,
-            text = "Stay healthy",
+            goal = Goal.MANTENERSE,
+            text = "Mantenerse saludable",
             imageUrl = "https://cdn.builder.io/api/v1/image/assets/TEMP/fc1c1eaac78d9b96f7a7c76de2e90baff2fb9fc2",
-            isSelected = selectedGoal == Goal.STAY_HEALTHY,
-            onClick = { onGoalSelected(Goal.STAY_HEALTHY) }
+            isSelected = selectedGoal == Goal.MANTENERSE,
+            onClick = { onGoalSelected(Goal.MANTENERSE) }
         )
     }
 }

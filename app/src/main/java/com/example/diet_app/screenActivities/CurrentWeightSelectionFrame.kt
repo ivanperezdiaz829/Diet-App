@@ -62,7 +62,7 @@ fun CurrentWeightSelectionScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            TitleSection("Your ", "current weight", "We will use this data to give you a better diet type for you")
+            TitleSection("Tu ", "peso actual", "Usaremos estos datos para darte una mejor dieta")
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -81,7 +81,7 @@ fun CurrentWeightSelectionScreen(
                             currentWeight = newValue
                         }
                     },
-                    label = { Text("Your current weight") },
+                    label = { Text("Tu peso actual") },
                     textStyle = androidx.compose.ui.text.TextStyle(
                         fontSize = 64.sp,
                         textAlign = TextAlign.Center,

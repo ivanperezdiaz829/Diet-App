@@ -1,13 +1,13 @@
 package com.example.diet_app.model
 
 enum class Sex {
-    Male,
-    Female,
+    Hombre,
+    Mujer,
 }
 
 fun getSexInt(sex: Sex): Int {
     return when (sex) {
-        Sex.Male -> 1
-        Sex.Female -> 0
+        Sex.Hombre -> 1
+        Sex.Mujer -> 0
     }
 }

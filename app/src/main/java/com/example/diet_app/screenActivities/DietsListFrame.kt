@@ -59,7 +59,7 @@ fun DietPlansScreen(
                 {
                     // Título
                     Text(
-                        text = "Your diets",
+                        text = "Tus dietas",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(bottom = 24.dp)
@@ -80,12 +80,12 @@ fun DietPlansScreen(
                         Tab(
                             selected = selectedTab == 0,
                             onClick = { selectedTab = 0 },
-                            text = { Text("Current",
+                            text = { Text("Plan actual",
                                 color = if (selectedTab == 1) GrayGreen else Color.Gray) },
                             icon = {
                                 Icon(
                                     Icons.Filled.Star,
-                                    contentDescription = "Current Plan",
+                                    contentDescription = "Plan actual",
                                     tint = if (selectedTab == 1) GrayGreen else Color.Gray
                                 )
                             }
@@ -94,12 +94,12 @@ fun DietPlansScreen(
                         Tab(
                             selected = selectedTab == 1,
                             onClick = { selectedTab = 1 },
-                            text = { Text("Other",
+                            text = { Text("Otros planes",
                                 color = if (selectedTab == 1) GrayGreen else Color.Gray) },
                             icon = {
                                 Icon(
                                     Icons.Filled.List,
-                                    contentDescription = "Other Plans",
+                                    contentDescription = "Otros planes",
                                     tint = if (selectedTab == 1) GrayGreen else Color.Gray
                                 )
                             }
@@ -128,7 +128,7 @@ fun CurrentDietContent(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "You don't have any current plan",
+            text = "No tienes ninguna dieta reciente",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 24.dp))
@@ -155,7 +155,7 @@ fun CurrentDietContent(navController: NavController) {
                     modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Generate Your Plan",
+                    text = "Genera tu dieta",
                     style = MaterialTheme.typography.labelLarge)
             }
         }
@@ -175,7 +175,7 @@ fun OtherDietsContent(
     ) {
         if (diets.isEmpty()) {
             Text(
-                text = "No available diet plans",
+                text = "No existen dietas disponibles",
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.bodyLarge
             )

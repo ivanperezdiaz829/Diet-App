@@ -57,8 +57,8 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DietInterface(
-    diets: MutableList<DietViewModel>, // Lista de ViewModels
     navController: NavController,
+    dietViewModel: DietViewModel,
 ) {
 
     var selectedDay by remember { mutableIntStateOf(1) }
@@ -77,20 +77,8 @@ fun DietInterface(
     val context = LocalContext.current
 
     LaunchedEffect(selectedDay) {
+        foodsForSelectedDay = dietViewModel.getDiet().diets.get(selectedDay - 1).getDiet().foods
         val date = Date() // Cambia la fecha si es necesario
-        /*
-        dietViewModel.getDiet().diets.getOrNull(selectedDay - 1)?.let { dietDayViewModel ->
-            dietDayViewModel.loadFromStorage(
-                context = context,
-                date = date,
-                foodVariant = dietViewModel.getDiet().foodVariant,
-                goal = dietViewModel.getDiet().goal,
-                dietId = dietViewModel.getDiet().dietId
-            ) { loadedDay ->
-                foodsForSelectedDay = loadedDay.getDiet().foods
-            }
-        }
-        */
     }
 
     Column(
@@ -113,7 +101,7 @@ fun DietInterface(
 
             Button(
                 onClick = {
-                    //navController.navigate(Screen.GraphicFrame.createRoute(diets[0].getDiet().dietId))
+                    navController.navigate(Screen.GraphicFrame.createRoute(dietViewModel.getDiet().dietId))
                 },
                 modifier = Modifier
                     .width(200.dp)
@@ -140,19 +128,19 @@ fun DietInterface(
             )
 
             GreenInfoCard(
-                title = "Goal",
-                content = "diets[0].getDiet().goal.toString()",
+                title = "Objetivo",
+                content = dietViewModel.getDiet().goal.toString(),
             )
         }
-        /*
+
         DaysList(
-            dietViewModel = diets[0],
+            dietViewModel = dietViewModel,
             selectedDay = selectedDay, // Pasamos el día seleccionado
             onDaySelected = { day ->
                 selectedDay = day
             }
         )
-        */
+
         Divider(
             color = Color.Black,
             thickness = 1.dp,
@@ -161,7 +149,6 @@ fun DietInterface(
                 .padding(vertical = 16.dp, horizontal = 24.dp)
         )
 
-        /*
         DayDiet(
             dayDietDayViewModel = dietViewModel.getDiet().diets[selectedDay - 1],
             foods = foodsForSelectedDay, // Usamos la lista de alimentos
@@ -169,7 +156,7 @@ fun DietInterface(
                 selectedFood = food // Actualizamos la comida seleccionada
             }
         )
-        */
+
         // Línea divisoria negra
     }
 }

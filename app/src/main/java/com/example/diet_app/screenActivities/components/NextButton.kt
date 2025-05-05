@@ -37,7 +37,7 @@ fun NextButton(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Next",
+                    text = "Continuar",
                     style = Typography.bodyLarge.copy(
                         color = Color.White
                     )

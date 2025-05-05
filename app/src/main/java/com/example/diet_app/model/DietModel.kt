@@ -11,7 +11,7 @@ class DietModel(
     var dietsId: List<Int> = emptyList(),
     var diets: List<DietDayViewModel> = emptyList(),
     var foodVariant: FoodVariant = FoodVariant.REGULAR,
-    var goal: Goal = Goal.STAY_HEALTHY
+    var goal: Goal = Goal.MANTENERSE
 ) {
 
 }
