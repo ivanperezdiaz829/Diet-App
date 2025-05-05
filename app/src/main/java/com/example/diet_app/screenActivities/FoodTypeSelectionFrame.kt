@@ -55,7 +55,7 @@ fun FoodTypeSelectionScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            TitleSection("Which one is your", "new food?", "Specify the type of the new food")
+            TitleSection("¿Cuál es tu", "nueva comida?", "Especifica el tipo de la neva comida")
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -90,7 +90,7 @@ private fun FoodOptions(
     ) {
         FoodOption(
             foodType = FoodType.PLATO_LIGERO,
-            text = "Light Meal",
+            text = "Plato Ligero",
             imageId = R.drawable.sun_day_morning,
             isSelected = selectedFoodTypes.contains(FoodType.PLATO_LIGERO),
             onClick = { onFoodTypeSelected(FoodType.PLATO_LIGERO) }
@@ -98,7 +98,7 @@ private fun FoodOptions(
 
         FoodOption(
             foodType = FoodType.PLATO_PRINCIPAL,
-            text = "Main Dish",
+            text = "Plato Principal",
             imageId = R.drawable.sun_day_midday,
             isSelected = selectedFoodTypes.contains(FoodType.PLATO_PRINCIPAL),
             onClick = { onFoodTypeSelected(FoodType.PLATO_PRINCIPAL) }
@@ -106,7 +106,7 @@ private fun FoodOptions(
 
         FoodOption(
             foodType = FoodType.PLATO_SECUNDARIO,
-            text = "Side Dish",
+            text = "Plato Secundario",
             imageId = R.drawable.sun_day_afternoon,
             isSelected = selectedFoodTypes.contains(FoodType.PLATO_SECUNDARIO),
             onClick = { onFoodTypeSelected(FoodType.PLATO_SECUNDARIO) }
