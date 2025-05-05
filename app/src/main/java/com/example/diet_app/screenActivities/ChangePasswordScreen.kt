@@ -2,6 +2,8 @@ package com.example.diet_app.screenActivities
 
 import android.content.Context
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,6 +35,8 @@ fun ChangePasswordScreen(
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
+    val scrollState = rememberScrollState()
+
     fun validatePassword(): Boolean {
         return when {
             currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty() -> {
@@ -51,18 +55,18 @@ fun ChangePasswordScreen(
         }
     }
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(48.dp),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 24.dp)
     ) {
-
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(vertical = 32.dp),
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             BackButton(onNavigateBack = onNavigateBack)
 
