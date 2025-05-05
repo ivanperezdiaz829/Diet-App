@@ -58,6 +58,19 @@ fun GraphicFrame(
         }
     }
 
+    """
+    val context = LocalContext.current
+    val scrollState = rememberScrollState()
+    val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
+
+    LaunchedEffect(Unit) {
+        val dietArray = getDietJsonArrayFromPreferences(context)
+        fetchNutritionalData(context, dietArray) { data ->
+            nutritionData.value = data
+        }
+    }
+    """
+
     Column(
         modifier = Modifier
             .fillMaxSize()

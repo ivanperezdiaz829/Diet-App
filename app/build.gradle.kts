@@ -69,5 +69,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.4.0")
     implementation("androidx.compose.ui:ui:1.5.0") // Asegúrate de usar una versión compatible
     implementation("androidx.compose.material3:material3:1.2.0") // Para Material3, si lo usas
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
 }
