@@ -194,7 +194,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.Welcome.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -495,6 +495,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     price = it.getFood().price,
                     foodVariants = it.getFood().foodVariants
                 )
+                userViewModel.getUser().foodList.add(newFood)
+                GlobalData.foodList.add(newFood)
+                var foodList = GlobalData.foodList
                 printFoodInfo(newFood)
                 navController.navigate(Screen.NewFoodType.route)
             })
@@ -620,7 +623,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNext = {
                     // llamada a la API para generar la dieta
                     var dietViewModel = GlobalData.mainDiet
-                    navController.navigate(Screen.DietInterface.createRoute(dietViewModel.getDiet().dietId))
+                    navController.navigate(Screen.DietInterface.createRoute(3.toString()))
                     //navController.navigateAndClearStack(Screen.Home.route)
                 },
             )
@@ -1225,7 +1228,7 @@ fun getDiet(dietId: String): DietViewModel {
         carbohydrates = 30.0,
         price = 6.0,
         foodVariants = setOf(FoodVariant.VEGETARIAN, FoodVariant.VEGAN),
-        foodTypes = setOf(FoodType.PLATO_SECUNDARIO, FoodType.PLATO_LIGERO)
+        foodTypes = setOf(FoodType.PLATO_SECUNDARIO)
     )
     var foodViewModel5 = FoodViewModel()
     foodViewModel5.updateFood(
@@ -1720,9 +1723,302 @@ fun getDiet(dietId: String): DietViewModel {
     }
     var dayDietLists2 = listOf(dietDayViewModel3, dietDayViewModel4, dietDayViewModel5, dietDayViewModel6)
 
+    val diet1 = listOf(
+        // Desayuno
+        FoodViewModel().apply {
+            updateFood(
+                name = "Tostadas con tomate y aceite de oliva",
+                calories = 280.0,
+                protein = 6.0,
+                fats = 12.0,
+                carbohydrates = 35.0,
+                price = 5.50,
+                foodVariants = setOf(FoodVariant.VEGETARIAN),
+                foodTypes = setOf(FoodType.PLATO_LIGERO)
+            )
+        },
+        // Media Mañana
+        FoodViewModel().apply {
+            updateFood(
+                name = "Yogur griego con miel y nueces",
+                calories = 220.0,
+                protein = 10.0,
+                fats = 15.0,
+                carbohydrates = 12.0,
+                price = 4.80,
+                foodVariants = setOf(FoodVariant.VEGETARIAN),
+                foodTypes = setOf(FoodType.PLATO_LIGERO)
+            )
+        },
+        // Almuerzo
+        FoodViewModel().apply {
+            updateFood(
+                name = "Paella de mariscos",
+                calories = 450.0,
+                protein = 25.0,
+                fats = 18.0,
+                carbohydrates = 50.0,
+                price = 14.90,
+                foodVariants = setOf(FoodVariant.REGULAR),
+                foodTypes = setOf(FoodType.PLATO_PRINCIPAL)
+            )
+        },
+        // Merienda
+        FoodViewModel().apply {
+            updateFood(
+                name = "Gazpacho andaluz",
+                calories = 150.0,
+                protein = 2.0,
+                fats = 8.0,
+                carbohydrates = 18.0,
+                price = 6.20,
+                foodVariants = setOf(FoodVariant.VEGAN),
+                foodTypes = setOf(FoodType.PLATO_LIGERO)
+            )
+        },
+        // Cena
+        FoodViewModel().apply {
+            updateFood(
+                name = "Dorada al horno con verduras",
+                calories = 320.0,
+                protein = 30.0,
+                fats = 15.0,
+                carbohydrates = 10.0,
+                price = 12.50,
+                foodVariants = setOf(FoodVariant.REGULAR),
+                foodTypes = setOf(FoodType.PLATO_PRINCIPAL)
+            )
+        },
+        // Snack 1
+        FoodViewModel().apply {
+            updateFood(
+                name = "Aceitunas aliñadas",
+                calories = 180.0,
+                protein = 1.0,
+                fats = 16.0,
+                carbohydrates = 5.0,
+                price = 3.80,
+                foodVariants = setOf(FoodVariant.VEGAN),
+                foodTypes = setOf(FoodType.PLATO_SECUNDARIO)
+            )
+        },
+        // Snack 2
+        FoodViewModel().apply {
+            updateFood(
+                name = "Vino tinto (copa)",
+                calories = 125.0,
+                protein = 0.0,
+                fats = 0.0,
+                carbohydrates = 4.0,
+                price = 7.00,
+                foodVariants = setOf(FoodVariant.VEGETARIAN),
+                foodTypes = setOf(FoodType.BEBIDA)
+            )
+        }
+    )
+    val diet2 = listOf(
+        // Desayuno
+        FoodViewModel().apply {
+            updateFood(
+                name = "Revuelto de claras con espinacas",
+                calories = 250.0,
+                protein = 28.0,
+                fats = 10.0,
+                carbohydrates = 8.0,
+                price = 6.80,
+                foodVariants = setOf(FoodVariant.VEGETARIAN),
+                foodTypes = setOf(FoodType.PLATO_LIGERO)
+            )
+        },
+        // Media Mañana
+        FoodViewModel().apply {
+            updateFood(
+                name = "Batido de proteína con leche de almendras",
+                calories = 200.0,
+                protein = 25.0,
+                fats = 5.0,
+                carbohydrates = 15.0,
+                price = 8.50,
+                foodVariants = setOf(FoodVariant.VEGAN),
+                foodTypes = setOf(FoodType.BEBIDA)
+            )
+        },
+        // Almuerzo
+        FoodViewModel().apply {
+            updateFood(
+                name = "Solomillo de ternera con brócoli",
+                calories = 380.0,
+                protein = 40.0,
+                fats = 22.0,
+                carbohydrates = 12.0,
+                price = 16.90,
+                foodVariants = setOf(FoodVariant.HALAL),
+                foodTypes = setOf(FoodType.PLATO_PRINCIPAL)
+            )
+        },
+        // Merienda
+        FoodViewModel().apply {
+            updateFood(
+                name = "Queso fresco con nueces",
+                calories = 210.0,
+                protein = 15.0,
+                fats = 16.0,
+                carbohydrates = 4.0,
+                price = 5.20,
+                foodVariants = setOf(FoodVariant.VEGETARIAN),
+                foodTypes = setOf(FoodType.PLATO_SECUNDARIO)
+            )
+        },
+        // Cena
+        FoodViewModel().apply {
+            updateFood(
+                name = "Merluza a la plancha con espárragos",
+                calories = 290.0,
+                protein = 35.0,
+                fats = 12.0,
+                carbohydrates = 5.0,
+                price = 13.40,
+                foodVariants = setOf(FoodVariant.REGULAR),
+                foodTypes = setOf(FoodType.PLATO_PRINCIPAL)
+            )
+        },
+        // Snack 1
+        FoodViewModel().apply {
+            updateFood(
+                name = "Jamón serrano (50g)",
+                calories = 160.0,
+                protein = 18.0,
+                fats = 10.0,
+                carbohydrates = 0.0,
+                price = 6.30,
+                foodVariants = setOf(FoodVariant.REGULAR),
+                foodTypes = setOf(FoodType.PLATO_SECUNDARIO)
+            )
+        },
+        // Snack 2
+        FoodViewModel().apply {
+            updateFood(
+                name = "Yogur proteico",
+                calories = 120.0,
+                protein = 20.0,
+                fats = 2.0,
+                carbohydrates = 6.0,
+                price = 4.90,
+                foodVariants = setOf(FoodVariant.VEGETARIAN),
+                foodTypes = setOf(FoodType.PLATO_LIGERO)
+            )
+        }
+    )
+    val diet3 = listOf(
+        // Desayuno
+        FoodViewModel().apply {
+            updateFood(
+                name = "Porridge de avena con leche de soja",
+                calories = 300.0,
+                protein = 12.0,
+                fats = 8.0,
+                carbohydrates = 45.0,
+                price = 5.70,
+                foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC),
+                foodTypes = setOf(FoodType.PLATO_LIGERO)
+            )
+        },
+        // Media Mañana
+        FoodViewModel().apply {
+            updateFood(
+                name = "Smoothie verde (espinaca, plátano y chía)",
+                calories = 180.0,
+                protein = 5.0,
+                fats = 4.0,
+                carbohydrates = 30.0,
+                price = 6.40,
+                foodVariants = setOf(FoodVariant.VEGAN),
+                foodTypes = setOf(FoodType.BEBIDA)
+            )
+        },
+        // Almuerzo
+        FoodViewModel().apply {
+            updateFood(
+                name = "Curry de garbanzos y espinacas",
+                calories = 350.0,
+                protein = 15.0,
+                fats = 12.0,
+                carbohydrates = 40.0,
+                price = 11.80,
+                foodVariants = setOf(FoodVariant.VEGAN),
+                foodTypes = setOf(FoodType.PLATO_PRINCIPAL)
+            )
+        },
+        // Merienda
+        FoodViewModel().apply {
+            updateFood(
+                name = "Hummus con zanahorias",
+                calories = 200.0,
+                protein = 6.0,
+                fats = 10.0,
+                carbohydrates = 20.0,
+                price = 4.90,
+                foodVariants = setOf(FoodVariant.VEGAN),
+                foodTypes = setOf(FoodType.PLATO_SECUNDARIO)
+            )
+        },
+        // Cena
+        FoodViewModel().apply {
+            updateFood(
+                name = "Tofu al wok con verduras",
+                calories = 280.0,
+                protein = 20.0,
+                fats = 15.0,
+                carbohydrates = 15.0,
+                price = 10.60,
+                foodVariants = setOf(FoodVariant.VEGAN),
+                foodTypes = setOf(FoodType.PLATO_PRINCIPAL)
+            )
+        },
+        // Snack 1
+        FoodViewModel().apply {
+            updateFood(
+                name = "Frutos secos tostados",
+                calories = 250.0,
+                protein = 8.0,
+                fats = 20.0,
+                carbohydrates = 10.0,
+                price = 5.50,
+                foodVariants = setOf(FoodVariant.VEGAN),
+                foodTypes = setOf(FoodType.PLATO_SECUNDARIO)
+            )
+        },
+        // Snack 2
+        FoodViewModel().apply {
+            updateFood(
+                name = "Leche dorada (cúrcuma)",
+                calories = 150.0,
+                protein = 3.0,
+                fats = 8.0,
+                carbohydrates = 15.0,
+                price = 4.20,
+                foodVariants = setOf(FoodVariant.VEGAN),
+                foodTypes = setOf(FoodType.BEBIDA)
+            )
+        }
+    )
+    var dietDayViewModel7 = DietDayViewModel().apply {
+        updateDietDay(foods = diet3)
+    }
+    var dietDayViewModel8 = DietDayViewModel().apply {
+        updateDietDay(foods = diet2)
+    }
+    var dietDayViewModel9 = DietDayViewModel().apply {
+        updateDietDay(foods = diet1)
+
+    }
+    var diets3 = listOf(dietDayViewModel7, dietDayViewModel8, dietDayViewModel9)
+
     if (dietId == "4") {
         dietViewModel.updateDiet(name = "Plan Usuario 7", duration = 2, dietId = dietId, goal = Goal.MANTENERSE, diets = dayDietLists)
 
+    } else if (dietId == "3"){
+        dietViewModel.updateDiet(name = "Nueva dieta", duration = 3, dietId = dietId, goal = Goal.GANAR_PESO, diets = diets3)
     } else {
         dietViewModel.updateDiet(name = "Plan Usuario 7 2", duration = 4, dietId = dietId, goal = Goal.GANAR_PESO, diets = dayDietLists2)
     }

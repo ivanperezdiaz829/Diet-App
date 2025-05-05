@@ -26,6 +26,7 @@ import com.example.ui.components.*
 import java.util.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import com.example.diet_app.screenActivities.components.BackButton
 
 @Composable
 fun UpdatePhysicalDataScreen(
@@ -99,13 +100,14 @@ fun UpdatePhysicalDataScreen(
         }
     }
 
-    BackButtonLeft(onNavigateBack = onNavigateBack)
 
     Box(
+
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -114,6 +116,8 @@ fun UpdatePhysicalDataScreen(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
+            BackButton(onNavigateBack = onNavigateBack)
+
             TitleSection()
             UsernameText(userViewModel.getUser().email)
 

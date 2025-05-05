@@ -60,7 +60,7 @@ fun CalendarScreen(
 
             Spacer(modifier = Modifier.height(80.dp))
 
-            TitleSection("Your", "Calendar", "Select a date to view the diet")
+            TitleSection("Tu", "calendario", "Selecciona una fecha para ver tu programación")
 
             Spacer(modifier = Modifier.height(30.dp))
 
@@ -81,7 +81,7 @@ fun CalendarScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (selectedDate.isEmpty()) "No date selected" else selectedDate,
+                        text = if (selectedDate.isEmpty()) "Ninguna fecha seleccionada" else selectedDate,
                         style = TextStyle(
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
@@ -102,13 +102,13 @@ fun CalendarScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Pick a date",
+                        text = "Selecciona una fecha",
                         style = TextStyle(fontSize = 16.sp, color = DarkGreen)
                     )
 
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_calendar),
-                        contentDescription = "Calendar",
+                        contentDescription = "Calendario",
                         tint = DarkGreen,
                         modifier = Modifier
                             .size(24.dp)

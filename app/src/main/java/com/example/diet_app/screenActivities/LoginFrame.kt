@@ -40,9 +40,10 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF797979))
-            .padding(top = 82.dp, start = 8.dp, end = 8.dp),
-        contentAlignment = Alignment.TopCenter
+            .padding(top = 8.dp, start = 8.dp, end = 8.dp),
+        contentAlignment = Alignment.Center
     ) {
+
         LoginCard(
             userViewModel = userViewModel,
             onLoginResult = { isRegistration ->
@@ -87,6 +88,7 @@ private fun LoginCard(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 20.dp)
         ) {
+
             // Header image
             Box(
                 modifier = Modifier
@@ -266,39 +268,6 @@ private fun LoginCard(
                         )
                     }
                 }
-            }
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            // Divider
-            Text(
-                text = "O",
-                fontSize = 15.sp,
-                color = Color(0xFF929292),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Social login
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.facebook),
-                    contentDescription = "Facebook Login",
-                    modifier = Modifier
-                        .size(45.dp)
-                        .padding(end = 16.dp)
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.google),
-                    contentDescription = "Google Login",
-                    modifier = Modifier
-                        .size(45.dp)
-                        .padding(start = 16.dp)
-                )
             }
 
             Spacer(modifier = Modifier.height(20.dp))

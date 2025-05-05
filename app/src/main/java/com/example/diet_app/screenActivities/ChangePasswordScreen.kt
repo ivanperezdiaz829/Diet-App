@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.screenActivities.components.BackButtonLeft
 import com.example.diet_app.updateUserPassword
 import com.example.diet_app.viewModel.UserViewModel
@@ -50,7 +51,6 @@ fun ChangePasswordScreen(
         }
     }
 
-    BackButtonLeft(onNavigateBack = onNavigateBack)
 
     Box(
         modifier = Modifier
@@ -58,11 +58,14 @@ fun ChangePasswordScreen(
             .padding(48.dp),
         contentAlignment = Alignment.Center
     ) {
+
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
+            BackButton(onNavigateBack = onNavigateBack)
+
             TitleSection()
             UsernameText(userViewModel.getUser().email)
             ChangePasswordTitle()

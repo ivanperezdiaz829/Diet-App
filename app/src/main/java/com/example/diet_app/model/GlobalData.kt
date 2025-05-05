@@ -16,7 +16,7 @@ object GlobalData {
 
     var foodViewModel by mutableStateOf(FoodViewModel())
 
-    var foodList by mutableStateOf(listOf<FoodViewModel>())
+    var foodList: MutableList<FoodViewModel> = mutableListOf()
 
     var dietsList by mutableStateOf(listOf<DietViewModel>())
 
@@ -126,7 +126,7 @@ object GlobalData {
         dayDiet = DietDayViewModel()
         mainDiet = DietViewModel()
         userViewModel = UserViewModel()
-        foodList = listOf()
+        foodList = mutableListOf()
         dietsList = listOf()
         initializeData()
     }

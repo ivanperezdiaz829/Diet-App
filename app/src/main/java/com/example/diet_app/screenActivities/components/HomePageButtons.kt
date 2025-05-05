@@ -38,17 +38,18 @@ fun OptionGrid(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            /*
             HomePageOptionCard(
                 label = "Calories Calculator",
                 imageId = R.drawable.calculator,
                 backgroundColor = Color(0xFFFF6C87), // color personalizado
                 onClick = { /* Acción temporal, no se hace nada por ahora */ }
             )
-
+            */
             HomePageOptionCard(
-                label = "Diet Calendar",
+                label = "Calendario",
                 imageId = R.drawable.calendar,
-                backgroundColor = Color(0xFF5C6DFF), // color personalizado
+                backgroundColor = Color(0xFF4CAF50), // color personalizado
                 onClick = {
                     navController.navigate(Screen.Calendar.route)
                 }
@@ -56,6 +57,7 @@ fun OptionGrid(navController: NavController) {
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            /*
             HomePageOptionCard(
                 label = "Generate Diet",
                 imageId = R.drawable.add,
@@ -71,6 +73,7 @@ fun OptionGrid(navController: NavController) {
                     navController.navigate(Screen.FoodList.route)
                 }
             )
+             */
         }
     }
 }

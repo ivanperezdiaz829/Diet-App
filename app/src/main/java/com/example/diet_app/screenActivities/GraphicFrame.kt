@@ -58,7 +58,7 @@ fun GraphicFrame(
         }
     }
 
-    """
+    /*
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
@@ -69,21 +69,22 @@ fun GraphicFrame(
             nutritionData.value = data
         }
     }
-    """
+    */
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(scrollState)
+            .statusBarsPadding()
     ) {
+        BackButton(onNavigateBack = { navController.popBackStack() })
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BackButton(onNavigateBack = { navController.popBackStack() })
-            ListIconScreen()
         }
 
         Spacer(modifier = Modifier.height(16.dp))

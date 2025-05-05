@@ -96,12 +96,12 @@ fun FoodDetailScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             val nutritionalData = mapOf(
-                "Proteins" to 0.0,
-                "Fats" to 0.0,
-                "Sugar" to 0.0,
-                "Salt" to 0.0,
-                "Carbohydrates" to 0.0,
-                "Calories" to 0.0
+                "Proteinas" to foodViewModel.getFood().protein,
+                "Grasas" to foodViewModel.getFood().fats,
+                "Azúcares" to foodViewModel.getFood().sugar,
+                "Sal" to foodViewModel.getFood().salt,
+                "Carbohidratos" to foodViewModel.getFood().carbohydrates,
+                "Calorias" to foodViewModel.getFood().calories
             )
 
             NutritionalInfoGrid(data = nutritionalData)
@@ -114,7 +114,7 @@ fun FoodDetailScreen(
 fun FoodVariants(foodViewModel: FoodViewModel){
 
     Text(
-        text = "Food Variants",
+        text = "Variantes alimenticias",
         fontSize = 24.sp,
         fontWeight = FontWeight.SemiBold,
         color = DarkGray,
@@ -157,7 +157,7 @@ fun NutritionalInfoGrid(data: Map<String, Double>) {
     ) {
         // Título
         Text(
-            text = "Qualities",
+            text = "Cualidades",
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
             color = DarkGray,
