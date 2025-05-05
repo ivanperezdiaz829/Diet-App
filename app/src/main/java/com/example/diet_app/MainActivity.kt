@@ -1228,7 +1228,7 @@ fun getDiet(dietId: String): DietViewModel {
         carbohydrates = 30.0,
         price = 6.0,
         foodVariants = setOf(FoodVariant.VEGETARIAN, FoodVariant.VEGAN),
-        foodTypes = setOf(FoodType.PLATO_SECUNDARIO, FoodType.PLATO_LIGERO)
+        foodTypes = setOf(FoodType.PLATO_SECUNDARIO)
     )
     var foodViewModel5 = FoodViewModel()
     foodViewModel5.updateFood(

@@ -21,7 +21,7 @@ fun DietSelectionScreen(
     onNavigateBack: () -> Unit,
     onNext: (Int) -> Unit
 ) {
-    val options = listOf("Regular", "Vegana", "Vegetariana", "Glucémica", "Halal")
+    val options = listOf("Regular", "Vegana", "Vegetariana", "Celiaca", "Halal")
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     BackButtonLeft(onNavigateBack)
@@ -37,8 +37,8 @@ fun DietSelectionScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("What kind of diet", fontSize = 24.sp)
-            Text("do you want?", fontSize = 24.sp, color = Color(0xFF40B93C))
+            Text("Qué tipo de dieta", fontSize = 24.sp)
+            Text("quieres?", fontSize = 24.sp, color = Color(0xFF40B93C))
         }
 
         Spacer(modifier = Modifier.height(32.dp))
