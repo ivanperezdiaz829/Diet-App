@@ -194,7 +194,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     val navController = rememberNavController()
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.Welcome.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -495,6 +495,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     price = it.getFood().price,
                     foodVariants = it.getFood().foodVariants
                 )
+                userViewModel.getUser().foodList.add(newFood)
+                GlobalData.foodList.add(newFood)
+                var foodList = GlobalData.foodList
                 printFoodInfo(newFood)
                 navController.navigate(Screen.NewFoodType.route)
             })

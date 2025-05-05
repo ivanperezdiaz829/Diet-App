@@ -12,7 +12,7 @@ class UserModel(
     var height: Int = 0,
     var currentWeight: Double = 0.0,
     var goal: Goal = Goal.MANTENERSE,
-    var foodList: List<FoodViewModel> = emptyList()
+    var foodList: MutableList<FoodViewModel> = mutableListOf()
 ) {
     // Todas las propiedades son mutables (var) y tienen valores por defecto
     // Kotlin genera automáticamente getters y setters
