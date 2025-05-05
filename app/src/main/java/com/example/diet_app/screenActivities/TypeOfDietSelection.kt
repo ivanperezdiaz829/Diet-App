@@ -21,7 +21,7 @@ fun DietSelectionScreen(
     onNavigateBack: () -> Unit,
     onNext: (Int) -> Unit
 ) {
-    val options = listOf("Regular", "Vegan", "Vegetarian", "Glycemic", "Halal")
+    val options = listOf("Regular", "Vegana", "Vegetariana", "Glucémica", "Halal")
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     BackButtonLeft(onNavigateBack)
@@ -86,7 +86,7 @@ fun DietSelectionScreen(
             enabled = selectedIndex != -1,
             modifier = Modifier.width(200.dp)
         ) {
-            Text("Confirm")
+            Text("Confirmar")
         }
     }
 }

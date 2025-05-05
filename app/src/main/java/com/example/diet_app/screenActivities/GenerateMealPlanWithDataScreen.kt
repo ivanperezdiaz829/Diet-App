@@ -35,13 +35,13 @@ fun GenerateMealPlanWithDataScreen(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                "Generate a new",
+                "Generar nuevo",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
             Text(
-                "meal plan",
+                "plan de comidas",
                 fontSize = 28.sp,
                 color = Color(0xFF40B93C),
                 fontWeight = FontWeight.Bold
@@ -51,7 +51,7 @@ fun GenerateMealPlanWithDataScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "This is the data we will use to generate your new diet.",
+            text = "Éstos son los datos que utilizaremos para generar tu dieta.",
             fontSize = 18.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center,
@@ -59,7 +59,7 @@ fun GenerateMealPlanWithDataScreen(
         )
 
         Text(
-            text = "Do you want to proceed or update it?",
+            text = "¿Quieres proceder o quieres actualizar tus datos?",
             fontSize = 18.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center,
@@ -74,11 +74,11 @@ fun GenerateMealPlanWithDataScreen(
                 .padding(horizontal = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            UserDataItem(label = "Goal:", value = userViewModel.getUser().goal.toString())
-            UserDataItem(label = "Sex:", value = userViewModel.getUser().sex.toString())
-            UserDataItem(label = "Age:", value = "${userViewModel.getUser().age} years")
-            UserDataItem(label = "Height:", value = "${userViewModel.getUser().height} cm")
-            UserDataItem(label = "Current weight:", value = "${userViewModel.getUser().currentWeight} kg")
+            UserDataItem(label = "Objetivo:", value = userViewModel.getUser().goal.toString())
+            UserDataItem(label = "Sexo:", value = userViewModel.getUser().sex.toString())
+            UserDataItem(label = "Fecha de nacimiento:", value = userViewModel.getUser().age)
+            UserDataItem(label = "Altura:", value = "${userViewModel.getUser().height} cm")
+            UserDataItem(label = "Peso actual:", value = "${userViewModel.getUser().currentWeight} kg")
         }
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -88,7 +88,7 @@ fun GenerateMealPlanWithDataScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CustomButton(
-                text = "Proceed",
+                text = "Proceder",
                 onClick = {
                     onNext(true)
                 },
@@ -96,7 +96,7 @@ fun GenerateMealPlanWithDataScreen(
             )
 
             CustomButton(
-                text = "Update",
+                text = "Actualizar",
                 onClick = {
                     onNext(false)
                 },

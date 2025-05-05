@@ -40,13 +40,13 @@ fun DietDurationScreen(
         // Título con jerarquía visual
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                "Select your",
+                "Selecciona la ",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
             Text(
-                "diet duration",
+                "duración de tu dieta",
                 fontSize = 28.sp,
                 color = customGreen,
                 fontWeight = FontWeight.Bold
@@ -57,7 +57,7 @@ fun DietDurationScreen(
 
         // Instrucciones
         Text(
-            text = "How many days should the diet plan last?",
+            text = "¿Para cuantos días debería durar la dieta?",
             fontSize = 18.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center,
@@ -87,7 +87,7 @@ fun DietDurationScreen(
 
             // Display de días
             Text(
-                text = "$selectedDays ${if (selectedDays == 1) "day" else "days"}",
+                text = "$selectedDays ${if (selectedDays == 1) "día" else "días"}",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
@@ -113,7 +113,7 @@ fun DietDurationScreen(
 
         // Indicador de rango
         Text(
-            text = "(1-7 days)",
+            text = "(1-7 días)",
             fontSize = 14.sp,
             color = Color.Gray,
             modifier = Modifier.padding(top = 8.dp)

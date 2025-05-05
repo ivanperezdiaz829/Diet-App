@@ -8,10 +8,10 @@ class UserModel(
     var email: String = "",
     var password: String = "",
     var age: String = "",
-    var sex: Sex = Sex.Male,
+    var sex: Sex = Sex.Hombre,
     var height: Int = 0,
     var currentWeight: Double = 0.0,
-    var goal: Goal = Goal.STAY_HEALTHY,
+    var goal: Goal = Goal.MANTENERSE,
     var foodList: List<FoodViewModel> = emptyList()
 ) {
     // Todas las propiedades son mutables (var) y tienen valores por defecto

@@ -64,7 +64,7 @@ fun SexSelectionScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            TitleSection("What is your", "sex?","We will use this data to give you a better diet type for you")
+            TitleSection("¿Cual es tu", "sexo?","Usaremos estos datos para darte una mejor dieta")
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -95,19 +95,19 @@ private fun SexOptions(
         verticalAlignment = Alignment.CenterVertically
     ) {
         SexOption(
-            sex = Sex.Female,
-            text = "Female",
+            sex = Sex.Mujer,
+            text = "Mujer",
             imageId = R.drawable.female,
-            isSelected = selectedSex == Sex.Female,
-            onClick = { onSexSelected(Sex.Female) }
+            isSelected = selectedSex == Sex.Mujer,
+            onClick = { onSexSelected(Sex.Mujer) }
         )
 
         SexOption(
-            sex = Sex.Male,
-            text = "Male",
+            sex = Sex.Hombre,
+            text = "Hombre",
             imageId = R.drawable.male,
-            isSelected = selectedSex == Sex.Male,
-            onClick = { onSexSelected(Sex.Male) }
+            isSelected = selectedSex == Sex.Hombre,
+            onClick = { onSexSelected(Sex.Hombre) }
         )
     }
 }

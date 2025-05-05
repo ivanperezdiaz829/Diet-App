@@ -67,7 +67,7 @@ fun HeightSelectionScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            TitleSection("What is your", "height?","We will use this data to give you a better diet type for you")
+            TitleSection("¿Cuál es tu", "altura?","Usaremos estos datos para darte una mejor dieta")
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -92,7 +92,7 @@ fun HeightSelectionScreen(
             ) {
                 // Texto que muestra la posición actual del slider
                 Text(
-                    text = "Current: ${sliderPosition.toInt()} cm",
+                    text = "Altura seleccionada: ${sliderPosition.toInt()} cm",
                     fontSize = 24.sp,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )

@@ -73,9 +73,9 @@ fun DietGeneratorSelectionScreen(
             Spacer(modifier = Modifier.height(120.dp))
 
             TitleSection(
-                "How do you want",
-                "to generate your diet?",
-                description = "Choose between automatic generation based on your profile or manual input"
+                "¿Como quieres",
+                "generar tu dieta?",
+                description = "Escoge entre una generación basada en tu perfil o una manual"
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -110,7 +110,7 @@ private fun GeneratorTypeOptions(
     ) {
         GeneratorTypeOption(
             type = DietGeneratorType.USER_DATA,
-            text = "Based on my data",
+            text = "Basada en mis datos",
             imageId = R.drawable.profile, // Cambia por tu icono
             isSelected = selectedGenerator == DietGeneratorType.USER_DATA,
             onClick = { onGeneratorSelected(DietGeneratorType.USER_DATA) }
@@ -118,7 +118,7 @@ private fun GeneratorTypeOptions(
 
         GeneratorTypeOption(
             type = DietGeneratorType.MANUAL_INPUT,
-            text = "Manual input",
+            text = "Especificada manualmente",
             imageId = R.drawable.manual, // Cambia por tu icono
             isSelected = selectedGenerator == DietGeneratorType.MANUAL_INPUT,
             onClick = { onGeneratorSelected(DietGeneratorType.MANUAL_INPUT) }

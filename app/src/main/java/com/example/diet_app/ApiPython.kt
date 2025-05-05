@@ -3,7 +3,6 @@ package com.example.diet_app
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.Composable
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.Sex
@@ -609,15 +608,15 @@ fun authenticateUser(
 
                         // Mapeo de valores numéricos a enums
                         val receivedSex = when (userJson.optInt("sex", 1)) {
-                            0 -> Sex.Female
-                            else -> Sex.Male // Valor por defecto si no es 0
+                            0 -> Sex.Mujer
+                            else -> Sex.Hombre // Valor por defecto si no es 0
                         }
 
                         val receivedGoal = when (userJson.optInt("goal", 1)) {
-                            0 -> Goal.LOSE_WEIGHT
-                            1 -> Goal.STAY_HEALTHY
-                            2 -> Goal.GAIN_WEIGHT
-                            else -> Goal.STAY_HEALTHY // Valor por defecto
+                            0 -> Goal.PERDER_PESO
+                            1 -> Goal.MANTENERSE
+                            2 -> Goal.GANAR_PESO
+                            else -> Goal.MANTENERSE // Valor por defecto
                         }
 
                         // Actualizamos el UserViewModel recibido

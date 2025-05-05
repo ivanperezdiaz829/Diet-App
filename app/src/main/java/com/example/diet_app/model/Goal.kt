@@ -1,15 +1,15 @@
 package com.example.diet_app.model
 
 enum class Goal {
-    LOSE_WEIGHT,
-    STAY_HEALTHY,
-    GAIN_WEIGHT
+    PERDER_PESO,
+    MANTENERSE,
+    GANAR_PESO
 }
 
 fun getGoalInt(goal: Goal): Int {
     return when (goal) {
-        Goal.LOSE_WEIGHT -> 0
-        Goal.STAY_HEALTHY -> 1
-        Goal.GAIN_WEIGHT -> 2
+        Goal.PERDER_PESO -> 0
+        Goal.MANTENERSE -> 1
+        Goal.GANAR_PESO -> 2
     }
 }
