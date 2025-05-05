@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.diet_app.R
+import com.example.diet_app.getPlateById
 import com.example.diet_app.ui.theme.DarkGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.ui.theme.DarkOverlay
@@ -117,29 +118,42 @@ fun CalendarScreen(
 
                                     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
                                     val storedDiet = prefs.getString("${date}_diet", null)
-                                    infoText = if (storedDiet != null) {
-                                        val json = JSONObject(storedDiet)
-                                        """
-                                            📅 *$date*
-    
-                                            🍳 Desayuno:
-                                            - Plato: ${json.getString("breakfast_dish")}
-                                            - Bebida: ${json.getString("breakfast_drink")}
-    
-                                            🥗 Almuerzo:
-                                            - Plato principal: ${json.getString("lunch_main_dish")}
-                                            - Segundo: ${json.getString("lunch_side_dish")}
-                                            - Bebida: ${json.getString("lunch_drink")}
-    
-                                            🍽 Cena:
-                                            - Plato: ${json.getString("dinner_dish")}
-                                            - Bebida: ${json.getString("dinner_drink")}
-                                        """.trimIndent()
 
+                                    if (storedDiet != null) {
+                                        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                        val dateObj = sdf.parse(date)
+
+                                        if (dateObj != null) {
+                                            getPlateById(context, dateObj) { plates ->
+                                                if (plates.isNotEmpty()) {
+                                                    infoText = """
+                        📅 *$date*
+
+                        🍳 Desayuno:
+                        - Plato: ${plates[0].name}
+                        - Bebida: ${plates[1].name}
+
+                        🥗 Almuerzo:
+                        - Plato principal: ${plates[2].name}
+                        - Segundo: ${plates[3].name}
+                        - Bebida: ${plates[4].name}
+
+                        🍽 Cena:
+                        - Plato: ${plates[5].name}
+                        - Bebida: ${plates[6].name}
+                    """.trimIndent()
+                                                } else {
+                                                    infoText = "⚠️ No se pudo cargar la información nutricional para $date."
+                                                }
+                                            }
+                                        } else {
+                                            infoText = "⚠️ Error al convertir la fecha: $date"
+                                        }
                                     } else {
-                                        "❌ No hay dieta guardada para $date."
+                                        infoText = "❌ No hay dieta guardada para $date."
                                     }
                                 }
+
                             }
                     )
                 }
@@ -153,11 +167,6 @@ fun CalendarScreen(
             }
 
             Spacer(modifier = Modifier.weight(1f))
-
-            NextButton(
-                enabled = selectedDate.isNotEmpty(),
-                onClick = { onNext(selectedDate) }
-            )
         }
     }
 }

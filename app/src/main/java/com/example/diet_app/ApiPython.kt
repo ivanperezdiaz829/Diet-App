@@ -3,6 +3,7 @@ package com.example.diet_app
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import com.example.diet_app.model.DietModel
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.Sex
@@ -898,7 +899,6 @@ fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Ma
                         "Grasas" to json.getDouble("grasas").toFloat(),
                         "Azucares" to json.getDouble("azucares").toFloat(),
                         "Sales" to json.getDouble("sales").toFloat()
-                        // Eliminar "Precio" del mapa
                     )
                     (context as Activity).runOnUiThread {
                         onDataReceived(data)
@@ -911,19 +911,35 @@ fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Ma
     })
 }
 
+fun getDietJsonArrayFromPreferences(context: Context): JSONArray {
+    val prefs = context.getSharedPreferences("DietData", Context.MODE_PRIVATE)
+    val jsonArray = JSONArray()
+
+    val calendar = Calendar.getInstance()
+    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+    // Asume 7 días, por ejemplo
+    for (i in 0 until 7) {
+        val dateKey = "${sdf.format(calendar.time)}_diet"
+        prefs.getString(dateKey, null)?.let { jsonString ->
+            val dayObject = JSONObject(jsonString)
+            jsonArray.put(dayObject)
+        }
+        calendar.add(Calendar.DAY_OF_YEAR, 1)
+    }
+
+    return jsonArray
+}
+
+
 fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -> Unit) {
     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val dateKey = "${sdf.format(date)}_diet"
 
-    val dayJsonString = prefs.getString(dateKey, null)
-
-    if (dayJsonString == null) {
-        onResult(emptyList())
-        return
-    }
-
+    val dayJsonString = prefs.getString(dateKey, null) ?: return onResult(emptyList())
     val dayJson = JSONObject(dayJsonString)
+
     val plateIds = listOf(
         dayJson.getString("breakfast_dish"),
         dayJson.getString("breakfast_drink"),
@@ -935,11 +951,10 @@ fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -
     )
 
     val client = OkHttpClient()
-    val foodViewModels = mutableListOf<FoodViewModel>()
-
+    val results = MutableList<FoodViewModel?>(plateIds.size) { null }
     var remaining = plateIds.size
 
-    for (id in plateIds) {
+    for ((index, id) in plateIds.withIndex()) {
         val request = Request.Builder()
             .url("http://10.0.2.2:8000/get_plate/$id")
             .get()
@@ -947,33 +962,36 @@ fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                synchronized(foodViewModels) {
+                synchronized(results) {
                     remaining--
                     if (remaining == 0) {
-                        onResult(foodViewModels)
+                        onResult(results.filterNotNull())
                     }
                 }
             }
 
             override fun onResponse(call: Call, response: Response) {
-                synchronized(foodViewModels) {
+                synchronized(results) {
                     val body = response.body?.string()
                     if (response.isSuccessful && body != null) {
                         val plateJson = JSONObject(body).getJSONObject("plate")
                         try {
                             val viewModel = FoodViewModel.fromJson(plateJson)
-                            foodViewModels.add(viewModel)
+                            results[index] = viewModel
                         } catch (e: Exception) {
                             Log.e("PlateParse", "Error parseando plate: ${e.message}")
                         }
                     }
                     remaining--
-                    if (remaining == 0) onResult(foodViewModels)
+                    if (remaining == 0) {
+                        onResult(results.filterNotNull())
+                    }
                 }
             }
         })
     }
 }
+
 
 fun createDiet(context: Context, name: String, userId: Int, dietTypeId: Int, onResult: (String) -> Unit) {
     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)

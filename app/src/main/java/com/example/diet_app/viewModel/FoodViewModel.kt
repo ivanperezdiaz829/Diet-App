@@ -13,6 +13,9 @@ import org.json.JSONObject
 class FoodViewModel : ViewModel() {
     private var food: FoodModel = FoodModel() // Inicialización por defecto
 
+    val name: String
+        get() = food.name
+
     fun updateFood(
         name: String = food.name,
         foodId: Int = food.foodId,
