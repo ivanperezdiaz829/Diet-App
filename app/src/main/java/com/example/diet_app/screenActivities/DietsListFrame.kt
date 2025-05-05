@@ -80,12 +80,12 @@ fun DietPlansScreen(
                         Tab(
                             selected = selectedTab == 0,
                             onClick = { selectedTab = 0 },
-                            text = { Text("Current",
+                            text = { Text("Plan actual",
                                 color = if (selectedTab == 1) GrayGreen else Color.Gray) },
                             icon = {
                                 Icon(
                                     Icons.Filled.Star,
-                                    contentDescription = "Current Plan",
+                                    contentDescription = "Plan actual",
                                     tint = if (selectedTab == 1) GrayGreen else Color.Gray
                                 )
                             }
@@ -94,12 +94,12 @@ fun DietPlansScreen(
                         Tab(
                             selected = selectedTab == 1,
                             onClick = { selectedTab = 1 },
-                            text = { Text("Other",
+                            text = { Text("Otros planes",
                                 color = if (selectedTab == 1) GrayGreen else Color.Gray) },
                             icon = {
                                 Icon(
                                     Icons.Filled.List,
-                                    contentDescription = "Other Plans",
+                                    contentDescription = "Otros planes",
                                     tint = if (selectedTab == 1) GrayGreen else Color.Gray
                                 )
                             }
