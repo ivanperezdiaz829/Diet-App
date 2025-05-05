@@ -83,82 +83,82 @@ fun AddNewFoodScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            TitleSection("Qualities of the", "new food", "Please specify the qualities of the new food to add")
+            TitleSection("Cualidades de la", "nueva comida", "Especifica las cualidades de la nueva comida")
 
             Spacer(modifier = Modifier.height(24.dp))
 
             // Campos de entrada para valores nutricionales
-            NutritionTextField(label = "Protein", value = protein, onValueChange = { protein = it })
+            NutritionTextField(label = "Proteinas", value = protein, onValueChange = { protein = it })
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
                 thickness = 1.dp,
                 color = Color.LightGray
             )
 
-            NutritionTextField(label = "Fats", value = fats, onValueChange = { fats = it })
+            NutritionTextField(label = "Grasas", value = fats, onValueChange = { fats = it })
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
                 thickness = 1.dp,
                 color = Color.LightGray
             )
 
-            NutritionTextField(label = "Sugar", value = sugar, onValueChange = { sugar = it })
+            NutritionTextField(label = "Azúcar", value = sugar, onValueChange = { sugar = it })
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
                 thickness = 1.dp,
                 color = Color.LightGray
             )
 
-            NutritionTextField(label = "Salt", value = salt, onValueChange = { salt = it })
+            NutritionTextField(label = "Sal", value = salt, onValueChange = { salt = it })
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
                 thickness = 1.dp,
                 color = Color.LightGray
             )
 
-            NutritionTextField(label = "Carbohydrates", value = carbohydrates, onValueChange = { carbohydrates = it })
+            NutritionTextField(label = "Carbohidratos", value = carbohydrates, onValueChange = { carbohydrates = it })
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
                 thickness = 1.dp,
                 color = Color.LightGray
             )
 
-            NutritionTextField(label = "Calories", value = calories, onValueChange = { calories = it })
+            NutritionTextField(label = "Calorias", value = calories, onValueChange = { calories = it })
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
                 thickness = 1.dp,
                 color = Color.LightGray
             )
 
-            NutritionTextField(label = "Price", value = price, onValueChange = { price = it })
+            NutritionTextField(label = "Precio", value = price, onValueChange = { price = it })
 
             Spacer(modifier = Modifier.height(32.dp))
 
             // Sección de opciones dietéticas
             DietOptionItem(
-                title = "Vegetarian",
-                description = "This food is vegetarian-friendly!",
+                title = "Vegetariana",
+                description = "Esta comida es apta para vegetarianos",
                 checked = isVegetarian,
                 onCheckedChange = { isVegetarian = it }
             )
 
             DietOptionItem(
-                title = "Vegan",
-                description = "This food is vegan-friendly!",
+                title = "Vegana",
+                description = "Esta comida es apta para veganos",
                 checked = isVegan,
                 onCheckedChange = onVeganChange
             )
 
             DietOptionItem(
-                title = "Celiac",
-                description = "This food is celiac-friendly!",
+                title = "Celiaca",
+                description = "Esta comida es apta para celiacos!",
                 checked = isCeliac,
                 onCheckedChange = { isCeliac = it }
             )
 
             DietOptionItem(
                 title = "Halal",
-                description = "This food is muslim-friendly!",
+                description = "Esta comida es apta para dieta musulmana!",
                 checked = isHalal,
                 onCheckedChange = { isHalal = it }
             )

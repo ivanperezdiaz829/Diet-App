@@ -85,12 +85,12 @@ fun FoodDetailDialog(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 val nutritionalData = mapOf(
-                    "Proteins" to foodViewModel.getFood().protein,
-                    "Fats" to foodViewModel.getFood().fats,
-                    "Sugar" to foodViewModel.getFood().sugar,
-                    "Salt" to foodViewModel.getFood().salt,
-                    "Carbohydrates" to foodViewModel.getFood().carbohydrates,
-                    "Calories" to foodViewModel.getFood().calories
+                    "Proteinas" to foodViewModel.getFood().protein,
+                    "Grasas" to foodViewModel.getFood().fats,
+                    "Azúcares" to foodViewModel.getFood().sugar,
+                    "Sal" to foodViewModel.getFood().salt,
+                    "Carbohidrates" to foodViewModel.getFood().carbohydrates,
+                    "Calorias" to foodViewModel.getFood().calories
                 )
 
                 NutritionalInfoGrid(data = nutritionalData)
