@@ -77,6 +77,33 @@ class FoodViewModel : ViewModel() {
     companion object {
         fun fromJson(json: JSONObject): FoodViewModel {
             val viewModel = FoodViewModel()
+            val variants = mutableSetOf<FoodVariant>()
+            val types = mutableSetOf<FoodType>()
+
+            // Si vienen como enteros
+            if (json.has("vegan") && json.getInt("vegan") == 1) variants.add(FoodVariant.VEGAN)
+            if (json.has("vegetarian") && json.getInt("vegetarian") == 1) variants.add(FoodVariant.VEGETARIAN)
+            if (json.has("celiac") && json.getInt("celiac") == 1) variants.add(FoodVariant.CELIAC)
+            if (json.has("halal") && json.getInt("halal") == 1) variants.add(FoodVariant.HALAL)
+
+            // Si vienen como array (mejor forma)
+            if (json.has("foodVariants")) {
+                val array = json.getJSONArray("foodVariants")
+                for (i in 0 until array.length()) {
+                    variants.add(FoodVariant.valueOf(array.getString(i)))
+                }
+            }
+
+            if (json.has("foodTypes")) {
+                val array = json.getJSONArray("foodTypes")
+                for (i in 0 until array.length()) {
+                    types.add(FoodType.valueOf(array.getString(i)))
+                }
+            } else if (json.has("type")) {
+                // si viene como entero
+                types.add(FoodType.fromTypeId(json.getInt("type")))
+            }
+
             viewModel.updateFood(
                 name = json.getString("name"),
                 protein = json.getDouble("proteins"),
@@ -86,15 +113,11 @@ class FoodViewModel : ViewModel() {
                 carbohydrates = json.getDouble("carbohydrates"),
                 calories = json.getDouble("calories"),
                 price = json.getDouble("price"),
-                foodVariants = mutableSetOf<FoodVariant>().apply {
-                    if (json.optInt("vegan", 0) == 1) add(FoodVariant.VEGAN)
-                    if (json.optInt("vegetarian", 0) == 1) add(FoodVariant.VEGETARIAN)
-                    if (json.optInt("celiac", 0) == 1) add(FoodVariant.CELIAC)
-                    if (json.optInt("halal", 0) == 1) add(FoodVariant.HALAL)
-                },
-                foodTypes = setOf(FoodType.fromTypeId(json.getInt("type"))) // Ahora funciona
+                foodVariants = variants,
+                foodTypes = types
             )
             return viewModel
         }
     }
+
 }

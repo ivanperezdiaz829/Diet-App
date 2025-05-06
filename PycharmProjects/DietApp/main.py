@@ -53,9 +53,6 @@ def get_plate(plate_id):
 
             # Convertir a diccionario y ajustar campos booleanos
             plate_data = dict(plate_row)
-            boolean_fields = ['vegan', 'vegetarian', 'celiac', 'halal']
-            for field in boolean_fields:
-                plate_data[field] = bool(plate_data[field])
 
             return jsonify({
                 "plate": plate_data,
