@@ -418,9 +418,8 @@ def main():
     """Función principal"""
     print("INICIANDO PRUEBAS DE LA API".center(50, "="))
 
-    test_get_diet_plan_days_by_complete(3)
-    test_get_diet_plan_days_by_complete(4)
-    test_get_diet_plan_days_by_complete(5)
+    response = requests.get(f"{BASE_URL}/get_all_diets_of_user_complete_information/{11}", )
+    print_response(response)
 
 
     print("\n" + "PRUEBAS COMPLETADAS".center(50, "="))
