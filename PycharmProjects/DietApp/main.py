@@ -12,7 +12,6 @@ from configuration.config import DB_PATH, PHYSICAL_ACTIVITY_LEVELS, SEX_VALUES
 from model.DietPlanDay import DietPlanDay
 from model.DietPlanComplete import DietPlanComplete
 
-# Inicialización única de la aplicación Flask
 app = Flask(__name__)
 
 # Configuración inicial
@@ -53,9 +52,6 @@ def get_plate(plate_id):
 
             # Convertir a diccionario y ajustar campos booleanos
             plate_data = dict(plate_row)
-            boolean_fields = ['vegan', 'vegetarian', 'celiac', 'halal']
-            for field in boolean_fields:
-                plate_data[field] = bool(plate_data[field])
 
             return jsonify({
                 "plate": plate_data,
@@ -788,8 +784,206 @@ def select_user(email: str):
 
 
 # --------------------------
-# Punto de entrada principal
+# Obtención de toda dieta asociada a un usuario con todos los datos
 # --------------------------
+@app.route('/get_all_diets_of_user_complete_information/<int:user_id>', methods=['GET'])
+def get_all_diets_of_user_complete_information(user_id):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
 
+            # Obtener el usuario
+            cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            user = cursor.fetchone()
+
+            print(user)
+
+            if not user:
+                return jsonify({"error": "usuario no encontrado"}), 404
+
+            # Imprimir los datos del usuario
+            print("Usuario obtenido:")
+            print(dict(user))  # Imprime los datos del usuario
+
+            # Obtener los planes de dieta completos
+            cursor.execute("SELECT * FROM diet_plans_complete WHERE user_id = ?", (user_id,))
+            diet_plans_complete = cursor.fetchall()
+
+            if not diet_plans_complete:
+                return jsonify({"error": "el usuario no tiene planes de dieta creados"}), 405
+
+            # Lista para almacenar los valores de los días de todos los planes de dieta
+            all_days = []
+
+            # Recorrer los planes de dieta y extraer los valores de cada día
+            for diet_plan_complete in diet_plans_complete:
+                # Lista para almacenar los valores de los días para este plan de dieta
+                days_details = []
+                days = [
+                    diet_plan_complete['day1'],
+                    diet_plan_complete['day2'],
+                    diet_plan_complete['day3'],
+                    diet_plan_complete['day4'],
+                    diet_plan_complete['day5'],
+                    diet_plan_complete['day6'],
+                    diet_plan_complete['day7']
+                ]
+
+                # Recorrer los días y obtener los detalles de cada uno
+                for day in days:
+                    if day is not None:  # Verificamos si el día tiene un valor
+                        # Obtener los detalles del día desde la tabla diet_plans_day
+                        cursor.execute("SELECT * FROM diet_plans_day WHERE id = ?", (day,))
+                        diet_plan_day = cursor.fetchone()  # Usamos fetchone ya que esperamos un solo resultado
+
+                        if diet_plan_day:
+                            # Lista para almacenar los campos relacionados con el plato
+                            plate_fields = []
+                            fields = [
+                                'breakfast_dish',
+                                'breakfast_drink',
+                                'lunch_main_dish',
+                                'lunch_side_dish',
+                                'lunch_drink',
+                                'dinner_dish',
+                                'dinner_drink'
+                            ]
+
+                            # Para cada campo, consultamos la tabla plates usando su id
+                            for field in fields:
+                                plate_id = diet_plan_day[field]
+                                if plate_id is not None:
+                                    cursor.execute("SELECT * FROM plates WHERE id = ?", (plate_id,))
+                                    plate = cursor.fetchone()
+                                    if plate:
+                                        plate_fields.append(dict(plate))  # Almacenamos el diccionario de la placa
+                                    else:
+                                        plate_fields.append(None)  # Si no encontramos la placa, agregamos None
+                                else:
+                                    plate_fields.append(None)  # Si el campo es None, agregamos None
+
+                            # Añadimos los detalles del día a la lista de días
+                            days_details.append({
+                                "day_id": day,
+                                "plates": plate_fields
+                            })
+                        else:
+                            # Si no encontramos detalles del día, añadir None
+                            days_details.append(None)
+                    else:
+                        # Si el día no está definido (es None), añadir None a la lista de días
+                        days_details.append(None)
+
+                # Añadimos los detalles de los días para este plan de dieta a la lista general
+                all_days.append({
+                    "diet_plan_id": diet_plan_complete['id'],
+                    "diet_plan_name": diet_plan_complete['name'],
+                    "days_details": days_details
+                })
+
+                # Imprimir los detalles de los días
+                print(f"Plan de dieta '{diet_plan_complete['name']}' días: {days_details}")
+
+            # Responder con los datos del usuario y los días de los planes de dieta
+            return jsonify({
+                "user": dict(user),
+                "diet_plans_complete": [dict(diet_plan) for diet_plan in diet_plans_complete],
+                "days_values": all_days  # Añadimos la lista con los detalles de los días
+            }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
+# --------------------------
+# Obtención de todas las comidas creadas por un usuario
+# --------------------------
+@app.route('/get_all_user_plates/<int:user_id>', methods=['GET'])
+def get_all_user_plates(user_id):  # Cambié el nombre de la función para que sea coherente con el endpoint
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            # Obtener el usuario
+            cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            user = cursor.fetchone()
+
+            if not user:
+                return jsonify({"error": "usuario no encontrado"}), 404
+
+            # Obtener los platos del usuario
+            cursor.execute("SELECT * FROM plates WHERE user_id = ?", (user_id,))
+            plates = cursor.fetchall()
+
+            if not plates:
+                return jsonify({"error": "el usuario no tiene platos creados"}), 405
+
+            # Convertir cada fila de platos en un diccionario
+            plate_list = [dict(plate) for plate in plates]
+
+            # Devolver los datos serializados
+            return jsonify({
+                "user": dict(user),
+                "plates": plate_list
+            }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
+# Endpoint to get all plates where user_id is NULL
+@app.route('/get_all_plates_where_user_id_is_null', methods=['GET'])
+def get_all_plates_where_user_id_is_null():
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            # Query plates where user_id is NULL
+            cursor.execute("SELECT * FROM plates WHERE user_id IS NULL")
+            plates = cursor.fetchall()
+
+            if not plates:
+                return jsonify({"message": "No plates found with user_id NULL"}), 200
+
+            # Convert plates to list of dictionaries
+            plate_list = [dict(plate) for plate in plates]
+
+            return jsonify({
+                "plates": plate_list
+            }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
+@app.route('/get_all_plates_where_user_id_is_either_users_or_null/<int:user_id>', methods=['GET'])
+def get_all_plates_where_user_id_is_either_users_or_null(user_id):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT * FROM plates WHERE user_id = ? OR user_id IS NULL", (user_id,))
+            plates = cursor.fetchall()
+
+            # Always return a plates array, empty if no plates found
+            plate_list = [dict(plate) for plate in plates]
+
+            return jsonify({
+                "user_id": user_id,
+                "plates": plate_list
+            }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8000)
+

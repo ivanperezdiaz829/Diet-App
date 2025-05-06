@@ -1254,7 +1254,7 @@ fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -
         dayJson.getString("lunch_drink"),
         dayJson.getString("dinner_dish"),
         dayJson.getString("dinner_drink")
-    )
+    ).filter { it.isNotEmpty() }
 
     val client = OkHttpClient()
     val results = MutableList<FoodViewModel?>(plateIds.size) { null }
