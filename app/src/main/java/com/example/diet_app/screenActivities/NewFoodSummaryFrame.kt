@@ -47,7 +47,7 @@ fun NewFoodSummaryScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            TitleSection("What is the name of the", "new food?", "Specify the name of the added food")
+            TitleSection("¿Cuál es el nombre de la", "nueva comida?", "Especifica el nombre de la comida añadida")
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -56,8 +56,8 @@ fun NewFoodSummaryScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             LabeledOutlinedTextField(
-                label = "Name of the food",
-                placeholder = "Croissant with poached egg",
+                label = "Nombre de la comida",
+                placeholder = " Cruasán con huevo escalfado",
                 value = selectedName,
                 onValueChange = { selectedName = it }
             )
@@ -83,12 +83,12 @@ fun FoodSummaryView(foodViewModel: FoodViewModel){
     Spacer(modifier = Modifier.height(30.dp))
 
     val nutritionalData = mapOf(
-        "Proteins" to foodViewModel.getFood().protein,
-        "Fats" to foodViewModel.getFood().fats,
-        "Sugar" to foodViewModel.getFood().sugar,
-        "Salt" to foodViewModel.getFood().salt,
-        "Carbohydrates" to foodViewModel.getFood().carbohydrates,
-        "Calories" to foodViewModel.getFood().calories,
+        "Proteinas" to foodViewModel.getFood().protein,
+        "Grasas" to foodViewModel.getFood().fats,
+        "Azúcar" to foodViewModel.getFood().sugar,
+        "Sal" to foodViewModel.getFood().salt,
+        "Carbohidratos" to foodViewModel.getFood().carbohydrates,
+        "Calorias" to foodViewModel.getFood().calories,
     )
 
     NutritionalInfoGrid(data = nutritionalData)

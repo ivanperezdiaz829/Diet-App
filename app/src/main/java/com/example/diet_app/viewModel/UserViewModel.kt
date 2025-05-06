@@ -18,7 +18,7 @@ class UserViewModel : ViewModel() {
         height: Int = currentUser.height,
         currentWeight: Double = currentUser.currentWeight,
         goal: Goal = currentUser.goal,
-        foodList: List<FoodViewModel> = currentUser.foodList
+        foodList: MutableList<FoodViewModel> = currentUser.foodList
     ) {
         currentUser = UserModel(
             id = id,

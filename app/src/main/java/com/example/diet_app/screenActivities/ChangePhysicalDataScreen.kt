@@ -26,6 +26,8 @@ import com.example.ui.components.*
 import java.util.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.graphics.Color
+import com.example.diet_app.screenActivities.components.BackButton
 
 @Composable
 fun UpdatePhysicalDataScreen(
@@ -99,13 +101,14 @@ fun UpdatePhysicalDataScreen(
         }
     }
 
-    BackButtonLeft(onNavigateBack = onNavigateBack)
 
     Box(
+
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -114,6 +117,8 @@ fun UpdatePhysicalDataScreen(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
+            BackButton(onNavigateBack = onNavigateBack)
+
             TitleSection()
             UsernameText(userViewModel.getUser().email)
 
@@ -194,10 +199,14 @@ fun UpdatePhysicalDataScreen(
                 onClick = { handleConfirm() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
+                    .padding(top = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4CAF50)
+                )
             ) {
                 Text("Confirmar")
             }
+
         }
     }
 

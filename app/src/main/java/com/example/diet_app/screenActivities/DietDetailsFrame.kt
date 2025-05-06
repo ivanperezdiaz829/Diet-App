@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.diet_app.model.Screen
@@ -239,7 +240,7 @@ fun GreenInfoCard(
 @Composable
 fun MealCard(
     food: FoodViewModel,
-    onDetailsClick: (FoodViewModel) -> Unit // Nuevo parámetro para manejar el click
+    onDetailsClick: (FoodViewModel) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -251,17 +252,21 @@ fun MealCard(
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = food.getFood().name,
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.White
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp) // Espacio entre texto y botón
                 )
 
                 Button(
-                    onClick = { onDetailsClick(food) }, // Usamos el callback
+                    onClick = { onDetailsClick(food) },
                     modifier = Modifier.height(32.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -281,6 +286,7 @@ fun MealCard(
         }
     }
 }
+
 
 @Composable
 fun DayDiet(
