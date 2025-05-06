@@ -27,6 +27,312 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
+
+// Representa la información del usuario
+data class User(
+    val id: Int,
+    val email: String,
+    val birthday: String,  // Podrías considerar usar un tipo de dato `Date`
+    val goal: Int,
+    val height: Int,
+    val password: String,
+    val physical_activity: Int,
+    val sex: Int,
+    val weight: Int
+)
+
+// Representa un plato, con los campos esenciales de la tabla `plates`
+data class Plate(
+    val id: Int,
+    val name: String,
+    val user_id: String, // Usé String porque el campo en la tabla es un texto
+    val calories: Int,
+    val carbohydrates: Int,
+    val proteins: Int,
+    val fats: Int,
+    val sugar: Int,
+    val sodium: Int,
+    val price: Double,
+    val type: Int,  // Puede ser un valor que represente el tipo del plato (por ejemplo, desayuno, comida, cena, etc.)
+    val vegan: Int,  // Usualmente 0 o 1, indica si es vegano
+    val vegetarian: Int, // Usualmente 0 o 1, indica si es vegetariano
+    val celiac: Int, // Usualmente 0 o 1, indica si es libre de gluten
+    val halal: Int // Usualmente 0 o 1, indica si es halal
+)
+
+
+// Representa un plan de dieta completo, según la tabla `diet_plans_complete`
+data class DietPlanComplete(
+    val id: Int,
+    val name: String,
+    val user_id: Int,
+    val created_at: String,  // Podrías usar un tipo `Date` si prefieres manejar fechas de manera más eficiente
+    val day1: Int?,
+    val day2: Int?,
+    val day3: Int?,
+    val day4: Int?,
+    val day5: Int?,
+    val day6: Int?,
+    val day7: Int?,
+    val diet_type_id: Int,
+    val duration: Int
+)
+
+// Representa los detalles de un día específico en un plan de dieta
+data class DietPlanDay(
+    val day_id: Int,
+    val plates: List<Plate?> // Lista de platos relacionados a este día
+)
+
+// Detalles completos de un plan de dieta, con información de los días de dieta
+data class DietPlanDayDetails(
+    val diet_plan_id: Int,
+    val diet_plan_name: String,
+    val days_details: List<DietPlanDay?> // Días de dieta asociados con el plan
+)
+
+// Respuesta completa del servidor que incluye la información del usuario, planes de dieta y detalles de los días
+data class DietInformationResponse(
+    val user: User,
+    val diet_plans_complete: List<DietPlanComplete>,
+    val days_values: List<DietPlanDayDetails>
+)
+
+// Función para deserializar la respuesta
+fun deserializeDietInformation(jsonResponse: String): DietInformationResponse {
+    val gson = Gson() // Creamos una instancia de Gson
+    return gson.fromJson(jsonResponse, DietInformationResponse::class.java) // Deserializamos el JSON
+}
+
+// Función para hacer la solicitud y obtener la respuesta
+fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String) -> Unit) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/get_all_diets_of_user_complete_information/$userId" // Asegúrate de usar la URL correcta
+
+    val request = Request.Builder()
+        .url(url)
+        .build()
+
+    // Hacer la solicitud HTTP
+    client.newCall(request).enqueue(object : okhttp3.Callback {
+        override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+            Log.e("API", "Error en la solicitud: ${e.message}")
+        }
+
+        override fun onResponse(call: okhttp3.Call, response: Response) {
+            if (response.isSuccessful) {
+                val jsonResponse = response.body?.string() // Obtenemos la respuesta como String
+
+                if (jsonResponse != null) {
+                    // Deserializar el JSON a nuestro objeto de Kotlin
+                    val dietInfoResponse = deserializeDietInformation(jsonResponse)
+
+                    // Imprimir los datos en el log para verlos
+                    Log.d("API", "Usuario: ${dietInfoResponse.user}")
+                    Log.d("API", "Planes de dieta completos: ${dietInfoResponse.diet_plans_complete}")
+                    Log.d("API", "Detalles de los días: ${dietInfoResponse.days_values}")
+
+                    // Llamamos a la función onResult para manejar la respuesta en la interfaz de usuario
+                    onResult(jsonResponse)
+                } else {
+                    Log.e("API", "La respuesta es vacía o nula")
+                }
+            } else {
+                Log.e("API", "Error en la respuesta: ${response.message}")
+            }
+        }
+    })
+}
+
+fun getUserPlatesPro(userId: Int, context: Context, onResult: (String) -> Unit) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/get_all_user_plates/$userId" // Asegúrate de que coincida con el endpoint real
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("BOBO", "Error en la solicitud: ${e.message}")
+            (context as? Activity)?.runOnUiThread {
+                onResult("Error: ${e.message}")
+            }
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            if (response.isSuccessful) {
+                val jsonResponse = response.body?.string()
+                if (jsonResponse != null) {
+                    Log.d("API", "Respuesta recibida: $jsonResponse")
+                    (context as? Activity)?.runOnUiThread {
+                        onResult(jsonResponse)
+                    }
+                } else {
+                    Log.e("API", "Respuesta vacía o nula")
+                    (context as? Activity)?.runOnUiThread {
+                        onResult("Error: Respuesta vacía del servidor")
+                    }
+                }
+            } else {
+                Log.e("API", "Error HTTP: ${response.code} ${response.message}")
+                (context as? Activity)?.runOnUiThread {
+                    onResult("Error HTTP: ${response.code}")
+                }
+            }
+        }
+    })
+}
+
+fun getAllPlatesWhereUserIdIsNull(context: Context, onResult: (Result<List<Plate>>) -> Unit) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/get_all_plates_where_user_id_is_null"
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("PlateAPI", "Error in request: ${e.message}")
+            (context as? Activity)?.runOnUiThread {
+                onResult(Result.failure(e))
+            }
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            try {
+                if (!response.isSuccessful) {
+                    throw IOException("HTTP error: ${response.code}")
+                }
+
+                val responseData = response.body?.string()
+                    ?: throw IOException("Empty server response")
+
+                Log.d("PlateAPI", "Response for null user_id plates: $responseData")
+
+                val json = JSONObject(responseData)
+                val platesArray = json.getJSONArray("plates")
+                val platesList = mutableListOf<Plate>()
+
+                for (i in 0 until platesArray.length()) {
+                    val plateJson = platesArray.getJSONObject(i)
+                    val plate = Plate(
+                        id = plateJson.getInt("id"),
+                        name = plateJson.getString("name"),
+                        user_id = plateJson.optString("user_id", ""),
+                        calories = plateJson.getInt("calories"),
+                        carbohydrates = plateJson.getInt("carbohydrates"),
+                        proteins = plateJson.getInt("proteins"),
+                        fats = plateJson.getInt("fats"),
+                        sugar = plateJson.getInt("sugar"),
+                        sodium = plateJson.getInt("sodium"),
+                        price = plateJson.getDouble("price"),
+                        type = plateJson.getInt("type"),
+                        vegan = plateJson.getInt("vegan"),
+                        vegetarian = plateJson.getInt("vegetarian"),
+                        celiac = plateJson.getInt("celiac"),
+                        halal = plateJson.getInt("halal")
+                    )
+                    platesList.add(plate)
+                }
+
+                (context as? Activity)?.runOnUiThread {
+                    onResult(Result.success(platesList))
+                }
+
+            } catch (e: Exception) {
+                Log.e("PlateAPI", "Error processing response: ${e.message}")
+                (context as? Activity)?.runOnUiThread {
+                    onResult(Result.failure(e))
+                }
+            }
+        }
+    })
+}
+
+fun getAllPlatesWhereUserIdIsEitherUsersOrNull(userId: Int, context: Context, onResult: (Result<List<Plate>>) -> Unit) {
+    val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS) // Increase timeout
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
+
+    val url = "http://10.0.2.2:8000/get_all_plates_where_user_id_is_either_users_or_null/$userId"
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("PlateAPI", "Error in request: ${e.message}")
+            (context as? Activity)?.runOnUiThread {
+                onResult(Result.failure(e))
+            }
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            try {
+                if (!response.isSuccessful) {
+                    throw IOException("HTTP error: ${response.code}")
+                }
+
+                val responseData = response.body?.string()
+                    ?: throw IOException("Empty server response")
+
+                Log.d("PlateAPI", "Response for user_id $userId or null plates: $responseData")
+
+                val json = JSONObject(responseData)
+                if (json.has("error")) {
+                    throw IOException("Server error: ${json.getString("error")}")
+                }
+
+                val platesArray = json.optJSONArray("plates") ?: JSONArray() // Use empty array if null
+                val platesList = mutableListOf<Plate>()
+
+                for (i in 0 until platesArray.length()) {
+                    val plateJson = platesArray.getJSONObject(i)
+                    val plate = Plate(
+                        id = plateJson.getInt("id"),
+                        name = plateJson.getString("name"),
+                        user_id = plateJson.optString("user_id", ""),
+                        calories = plateJson.getInt("calories"),
+                        carbohydrates = plateJson.getInt("carbohydrates"),
+                        proteins = plateJson.getInt("proteins"),
+                        fats = plateJson.getInt("fats"),
+                        sugar = plateJson.getInt("sugar"),
+                        sodium = plateJson.getInt("sodium"),
+                        price = plateJson.getDouble("price"),
+                        type = plateJson.getInt("type"),
+                        vegan = plateJson.getInt("vegan"),
+                        vegetarian = plateJson.getInt("vegetarian"),
+                        celiac = plateJson.getInt("celiac"),
+                        halal = plateJson.getInt("halal")
+                    )
+                    platesList.add(plate)
+                }
+
+                (context as? Activity)?.runOnUiThread {
+                    onResult(Result.success(platesList))
+                }
+
+            } catch (e: Exception) {
+                Log.e("PlateAPI", "Error processing response: ${e.message}")
+                (context as? Activity)?.runOnUiThread {
+                    onResult(Result.failure(e))
+                }
+            }
+        }
+    })
+}
+
 fun getPrefs(context: Context, name: String, userId: Int, dietTypeId: Int, duration: Int) : JSONObject {
     var planJson = JSONObject()
     for (i in 0 until duration) {
