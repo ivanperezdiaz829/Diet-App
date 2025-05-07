@@ -120,6 +120,9 @@ fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String
     client.newCall(request).enqueue(object : okhttp3.Callback {
         override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
             Log.e("API", "Error en la solicitud: ${e.message}")
+            (context as? Activity)?.runOnUiThread {
+                onResult("Error: ${e.message}")
+            }
         }
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
@@ -136,12 +139,20 @@ fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String
                     Log.d("API", "Detalles de los días: ${dietInfoResponse.days_values}")
 
                     // Llamamos a la función onResult para manejar la respuesta en la interfaz de usuario
-                    onResult(jsonResponse)
+                    (context as? Activity)?.runOnUiThread {
+                        onResult(jsonResponse)
+                    }
                 } else {
                     Log.e("API", "La respuesta es vacía o nula")
+                    (context as? Activity)?.runOnUiThread {
+                        onResult("Error: Respuesta vacía del servidor")
+                    }
                 }
             } else {
                 Log.e("API", "Error en la respuesta: ${response.message}")
+                (context as? Activity)?.runOnUiThread {
+                    onResult("Error: ${response.message}")
+                }
             }
         }
     })
