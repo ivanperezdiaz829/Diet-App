@@ -1091,7 +1091,6 @@ fun deleteUserByEmail(
         }
     })
 }
-
 fun updateUserPhysicalData(
     id: Int,
     updatedFields: Map<String, Any>,
@@ -1102,10 +1101,14 @@ fun updateUserPhysicalData(
     val client = OkHttpClient()
 
     // Convertimos el Map a un JSONObject
-    val json = JSONObject()
-    for ((key, value) in updatedFields) {
-        json.put(key, value)
+    val json = JSONObject().apply {
+        for ((key, value) in updatedFields) {
+            put(key, value)
+        }
     }
+
+    // Imprimir los datos enviados en el Logcat para depuración
+    Log.d("updateUserPhysicalData", "Datos enviados: ${json.toString(4)}")
 
     val mediaType = "application/json; charset=utf-8".toMediaType()
     val requestBody = json.toString().toRequestBody(mediaType)
@@ -1113,13 +1116,18 @@ fun updateUserPhysicalData(
     val request = Request.Builder()
         .url("http://10.0.2.2:8000/update_user_physical/$id")
         .patch(requestBody)
+        .header("Content-Type", "application/json")
         .build()
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             val msg = "Error de red: ${e.message}"
             Log.e("updateUserPhysicalData", msg)
-            onError(msg)
+
+            // Ejecutar en el hilo principal para actualizar la UI
+            (context as? Activity)?.runOnUiThread {
+                onError(msg)
+            }
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -1128,15 +1136,24 @@ fun updateUserPhysicalData(
                 if (!response.isSuccessful) {
                     val msg = "Error HTTP ${response.code}: $responseBody"
                     Log.e("updateUserPhysicalData", msg)
-                    onError(msg)
+
+                    // Ejecutar en el hilo principal para actualizar la UI
+                    (context as? Activity)?.runOnUiThread {
+                        onError(msg)
+                    }
                 } else {
                     Log.d("updateUserPhysicalData", "Respuesta: $responseBody")
-                    onResult(responseBody ?: "Actualización exitosa sin cuerpo")
+
+                    // Ejecutar en el hilo principal para actualizar la UI
+                    (context as? Activity)?.runOnUiThread {
+                        onResult(responseBody ?: "Actualización exitosa sin cuerpo")
+                    }
                 }
             }
         }
     })
 }
+
 
 fun updateUserPassword(
     id: Int,
@@ -1153,12 +1170,16 @@ fun updateUserPassword(
         put("new_password", newPassword)
     }
 
+    // Imprimir datos en el Logcat para depuración
+    Log.d("updateUserPassword", "Datos enviados: ${json.toString(4)}")
+
     val mediaType = "application/json; charset=utf-8".toMediaType()
     val requestBody = json.toString().toRequestBody(mediaType)
 
     val request = Request.Builder()
         .url("http://10.0.2.2:8000/update_user_password/$id")
         .patch(requestBody)
+        .header("Content-Type", "application/json")
         .build()
 
     client.newCall(request).enqueue(object : Callback {

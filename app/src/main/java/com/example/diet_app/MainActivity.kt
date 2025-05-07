@@ -174,8 +174,7 @@ class MainActivity : ComponentActivity() {
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
             // In your ViewModel or Activity
-            //DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
-            DietPlanScreen()
+            DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
             /*
             DietInterface(
                 navController = rememberNavController(),
