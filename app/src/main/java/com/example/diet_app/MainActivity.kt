@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -173,7 +174,8 @@ class MainActivity : ComponentActivity() {
             //getDietPlanById(4, LocalContext.current, onResult = {})
             //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
             // In your ViewModel or Activity
-            DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
+            //DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
+            DietPlanScreen()
             /*
             DietInterface(
                 navController = rememberNavController(),
@@ -184,6 +186,117 @@ class MainActivity : ComponentActivity() {
             //GraphicFrame(dietJson, onNavigateBack = {finish()})
             //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
         }
+    }
+}
+
+
+@Composable
+fun DietPlanScreen() {
+    val context = LocalContext.current
+    var responseText by remember { mutableStateOf("Cargando...") }
+
+    // Llamar solo una vez al obtener la composición
+    LaunchedEffect(Unit) {
+        getUserDietPlansCompletePro(11, context) { jsonResponse ->
+            responseText = jsonResponse // Actualizamos el estado
+        }
+    }
+
+    // Mostrar el contenido en pantalla
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(text = "Respuesta del servidor:")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = responseText)
+    }
+}
+
+@Composable
+fun Plates() {
+    val context = LocalContext.current
+    var responseText by remember { mutableStateOf("Cargando...") }
+
+    // Llamar solo una vez al componer
+    LaunchedEffect(Unit) {
+        getUserPlatesPro(11, context) { jsonResponse ->
+            responseText = jsonResponse // Actualizamos el estado
+        }
+    }
+
+    // Mostrar el contenido en pantalla
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(text = "Platos del usuario:")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = responseText)
+    }
+}
+
+@Composable
+fun PlatesWithNullUserIdScreen() {
+    val context = LocalContext.current
+    var responseText by remember { mutableStateOf("Cargando...") }
+
+    // Call the API once during composition
+    LaunchedEffect(Unit) {
+        getAllPlatesWhereUserIdIsNull(context) { result ->
+            responseText = result.fold(
+                onSuccess = { plates ->
+                    if (plates.isEmpty()) {
+                        "No se encontraron platos sin usuario asignado."
+                    } else {
+                        plates.joinToString("\n") { plate ->
+                            "Plato: ${plate.name}, Calorías: ${plate.calories} kcal, " +
+                                    "Vegano: ${if (plate.vegan == 1) "Sí" else "No"}, " +
+                                    "Vegetariano: ${if (plate.vegetarian == 1) "Sí" else "No"}"
+                        }
+                    }
+                },
+                onFailure = { error ->
+                    "Error al obtener platos: ${error.message}"
+                }
+            )
+        }
+    }
+
+    // Display the content on screen
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(text = "Platos sin usuario asignado:")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = responseText)
+    }
+}
+
+@Composable
+fun PlatesForUserOrNullScreen(userId: Int = 11) {
+    val context = LocalContext.current
+    var responseText by remember { mutableStateOf("Cargando...") }
+
+    // Call the API once during composition
+    LaunchedEffect(Unit) {
+        getAllPlatesWhereUserIdIsEitherUsersOrNull(userId, context) { result ->
+            responseText = result.fold(
+                onSuccess = { plates ->
+                    if (plates.isEmpty()) {
+                        "No se encontraron platos para el usuario $userId o sin usuario asignado."
+                    } else {
+                        plates.joinToString("\n") { plate ->
+                            "Plato: ${plate.name}, Calorías: ${plate.calories} kcal, " +
+                                    "Usuario: ${plate.user_id.ifEmpty { "Ninguno" }}, " +
+                                    "Vegano: ${if (plate.vegan == 1) "Sí" else "No"}"
+                        }
+                    }
+                },
+                onFailure = { error ->
+                    "Error al obtener platos: ${error.message}"
+                }
+            )
+        }
+    }
+
+    // Display the content on screen
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(text = "Platos del usuario $userId o sin usuario asignado:")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = responseText)
     }
 }
 
