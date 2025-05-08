@@ -161,7 +161,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
-            userViewModel.updateUser(id = 16)
+            userViewModel.updateUser(id = 11)
             var dietViewModel = DietViewModel()
 
             DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
@@ -454,6 +454,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
         composable(route = Screen.Meals.route
         ) {
 
+            var showDiets by remember { mutableStateOf(false) }
+
             LaunchedEffect(Unit) {
                 getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
                     dietJson = jsonResponse
@@ -461,16 +463,20 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     if (jsonResponse.isNotEmpty()) {
                         val response = deserializeDietInformation(jsonResponse)
                         dietViewModels = response.toDietViewModels() // Ahora recibe una lista
+                        showDiets = true
                     }
                 }
             }
 
             // Muestra la pantalla solo cuando tengamos datos
-
-            DietPlansScreen(
-                navController = navController,
-                diets = dietViewModels // Pasamos la lista completa
-            )
+            if (showDiets) {
+                DietPlansScreen(
+                    navController = navController,
+                    diets = dietViewModels // Pasamos la lista completa
+                )
+            } else {
+                LoadingScreen()
+            }
 
         }
 
