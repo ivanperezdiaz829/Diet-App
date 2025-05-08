@@ -22,10 +22,9 @@ fun DietView(
     navController: NavController,
     dietViewModel: DietViewModel,
     imageResId: Int = R.drawable.healthy_icon, // Valor por defecto
-    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .clickable {
                 // Navegación simplificada

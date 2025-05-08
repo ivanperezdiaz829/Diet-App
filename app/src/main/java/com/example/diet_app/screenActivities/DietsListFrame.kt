@@ -47,7 +47,7 @@ fun DietPlansScreen(
     diets: MutableList<DietViewModel> // Lista de ViewModels
     ) {
 
-    var selectedTab by remember { mutableIntStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(1) }
 
     Scaffold { paddingValues ->
         Column(
@@ -183,8 +183,7 @@ fun OtherDietsContent(
             diets.forEach { diet ->
                 DietView(
                     navController = navController,
-                    dietViewModel = diet,
-                    modifier = Modifier.fillMaxWidth()
+                    dietViewModel = diet
                 )
             }
         }

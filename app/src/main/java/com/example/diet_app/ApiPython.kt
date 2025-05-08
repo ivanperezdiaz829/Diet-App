@@ -3,7 +3,9 @@ package com.example.diet_app
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import com.example.diet_app.model.DietModel
+import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.Sex
@@ -30,6 +32,88 @@ import java.util.concurrent.TimeUnit
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+
+
+fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
+    val dietViewModels = mutableListOf<DietViewModel>()
+
+    // Convertimos todos los días de dieta (esto se comparte entre todas las dietas)
+    val dietDayViewModels = this.days_values.flatMap { dayDetails ->
+        dayDetails.days_details.filterNotNull().map { dietDay ->
+            dietDay.toDietDayViewModel()
+        }
+    }
+
+    // Procesamos cada plan de dieta completo
+    this.diet_plans_complete.forEach { dietPlan ->
+        val dietViewModel = DietViewModel().apply {
+            updateDiet(
+                name = dietPlan.name,
+                duration = dietPlan.duration,
+                creationDate = dietPlan.created_at,
+                diets = dietDayViewModels,
+                dietsId = listOfNotNull(
+                    dietPlan.day1, dietPlan.day2, dietPlan.day3,
+                    dietPlan.day4, dietPlan.day5, dietPlan.day6, dietPlan.day7
+                ),
+                foodVariant = when (dietPlan.diet_type_id) {
+                    1 -> FoodVariant.REGULAR
+                    2 -> FoodVariant.VEGAN
+                    3 -> FoodVariant.VEGETARIAN
+                    4 -> FoodVariant.CELIAC
+                    5 -> FoodVariant.HALAL
+                    else -> FoodVariant.REGULAR // Valor por defecto
+                },
+                dietId = dietPlan.id.toString()
+            )
+        }
+        dietViewModels.add(dietViewModel)
+    }
+
+    return dietViewModels
+}
+
+fun DietPlanDay.toDietDayViewModel(): DietDayViewModel {
+    val dietDayViewModel = DietDayViewModel()
+
+    val foodViewModels = this.plates.filterNotNull().map { plate ->
+        val foodViewModel = FoodViewModel()
+
+        // Determinar la variante de comida
+        val variant = when {
+            plate.vegan == 1 -> FoodVariant.VEGAN
+            plate.vegetarian == 1 -> FoodVariant.VEGETARIAN
+            plate.celiac == 1 -> FoodVariant.CELIAC
+            plate.halal == 1 -> FoodVariant.HALAL
+            else -> FoodVariant.REGULAR
+        }
+
+        foodViewModel.updateFood(
+            name = plate.name,
+            foodId = plate.id,
+            protein = plate.proteins.toDouble(),
+            fats = plate.fats.toDouble(),
+            sugar = plate.sugar.toDouble(),
+            salt = plate.sodium.toDouble(),
+            carbohydrates = plate.carbohydrates.toDouble(),
+            calories = plate.calories.toDouble(),
+            price = plate.price,
+            foodVariants = setOf(variant),
+            foodTypes = setOf(FoodType.fromTypeId(plate.type))
+        )
+        foodViewModel
+    }
+
+    dietDayViewModel.updateDietDay(
+        foods = foodViewModels,
+        foodVariant = FoodVariant.REGULAR,
+        goal = Goal.MANTENERSE,
+        dietId = this.day_id,
+        foodsId = this.plates.filterNotNull().map { it.id }
+    )
+
+    return dietDayViewModel
+}
 
 // Representa la información del usuario
 data class User(

@@ -29,10 +29,12 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -70,7 +72,9 @@ class MainActivity : ComponentActivity() {
         // Forzar íconos oscuros en la barra de estado
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
-        val dietJson = """
+        /*
+        val dietJson =
+            """
 {
   "dieta": [
     [
@@ -152,38 +156,17 @@ class MainActivity : ComponentActivity() {
   ]
 }
 """.trimIndent()
+        */
+
 
         setContent {
             var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
+            userViewModel.updateUser(id = 11)
             var dietViewModel = DietViewModel()
-            /*
-            createUser(
-                email = "frikazoA2@gmail.es",
-                password = "superSeguro.123",
-                physicalActivity = 4,
-                goal = 1,
-                sex = 1,
-                birthday = "1995-06-15",
-                height = 168,
-                weight = 60,
-                context = LocalContext.current,
-                onResult = {}
-            )
-            */
-            //getDietPlanById(4, LocalContext.current, onResult = {})
-            //getUserByEmail("Janesdoe@gmail.es", LocalContext.current, onResult = {})
-            // In your ViewModel or Activity
+
             DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
-            /*
-            DietInterface(
-                navController = rememberNavController(),
-                dietViewModel = dietViewModel
-            )
-            */
-            //CalendarScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
-            //GraphicFrame(dietJson, onNavigateBack = {finish()})
-            //TargetWeightSelectionScreen(onNavigateBack = { finish() }, onSkip = { finish() }, onNext = {})
+
         }
     }
 }
@@ -202,10 +185,29 @@ fun DietPlanScreen() {
     }
 
     // Mostrar el contenido en pantalla
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .verticalScroll(rememberScrollState())
+    ) {
         Text(text = "Respuesta del servidor:")
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = responseText)
+    }
+
+    Log.d("DietPlanScreen", "Response text: $responseText")
+
+}
+
+@Composable
+fun DietViewModelScreen(dietViewModel: DietViewModel) {
+    // Mostrar el contenido en pantalla
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .verticalScroll(rememberScrollState())
+    ) {
+        Text(text = "Respuesta del servidor:")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = dietViewModel.getDiet().diets[0].getDiet().foods[0].name)
     }
 }
 
@@ -304,9 +306,11 @@ fun PlatesForUserOrNullScreen(userId: Int = 11) {
 fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: FoodViewModel, dietViewModel: DietViewModel) {
     // Usamos NavController para manejar la navegación
     val navController = rememberNavController()
+    var dietJson by remember { mutableStateOf<String?>(null) }
+    var dietViewModels by remember { mutableStateOf<MutableList<DietViewModel>>(mutableListOf()) }
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Welcome.route) {
+    NavHost(navController = navController, startDestination = Screen.Meals.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -451,26 +455,27 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
         composable(route = Screen.Meals.route
         ) {
 
-            var diets: MutableList<DietViewModel> = mutableListOf<DietViewModel>()
-
-            getUserDietPlansComplete(
-                userViewModel.getUser().id,
-                applicationContext,
-                diets,
-                onResult = { result ->
-                    result.onSuccess {
-                            updatedList ->
-                        GlobalData.dietsList = updatedList
-                        diets = updatedList as MutableList<DietViewModel>
+            LaunchedEffect(Unit) {
+                getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                    dietJson = jsonResponse
+                    // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                    if (jsonResponse.isNotEmpty()) {
+                        val response = deserializeDietInformation(jsonResponse)
+                        dietViewModels = response.toDietViewModels() // Ahora recibe una lista
                     }
                 }
-            )
+            }
 
-            DietPlansScreen(
-                navController,
-                diets = diets
-            )
-
+            // Muestra la pantalla solo cuando tengamos datos
+            if (dietViewModels.isNotEmpty()) {
+                DietPlansScreen(
+                    navController = navController,
+                    diets = dietViewModels // Pasamos la lista completa
+                )
+            } else {
+                // Muestra un indicador de carga mientras esperamos
+                LoadingScreen()
+            }
         }
 
         composable(route = Screen.Welcome.route,
@@ -775,8 +780,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
         }
 
         // Así debe quedar tu composable (copia exactamente esto)
-        composable(
-            route = Screen.DietInterface.route,
+        composable(route = Screen.DietInterface.route,
             arguments = listOf(
                 navArgument("dietId") {
                     type = NavType.StringType // o IntType si usas números
@@ -785,28 +789,17 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         ) { entry ->
             val dietId = entry.arguments?.getString("dietId") ?: ""
-            var diets: MutableList<DietViewModel> = mutableListOf<DietViewModel>()
-            /*
-            getUserDietPlansComplete(
-                7,
-                applicationContext,
-                diets,
-                onResult = { result ->
-                    result.onSuccess {
-                            updatedList ->
-                        GlobalData.dietsList = updatedList
-                        diets = updatedList as MutableList<DietViewModel>
-                    }
-                }
-            )
-            */
+            var diet = getDietViewModelId(dietViewModels, dietId)
 
-            var diet = getDiet(dietId)
-
-            DietInterface(
-                dietViewModel = diet,
-                navController = navController,// Pasa el ID a tu pantalla
-            )
+            if (diet != null) {
+                DietInterface(
+                    dietViewModel = diet,
+                    navController = navController,// Pasa el ID a tu pantalla
+                )
+            } else {
+                // Muestra un indicador de carga mientras esperamos
+                LoadingScreen()
+            }
         }
 
         composable(
@@ -2135,4 +2128,8 @@ fun getDiet(dietId: String): DietViewModel {
         dietViewModel.updateDiet(name = "Plan Usuario 7 2", duration = 4, dietId = dietId, goal = Goal.GANAR_PESO, diets = dayDietLists2)
     }
     return dietViewModel
+}
+
+fun getDietViewModelId(dietViewModelList: List<DietViewModel>, dietId: String): DietViewModel? {
+    return dietViewModelList.find { it.getDiet().dietId == dietId }
 }
