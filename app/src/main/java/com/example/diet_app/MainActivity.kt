@@ -158,11 +158,10 @@ class MainActivity : ComponentActivity() {
 """.trimIndent()
         */
 
-
         setContent {
             var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
-            userViewModel.updateUser(id = 11)
+            userViewModel.updateUser(id = 16)
             var dietViewModel = DietViewModel()
 
             DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
@@ -467,15 +466,12 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             }
 
             // Muestra la pantalla solo cuando tengamos datos
-            if (dietViewModels.isNotEmpty()) {
-                DietPlansScreen(
-                    navController = navController,
-                    diets = dietViewModels // Pasamos la lista completa
-                )
-            } else {
-                // Muestra un indicador de carga mientras esperamos
-                LoadingScreen()
-            }
+
+            DietPlansScreen(
+                navController = navController,
+                diets = dietViewModels // Pasamos la lista completa
+            )
+
         }
 
         composable(route = Screen.Welcome.route,

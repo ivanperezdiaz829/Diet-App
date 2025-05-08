@@ -175,7 +175,7 @@ fun OtherDietsContent(
     ) {
         if (diets.isEmpty()) {
             Text(
-                text = "No existen dietas disponibles",
+                text = "No tienes ninguna dieta guardada",
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.bodyLarge
             )

@@ -36,16 +36,24 @@ import com.google.gson.annotations.SerializedName
 
 fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
     val dietViewModels = mutableListOf<DietViewModel>()
+    
+    Log.d("DIET_CONVERSION", "Iniciando conversión de DietInformationResponse a DietViewModel")
 
     // Convertimos todos los días de dieta (esto se comparte entre todas las dietas)
     val dietDayViewModels = this.days_values.flatMap { dayDetails ->
+        Log.d("DIET_CONVERSION", "Procesando DietPlanDayDetails: ${dayDetails.diet_plan_name}, días: ${dayDetails.days_details.size}")
+
         dayDetails.days_details.filterNotNull().map { dietDay ->
-            dietDay.toDietDayViewModel()
+            val dayViewModel = dietDay.toDietDayViewModel()
+            Log.d("DIET_CONVERSION", "Convertido DietPlanDay con ID: ${dietDay.day_id} a DietDayViewModel con ${dayViewModel.getDiet().foods.size} alimentos")
+            dayViewModel
         }
     }
 
     // Procesamos cada plan de dieta completo
     this.diet_plans_complete.forEach { dietPlan ->
+        Log.d("DIET_CONVERSION", "Procesando DietPlanComplete: ${dietPlan.name} (ID: ${dietPlan.id})")
+
         val dietViewModel = DietViewModel().apply {
             updateDiet(
                 name = dietPlan.name,
@@ -67,11 +75,17 @@ fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
                 dietId = dietPlan.id.toString()
             )
         }
+
+        Log.d("DIET_CONVERSION", "Agregado DietViewModel para el plan: ${dietPlan.name} con ${dietDayViewModels.size} días")
+
         dietViewModels.add(dietViewModel)
     }
 
+    Log.d("DIET_CONVERSION", "Conversión completa: ${dietViewModels.size} DietViewModels creados")
+
     return dietViewModels
 }
+
 
 fun DietPlanDay.toDietDayViewModel(): DietDayViewModel {
     val dietDayViewModel = DietDayViewModel()
