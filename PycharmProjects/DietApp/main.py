@@ -811,8 +811,11 @@ def get_all_diets_of_user_complete_information(user_id):
             diet_plans_complete = cursor.fetchall()
 
             if not diet_plans_complete:
-                return jsonify({"error": "el usuario no tiene planes de dieta creados"}), 405
-
+                return jsonify({
+                    "user": dict(user),
+                    "diet_plans_complete": [],
+                    "days_values": []  # Añadimos la lista con los detalles de los días
+                }), 201
             # Lista para almacenar los valores de los días de todos los planes de dieta
             all_days = []
 
