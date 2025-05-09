@@ -11,6 +11,7 @@ from model.User import User, validate_email
 from configuration.config import DB_PATH, PHYSICAL_ACTIVITY_LEVELS, SEX_VALUES
 from model.DietPlanDay import DietPlanDay
 from model.DietPlanComplete import DietPlanComplete
+import json
 
 app = Flask(__name__)
 
@@ -278,7 +279,6 @@ def delete_user(user_id):
 # Endpoints de Planes de Dieta
 # --------------------------
 
-@app.route('/create_diet_plan', methods=['POST'])
 def create_diet_plan():
     try:
         data = request.get_json()
@@ -657,59 +657,6 @@ def delete_diet_plan(plan_id):
 # --------------------------
 # Endpoints de Cálculos Nutricionales
 # --------------------------
-
-@app.route('/calculate', methods=['POST'])
-def calculate_diet():
-    try:
-        data = request.get_json()
-
-        if "values" not in data:
-            return jsonify({"error": "No values provided"}), 400
-
-        values_str = data["values"]
-        values_list = ast.literal_eval(values_str)
-
-        if not isinstance(values_list, list) or len(values_list) < 10:
-            return jsonify({"error": "Lista de valores inválida"}), 400
-
-        values = [float(i) for i in values_list]
-
-        dieta = total_diet_generator(
-            carbohydrates=values[0],
-            sugar=values[1],
-            energy=[values[2], values[3]],
-            protein=values[4],
-            salt=values[5],
-            fat=values[6],
-            price=values[8],
-            person_type=int(values[9]),
-            person_preferences=1,
-            total_days=int(values[7])
-        )
-
-        if not dieta or len(dieta) < int(values[7]):
-            return jsonify({"error": "No valid diet found"}), 404
-
-        result = []
-        for day in dieta:
-            result.append({
-                "breakfast_dish": day[0][0].plate_id,
-                "breakfast_drink": day[0][1].plate_id,
-                "lunch_main_dish": day[1][0].plate_id,
-                "lunch_side_dish": day[1][1].plate_id,
-                "lunch_drink": day[1][2].plate_id,
-                "dinner_dish": day[2][0].plate_id,
-                "dinner_drink": day[2][1].plate_id
-            })
-
-        return jsonify(result)
-
-    except (ValueError, TypeError) as e:
-        return jsonify({"error": f"Datos inválidos: {str(e)}"}), 400
-    except Exception as e:
-        return jsonify({"error": f"Error interno: {str(e)}"}), 500
-
-
 @app.route("/barplot", methods=["POST"])
 def barplot():
     data = request.get_json(force=True)
@@ -987,6 +934,171 @@ def get_all_plates_where_user_id_is_either_users_or_null(user_id):
         return jsonify({"error": f"Database error: {str(e)}"}), 500
     except Exception as e:
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
+
+@app.route('/calculate_diet_with_inputs', methods=['POST'])
+def calculate_diet_with_inputs():
+    try:
+        # Log incoming request
+        print("[INFO] Request received at /calculate_diet_with_inputs")
+        data = request.get_json()
+        print(f"[DEBUG] Raw JSON data: {data}")
+
+        # Check for the 'values' key
+        if "values" not in data:
+            print("[ERROR] No 'values' key found in JSON")
+            return jsonify({"error": "No values provided"}), 400
+
+        # Extract and parse the values list
+        values_list = json.loads(data["values"]) if isinstance(data["values"], str) else data["values"]
+        print(f"[DEBUG] Parsed values list: {values_list}")
+
+        # Validate the expected length (13 items)
+        if not isinstance(values_list, list) or len(values_list) != 12:
+            print(f"[ERROR] Invalid values list structure: {values_list}")
+            return jsonify({"error": "Lista de valores inválida"}), 400
+
+        try:
+            # Generate the diet plan
+            dieta = total_diet_generator(
+                carbohydrates=float(values_list[0]),
+                sugar=float(values_list[1]),
+                energy=[float(values_list[2]), float(values_list[3])],
+                protein=float(values_list[4]),
+                salt=float(values_list[5]),
+                fat=float(values_list[6]),
+                price=float(values_list[8]),
+                person_type=int(values_list[9]),
+                person_preferences=1,
+                total_days=int(values_list[7])
+            )
+            print(f"[DEBUG] Diet generated: {dieta}")
+        except Exception as e:
+            print(f"[ERROR] Error generating diet: {e}")
+            return jsonify({"error": f"Error generating diet: {e}"}), 500
+
+        # Validate the generated diet
+        if not dieta or len(dieta) < int(values_list[7]):
+            print(f"[ERROR] Insufficient diet length: {dieta}")
+            return jsonify({"error": "No valid diet found"}), 404
+
+        # Prepare diet data for database insertion
+        try:
+            diet_data = {
+                "name": values_list[10],
+                "user_id": int(values_list[11]),
+                "duration": int(values_list[7]),
+                "diet_type_id": int(values_list[9])
+            }
+
+            for day_num, day in enumerate(dieta, start=1):
+                diet_data[f"day{day_num}"] = {
+                    "breakfast_dish": day[0][0].plate_id,
+                    "breakfast_drink": day[0][1].plate_id,
+                    "lunch_main_dish": day[1][0].plate_id,
+                    "lunch_side_dish": day[1][1].plate_id,
+                    "lunch_drink": day[1][2].plate_id,
+                    "dinner_dish": day[2][0].plate_id,
+                    "dinner_drink": day[2][1].plate_id
+                }
+            print(f"[DEBUG] Diet data prepared for DB: {diet_data}")
+
+            response, status_code = create_diet_plan_internal(diet_data)
+            print(f"[DEBUG] Response from create_diet_plan_internal: {response}")
+            if status_code != 201:
+                print(f"[ERROR] Failed to save diet to DB, status code: {status_code}")
+                return jsonify(response), status_code
+
+            result = [diet_data[f"day{i + 1}"] for i in range(int(values_list[7]))]
+            print(f"[DEBUG] Final API response: {result}")
+            return jsonify(result), 200
+        except Exception as e:
+            print(f"[ERROR] Error preparing DB data or final response: {e}")
+            return jsonify({"error": f"Error preparing diet data: {e}"}), 500
+
+    except (ValueError, TypeError) as e:
+        print(f"[ERROR] General data error: {e}")
+        return jsonify({"error": f"Datos inválidos: {e}"}), 400
+    except Exception as e:
+        print(f"[ERROR] Internal server error: {e}")
+        return jsonify({"error": f"Error interno: {e}"}), 500
+
+
+def create_diet_plan_internal(data):
+    try:
+        # Validate required fields
+        required_fields = ['name', 'user_id', 'duration', 'diet_type_id']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Campo requerido faltante: {field}"}), 400
+
+        # Validate duration is between 1-7
+        duration = data['duration']
+        if not 1 <= duration <= 7:
+            return jsonify({"error": "Duración debe estar entre 1 y 7 días"}), 400
+
+        # Validate that required days exist
+        for day_num in range(1, duration + 1):
+            day_key = f'day{day_num}'
+            if day_key not in data:
+                return jsonify({"error": f"Se requiere día {day_num} para duración {duration}"}), 400
+
+        day_ids = []
+
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+
+            # Process each day up to the duration
+            for day_num in range(1, 8):
+                day_key = f'day{day_num}'
+                if day_key in data and day_num <= duration:
+                    try:
+                        day_obj = DietPlanDay(**data[day_key])
+                        cursor.execute("""
+                            INSERT INTO diet_plans_day (
+                                breakfast_dish, breakfast_drink,
+                                lunch_main_dish, lunch_side_dish, lunch_drink,
+                                dinner_dish, dinner_drink
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """, day_obj.to_tuple())
+                        day_ids.append(cursor.lastrowid)
+                    except ValueError as e:
+                        return jsonify({"error": f"Error en {day_key}: {str(e)}"}), 400
+                else:
+                    day_ids.append(None)
+
+            # Create the complete diet plan
+            plan = DietPlanComplete(
+                name=data['name'],
+                user_id=int(data['user_id']),
+                duration=duration,
+                diet_type_id=int(data['diet_type_id']),
+                day1=day_ids[0],
+                day2=day_ids[1],
+                day3=day_ids[2],
+                day4=day_ids[3],
+                day5=day_ids[4],
+                day6=day_ids[5],
+                day7=day_ids[6]
+            )
+
+            cursor.execute("""
+                INSERT INTO diet_plans_complete (
+                    name, user_id, duration, diet_type_id,
+                    day1, day2, day3, day4, day5, day6, day7
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, plan.to_tuple())
+
+            plan_id = cursor.lastrowid
+            conn.commit()
+
+            return jsonify({"message": "Plan de dieta creado exitosamente", "plan_id": plan_id}), 201
+
+    except sqlite3.Error as e:
+        return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8000)
 
