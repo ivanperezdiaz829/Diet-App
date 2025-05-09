@@ -23,6 +23,8 @@ fun NewFoodSummaryScreen(
     foodViewModel: FoodViewModel
 ) {
     var selectedName by remember { mutableStateOf("") } // Usamos un Set para almacenar múltiples selecciones
+    var showDialog by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -67,10 +69,44 @@ fun NewFoodSummaryScreen(
             NextButton(
                 enabled = selectedName.isNotEmpty(), // Habilitar si hay al menos una selección
                 onClick = {
-                    foodViewModel.updateFood(name = selectedName)
-                    onNext(foodViewModel)
+                    showDialog = true
                 }
             )
+
+            // Diálogo de confirmación
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        // Si el usuario cierra el diálogo sin responder
+                        showDialog = false
+                    },
+                    title = { Text("Confirmar añadir esta comida") },
+                    text = { Text("¿Realmente quieres añadir esta comida?") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                showDialog = false
+                                // Ejecutar la acción original
+                                foodViewModel.updateFood(name = selectedName)
+                                onNext(foodViewModel)
+                            }
+                        ) {
+                            Text("Sí")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                showDialog = false
+                                // No hacer nada, se cancela la acción
+                            }
+                        ) {
+                            Text("No")
+                        }
+                    }
+                )
+            }
+
         }
     }
 }

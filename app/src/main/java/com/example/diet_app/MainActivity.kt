@@ -610,7 +610,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         }
 
-
         composable(route = Screen.FoodList.route,
         ) {
             FoodListViewScreen(navController, GlobalData.foodList)
