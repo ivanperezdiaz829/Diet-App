@@ -72,96 +72,10 @@ class MainActivity : ComponentActivity() {
         // Forzar íconos oscuros en la barra de estado
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
-        /*
-        val dietJson =
-            """
-{
-  "dieta": [
-    [
-      {
-        "name": "Manzana",
-        "calories": 280,
-        "carbohydrates": 35,
-        "protein": 15,
-        "fat": 8,
-        "sugar": 12,
-        "salt": 0,
-        "price": 0.5
-      },
-      {
-        "name": "Yogur",
-        "calories": 5,
-        "carbohydrates": 1,
-        "protein": 0.5,
-        "fat": 0,
-        "sugar": 0,
-        "salt": 0,
-        "price": 0.8
-      }
-    ],
-    [
-      {
-        "name": "Pasta",
-        "calories": 350,
-        "carbohydrates": 5,
-        "protein": 25,
-        "fat": 18,
-        "sugar": 2,
-        "salt": 1.2,
-        "price": 1.2
-      },
-      {
-        "name": "Ensalada",
-        "calories": 220,
-        "carbohydrates": 35,
-        "protein": 8,
-        "fat": 6,
-        "sugar": 3,
-        "salt": 0.4,
-        "price": 1.0
-      },
-      {
-        "name": "Agua",
-        "calories": 90,
-        "carbohydrates": 24,
-        "protein": 0.3,
-        "fat": 0.1,
-        "sugar": 22,
-        "salt": 0.1,
-        "price": 0
-      }
-    ],
-    [
-      {
-        "name": "Sopa",
-        "calories": 320,
-        "carbohydrates": 20,
-        "protein": 28,
-        "fat": 12,
-        "sugar": 8,
-        "salt": 1.5,
-        "price": 1.0
-      },
-      {
-        "name": "Pan integral",
-        "calories": 2,
-        "carbohydrates": 0.5,
-        "protein": 0,
-        "fat": 0,
-        "sugar": 0,
-        "salt": 0,
-        "price": 0.6
-      }
-    ]
-  ]
-}
-""".trimIndent()
-        */
-
         setContent {
             var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
-            userViewModel.updateUser(id = 11)
+            userViewModel.updateUser(id = 17)
             var dietViewModel = DietViewModel()
 
             DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
@@ -178,7 +92,7 @@ fun DietPlanScreen() {
 
     // Llamar solo una vez al obtener la composición
     LaunchedEffect(Unit) {
-        getUserDietPlansCompletePro(11, context) { jsonResponse ->
+        getUserDietPlansCompletePro(16, context) { jsonResponse ->
             responseText = jsonResponse // Actualizamos el estado
         }
     }
@@ -869,6 +783,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
         ) {
             GenerateMealPlanWithInputsScreen(
                 context = applicationContext,
+                userId = userViewModel.getUser().id,
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     /*
@@ -877,8 +792,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     Log.d("FoodList", foodList.toString())
                     navController.navigate(Screen.Home.route)
                     */
-                    sendDataToServer(it, applicationContext, onResult = {})
-                    navController.navigate(Screen.Home.route)
+                    create_diet_with_inputs(it, applicationContext, onResult = {})
+                    navController.navigate(Screen.Meals.route)
 
                 }
             )
@@ -981,6 +896,7 @@ fun WelcomeScreen(navController: NavController, userViewModel: UserViewModel) {
     }
 }
 
+/*
 @Composable
 fun DietForm(userViewModel: UserViewModel, context: Context) {
     var maxCarbohydrates by remember { mutableStateOf("") }
@@ -1034,6 +950,7 @@ fun DietForm(userViewModel: UserViewModel, context: Context) {
         Text("Resultado: $result", style = MaterialTheme.typography.bodyLarge)
     }
 }
+*/
 
 @Composable
 fun BasalMetabolismScreen(userViewModel: UserViewModel) {

@@ -505,16 +505,17 @@ fun parseFoodsFromJson(jsonObject: JSONObject): List<FoodViewModel> {
     return foodList
 }
 
-fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) -> Unit) {
+fun create_diet_with_inputs(values: List<Any>, context: Context, onResult: (String) -> Unit) {
     val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .build()
-    val url = "http://10.0.2.2:8000/calculate"
+    val url = "http://10.0.2.2:8000/calculate_diet_with_inputs"
 
+    // Serializar 'values' correctamente como JSON string
     val json = JSONObject()
-    json.put("values", values)
+    json.put("values", JSONArray(values).toString())  // <- Esta línea es crucial
 
     Log.d("DietForm", "Enviando valores al servidor: $values")
 
@@ -534,6 +535,7 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
             response.body?.string()?.let { responseBody ->
                 Log.d("DietForm", "Respuesta del servidor: $responseBody")
                 try {
+                    // Usa JSONArray solo si el servidor responde con una lista
                     val jsonArray = JSONArray(responseBody)
                     (context as? Activity)?.runOnUiThread {
                         val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
@@ -541,21 +543,17 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
                         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                         val calendar = Calendar.getInstance()
 
-                        val stringBuilder = StringBuilder()
-
                         for (i in 0 until jsonArray.length()) {
                             val dayData = jsonArray.getJSONObject(i)
                             val breakfastDish = dayData.getString("breakfast_dish")
                             val breakfastDrink = dayData.getString("breakfast_drink")
-
                             val lunchMain = dayData.getString("lunch_main_dish")
                             val lunchSide = dayData.getString("lunch_side_dish")
                             val lunchDrink = dayData.getString("lunch_drink")
-
                             val dinnerDish = dayData.getString("dinner_dish")
                             val dinnerDrink = dayData.getString("dinner_drink")
 
-                            val dateString = sdf.format(calendar.time) // fecha actual
+                            val dateString = sdf.format(calendar.time)
 
                             // Guardar en SharedPreferences
                             val dietData = JSONObject().apply {
@@ -572,7 +570,7 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
                         }
 
                         editor.apply()
-                        onResult(stringBuilder.toString().trim())
+                        onResult("✅ Dieta guardada exitosamente")
                     }
                 } catch (e: Exception) {
                     Log.e("DietForm", "Error al procesar JSON: ${e.message}")
@@ -584,6 +582,7 @@ fun sendDataToServer(values: List<Double>, context: Context, onResult: (String) 
         }
     })
 }
+
 
 fun calculateBasalRate(
     weight: Double,
