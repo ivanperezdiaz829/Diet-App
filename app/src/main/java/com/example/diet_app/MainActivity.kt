@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Button
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -223,7 +224,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     var dietViewModels by remember { mutableStateOf<MutableList<DietViewModel>>(mutableListOf()) }
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Meals.route) {
+    NavHost(navController = navController, startDestination = Screen.Welcome.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -241,28 +242,56 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             popExitTransition = {
                 slideOutHorizontally(targetOffsetX = { it })
             }
-        ) {GoalSelectionScreen(
-            onSkip = { navController.navigate("welcome") },
-            onNavigateBack = { navController.popBackStack() },
-            onNext = {
-                Log.d("CurrentUser", userViewModel.getUser().toString())
-                userViewModel.updateUser(goal = it)
-                GlobalData.login(userViewModel)
-                createUser(
-                    email = userViewModel.getUser().email,
-                    password = userViewModel.getUser().password,
-                    physicalActivity = 4,
-                    sex = getSexInt(userViewModel.getUser().sex),
-                    birthday = userViewModel.getUser().age,
-                    height = userViewModel.getUser().height,
-                    weight = userViewModel.getUser().currentWeight.toInt(),
-                    context = applicationContext,
-                    goal = getGoalInt(userViewModel.getUser().goal),
-                    onResult = {},
-                )
-                navController.navigate(Screen.Home.route)
-            },
-        )}
+        ) {
+            GoalSelectionScreen(
+                onSkip = { navController.navigate("welcome") },
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    Log.d("CurrentUser", userViewModel.getUser().toString())
+                    userViewModel.updateUser(goal = it)
+                    GlobalData.login(userViewModel)
+                    createUser(
+                        email = userViewModel.getUser().email,
+                        password = userViewModel.getUser().password,
+                        physicalActivity = 4,
+                        sex = getSexInt(userViewModel.getUser().sex),
+                        birthday = userViewModel.getUser().age,
+                        height = userViewModel.getUser().height,
+                        weight = userViewModel.getUser().currentWeight.toInt(),
+                        context = applicationContext,
+                        goal = getGoalInt(userViewModel.getUser().goal),
+                        onResult = {
+                            authenticateUser(
+                                email = userViewModel.getUser().email,
+                                password = userViewModel.getUser().password,
+                                context = applicationContext,
+                                userViewModel = userViewModel
+                            ) { result ->
+                                when {
+                                    result.isSuccess -> {
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Usuario autenticado\n" +
+                                                    "Bienvenido ${userViewModel.getUser().email}!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                    result.isFailure -> {
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Fallo de autenticación",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            }
+                        },
+                    )
+
+                    navController.navigate(Screen.Home.route)
+                },
+            )
+        }
 
         composable(route = Screen.Sex.route,
             enterTransition = {
@@ -495,7 +524,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 }
             )
         }
-
 
         composable(route = Screen.FoodList.route,
         ) {

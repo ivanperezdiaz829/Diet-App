@@ -6,7 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -24,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,7 +42,8 @@ import com.example.diet_app.viewModel.UserViewModel
 
 enum class DietGeneratorType {
     USER_DATA,    // Generador basado en datos del usuario
-    MANUAL_INPUT  // Generador basado en datos introducidos manualmente
+    MANUAL_INPUT, // Generador basado en datos introducidos manualmente
+    SPECIFIED_DIET // Generador basado en comidas escogidas manunalmente
 }
 
 @Composable
@@ -97,21 +98,23 @@ fun DietGeneratorSelectionScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GeneratorTypeOptions(
     selectedGenerator: DietGeneratorType?,
     onGeneratorSelected: (DietGeneratorType) -> Unit
 ) {
-    Row(
+    FlowRow(
         modifier = Modifier
             .padding(24.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+        maxItemsInEachRow = 2 // Puedes ajustar este valor según necesites
     ) {
         GeneratorTypeOption(
             type = DietGeneratorType.USER_DATA,
             text = "Basada en mis datos",
-            imageId = R.drawable.profile, // Cambia por tu icono
+            imageId = R.drawable.profile,
             isSelected = selectedGenerator == DietGeneratorType.USER_DATA,
             onClick = { onGeneratorSelected(DietGeneratorType.USER_DATA) }
         )
@@ -119,9 +122,17 @@ private fun GeneratorTypeOptions(
         GeneratorTypeOption(
             type = DietGeneratorType.MANUAL_INPUT,
             text = "Especificada manualmente",
-            imageId = R.drawable.manual, // Cambia por tu icono
+            imageId = R.drawable.manual,
             isSelected = selectedGenerator == DietGeneratorType.MANUAL_INPUT,
             onClick = { onGeneratorSelected(DietGeneratorType.MANUAL_INPUT) }
+        )
+
+        GeneratorTypeOption(
+            type = DietGeneratorType.SPECIFIED_DIET,
+            text = "Dieta escogida a medida",
+            imageId = R.drawable.modify,
+            isSelected = selectedGenerator == DietGeneratorType.SPECIFIED_DIET,
+            onClick = { onGeneratorSelected(DietGeneratorType.SPECIFIED_DIET) }
         )
     }
 }

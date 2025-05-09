@@ -161,7 +161,6 @@ data class Plate(
     val halal: Int // Usualmente 0 o 1, indica si es halal
 )
 
-
 // Representa un plan de dieta completo, según la tabla `diet_plans_complete`
 data class DietPlanComplete(
     val id: Int,
@@ -1188,6 +1187,7 @@ fun deleteUserByEmail(
         }
     })
 }
+
 fun updateUserPhysicalData(
     id: Int,
     updatedFields: Map<String, Any>,
@@ -1366,7 +1366,6 @@ fun getDietJsonArrayFromPreferences(context: Context): JSONArray {
     return jsonArray
 }
 
-
 fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -> Unit) {
     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -1426,7 +1425,6 @@ fun getPlateById(context: Context, date: Date, onResult: (List<FoodViewModel>) -
         })
     }
 }
-
 
 fun createDiet(context: Context, name: String, userId: Int, dietTypeId: Int, onResult: (String) -> Unit) {
     val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
