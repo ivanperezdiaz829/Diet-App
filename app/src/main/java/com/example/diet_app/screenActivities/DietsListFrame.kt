@@ -80,12 +80,12 @@ fun DietPlansScreen(
                         Tab(
                             selected = selectedTab == 0,
                             onClick = { selectedTab = 0 },
-                            text = { Text("Plan actual",
+                            text = { Text("Generar dieta",
                                 color = if (selectedTab == 1) GrayGreen else Color.Gray) },
                             icon = {
                                 Icon(
                                     Icons.Filled.Star,
-                                    contentDescription = "Plan actual",
+                                    contentDescription = "Generar dieta",
                                     tint = if (selectedTab == 1) GrayGreen else Color.Gray
                                 )
                             }
@@ -128,7 +128,7 @@ fun CurrentDietContent(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "No tienes ninguna dieta reciente",
+            text = "Genera tus nueva dieta",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 24.dp))
