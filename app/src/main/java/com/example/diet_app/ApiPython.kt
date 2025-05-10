@@ -583,6 +583,84 @@ fun create_diet_with_inputs(values: List<Any>, context: Context, onResult: (Stri
 }
 
 
+fun create_diet_with_user_data(requirements: List<Any>, context: Context, onResult: (String) -> Unit) {
+    val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .build()
+    val url = "http://10.0.2.2:8000/calculate_diet_with_user_data"
+
+    // Serializar 'values' correctamente como JSON string
+    val json = JSONObject()
+    json.put("requirements", JSONArray(requirements).toString())  // <- Esta línea es crucial
+
+    Log.d("DietForm", "Enviando requerimientos al servidor: $requirements")
+
+    val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            onResult("❌ Error: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                Log.d("DietForm", "Respuesta del servidor: $responseBody")
+                try {
+                    // Usa JSONArray solo si el servidor responde con una lista
+                    val jsonArray = JSONArray(responseBody)
+                    (context as? Activity)?.runOnUiThread {
+                        val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
+                        val editor = prefs.edit()
+                        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        val calendar = Calendar.getInstance()
+
+                        for (i in 0 until jsonArray.length()) {
+                            val dayData = jsonArray.getJSONObject(i)
+                            val breakfastDish = dayData.getString("breakfast_dish")
+                            val breakfastDrink = dayData.getString("breakfast_drink")
+                            val lunchMain = dayData.getString("lunch_main_dish")
+                            val lunchSide = dayData.getString("lunch_side_dish")
+                            val lunchDrink = dayData.getString("lunch_drink")
+                            val dinnerDish = dayData.getString("dinner_dish")
+                            val dinnerDrink = dayData.getString("dinner_drink")
+
+                            val dateString = sdf.format(calendar.time)
+
+                            // Guardar en SharedPreferences
+                            val dietData = JSONObject().apply {
+                                put("breakfast_dish", breakfastDish)
+                                put("breakfast_drink", breakfastDrink)
+                                put("lunch_main_dish", lunchMain)
+                                put("lunch_side_dish", lunchSide)
+                                put("lunch_drink", lunchDrink)
+                                put("dinner_dish", dinnerDish)
+                                put("dinner_drink", dinnerDrink)
+                            }
+                            editor.putString("${dateString}_diet", dietData.toString())
+                            calendar.add(Calendar.DAY_OF_YEAR, 1)
+                        }
+
+                        editor.apply()
+                        onResult("✅ Dieta guardada exitosamente")
+                    }
+                } catch (e: Exception) {
+                    Log.e("DietForm", "Error al procesar JSON: ${e.message}")
+                    (context as? Activity)?.runOnUiThread {
+                        onResult("⚠️ Error al procesar la respuesta del servidor")
+                    }
+                }
+            }
+        }
+    })
+}
+
 fun calculateBasalRate(
     weight: Double,
     height: Double,

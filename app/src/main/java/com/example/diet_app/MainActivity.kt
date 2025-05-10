@@ -79,8 +79,12 @@ class MainActivity : ComponentActivity() {
             userViewModel.updateUser(id = 17)
             var dietViewModel = DietViewModel()
 
-            DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
+            //DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
+            var userData: List<Any>
+            userData = listOf(userViewModel.getUser().id, 5, 3, "nombre chulo")
 
+            create_diet_with_user_data(userData, LocalContext.current, {})
+            Log.d("apidieta", "se ha intentado crear una dieta con la data del usuario")
         }
     }
 }
@@ -632,7 +636,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     if (it) {
-
                         navController.navigate(Screen.TypeOfDietSelection.route)
                     } else {
                         navController.navigate(Screen.Sex.route)
@@ -682,10 +685,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             DietDurationScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
-                    // llamada a la API para generar la dieta
-                    var dietViewModel = GlobalData.mainDiet
-                    navController.navigate(Screen.DietInterface.createRoute(3.toString()))
-                    //navController.navigateAndClearStack(Screen.Home.route)
+                    // aquí hay que llamar al método
                 },
             )
         }
