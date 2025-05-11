@@ -1,4 +1,4 @@
-Aplicación Dietas personalizadas (Grupo de trabajo 16):
+APLICACIÓN PARA CREACIÓN DE DIETAS PERSONALIZADAS (Grupo de trabajo 16):
 
      - Iván Pérez Díaz
      - Daniel Morales Sosa
@@ -11,15 +11,12 @@ Aplicación Dietas personalizadas (Grupo de trabajo 16):
 PROYECTO DE APLICACIÓN PARA UNA DIETA PERSONALIZADA:
 
      - La rama main estará compuesta únicamente con documentación.
-
      - La rama develop será la usada de manera habitual para desarrollar.
-
      - La rama master será donde se guardarán los códigos con funcionalidades terminadas.
-
      - La rama ui_branch será usada para las pruebas en la creación de la interfaz gráfica del proyecto.
 
 
-Enlaces:
+ENLACES DEL PROYECTO:
 
      - GitHub: https://github.com/ivanperezdiaz829/Diet-App
      - Trello: https://trello.com/b/f1nXu4qf/ps
