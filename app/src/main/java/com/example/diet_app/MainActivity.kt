@@ -89,7 +89,6 @@ class MainActivity : ComponentActivity() {
              */
 
             DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
-
         }
     }
 }
@@ -623,6 +622,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 },
                 foodViewModel = newFood
             )
+
             if (addNewFood) {
                 LaunchedEffect(Unit) {
                     createPlateFromViewModel(newFood, userViewModel.getUser().id.toString(), applicationContext, onResult = {})
