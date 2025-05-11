@@ -414,13 +414,37 @@ def test_plate_obtention():
 
     return test_plate_id
 
+
 def main():
     """Función principal"""
     print("INICIANDO PRUEBAS DE LA API".center(50, "="))
 
-    response = requests.get(f"{BASE_URL}/get_all_diets_of_user_complete_information/{11}", )
-    print_response(response)
+    url = "http://localhost:8000/create_plate"  # Añade la ruta específica
+    data = {
+        "name": "Ensalada César de César",
+        "user_id": 1,
+        "calories": 350,
+        "carbohydrates": 20,
+        "proteins": 15,
+        "fats": 10,
+        "sugar": 5,
+        "sodium": 200,
+        "price": 8,
+        "type": 1,
+        "vegan": 0,
+        "vegetarian": 1,
+        "celiac": 1,
+        "halal": 0
+    }
 
+    response = requests.post(url, json=data)
+
+    # Imprimir la respuesta
+    print("Status Code:", response.status_code)
+    try:
+        print("Response Body:", response.json())
+    except ValueError:
+        print("Response Body: No JSON content", response.text)
 
     print("\n" + "PRUEBAS COMPLETADAS".center(50, "="))
 
