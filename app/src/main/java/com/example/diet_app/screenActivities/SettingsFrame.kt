@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.diet_app.R
 import com.example.diet_app.model.Screen
+import com.example.diet_app.model.Sex
 import com.example.diet_app.screenActivities.components.SettingsOption
 import com.example.diet_app.screenActivities.components.ToolBox
 import com.example.diet_app.viewModel.UserViewModel
@@ -62,7 +63,13 @@ fun SettingsScreen(
 
         // Imagen de perfil
         Image(
-            painter = painterResource(id = R.drawable.male), // Imagen de perfil localizada en res/drawable
+            painter = painterResource(
+                id = if (userViewModel.getUser().sex == Sex.Hombre) {
+                    R.drawable.male
+                } else {
+                    R.drawable.female
+                }
+            ),
             contentDescription = "User Avatar",
             modifier = Modifier
                 .size(100.dp)

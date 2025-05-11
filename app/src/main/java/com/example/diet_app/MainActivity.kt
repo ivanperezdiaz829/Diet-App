@@ -76,8 +76,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
-            userViewModel.updateUser(id = 17)
             var dietViewModel = DietViewModel()
+            /*
+            userViewModel.updateUser(id = 17)
 
             //DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
             var userData: List<Any>
@@ -85,6 +86,10 @@ class MainActivity : ComponentActivity() {
 
             create_diet_with_user_data(userData, LocalContext.current, {})
             Log.d("apidieta", "se ha intentado crear una dieta con la data del usuario")
+             */
+
+            DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
+
         }
     }
 }
@@ -606,16 +611,22 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
+            var addNewFood by remember { mutableStateOf(false) }
             NewFoodSummaryScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     newFood.updateFood(name = it.getFood().name)
                     printFoodInfo(newFood)
                     navController.navigate(Screen.FoodDetail.route)
+                    addNewFood = true
                     //llamar a la API para guardar comida
                 },
                 foodViewModel = newFood
             )
+
+            LaunchedEffect(addNewFood) {
+                createPlateFromViewModel(newFood, userViewModel.getUser().id.toString(), applicationContext, onResult = {})
+            }
         }
 
         composable(route = Screen.GenerateMealPlanWithData.route,

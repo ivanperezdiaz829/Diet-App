@@ -13,6 +13,7 @@ import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
+import com.example.diet_app.viewModel.toPlate
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -266,7 +267,7 @@ fun getUserPlatesPro(userId: Int, context: Context, onResult: (String) -> Unit) 
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            Log.e("BOBO", "Error en la solicitud: ${e.message}")
+            Log.e("API", "Error en la solicitud: ${e.message}")
             (context as? Activity)?.runOnUiThread {
                 onResult("Error: ${e.message}")
             }
@@ -1724,6 +1725,76 @@ fun deleteDiet(planId: Int, context: Context, onResult: (String) -> Unit) {
     })
 }
 
+fun createPlate(plate: Plate, context: Context, onResult: (String) -> Unit): String {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/create_plate"
 
+    val json = JSONObject().apply {
+        put("name", plate.name)
+        put("user_id", plate.user_id)
+        put("calories", plate.calories)
+        put("carbohydrates", plate.carbohydrates)
+        put("proteins", plate.proteins)
+        put("fats", plate.fats)
+        put("sugar", plate.sugar)
+        put("sodium", plate.sodium)
+        put("price", plate.price)
+        put("type", plate.type)
+        put("vegan", plate.vegan)
+        put("vegetarian", plate.vegetarian)
+        put("celiac", plate.celiac)
+        put("halal", plate.halal)
+    }
 
+    Log.d("SendPlate", "Sending data: $json")
 
+    val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("SendPlate", "Connection failed: ${e.message}")
+            onResult("Error connecting to the server: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.string()?.let { responseBody ->
+                Log.d("SendPlate", "Server response: $responseBody")
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+                    if (response.isSuccessful) {
+                        val message = jsonResponse.optString("message", "✅ Plate created successfully")
+                        return onResult(message)
+                    } else {
+                        val error = jsonResponse.optString("error", "❗ Unknown error")
+                        onResult("Error: $error")
+                    }
+                } catch (e: Exception) {
+                    Log.e("SendPlate", "JSON processing error: ${e.message}")
+                    onResult("Error processing server response")
+                }
+            }
+        }
+    })
+    return ""
+}
+
+fun createPlateFromViewModel(
+    foodViewModel: FoodViewModel,
+    userId: String,
+    context: Context,
+    onResult: (String) -> Unit
+) {
+    // Obtiene el FoodModel del ViewModel
+    val foodModel = foodViewModel.getFood()
+
+    // Convierte a Plate
+    val plate = foodModel.toPlate(userId)
+
+    // Llama a la función original
+    createPlate(plate, context, onResult)
+}
