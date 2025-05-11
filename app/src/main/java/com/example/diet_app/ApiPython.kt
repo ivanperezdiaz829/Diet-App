@@ -13,6 +13,7 @@ import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
+import com.example.diet_app.viewModel.toPlate
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -1780,4 +1781,20 @@ fun createPlate(plate: Plate, context: Context, onResult: (String) -> Unit): Str
         }
     })
     return ""
+}
+
+fun createPlateFromViewModel(
+    foodViewModel: FoodViewModel,
+    userId: String,
+    context: Context,
+    onResult: (String) -> Unit
+) {
+    // Obtiene el FoodModel del ViewModel
+    val foodModel = foodViewModel.getFood()
+
+    // Convierte a Plate
+    val plate = foodModel.toPlate(userId)
+
+    // Llama a la función original
+    createPlate(plate, context, onResult)
 }

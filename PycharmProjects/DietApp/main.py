@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, send_file
-from pkg_resources import require
 
 from Graphs import *
 from ObtainTotals import *
@@ -10,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import re
 
-from PycharmProjects.DietApp.GenerarDieta2 import calculate_nutritional_requirements
+from GenerarDieta2 import calculate_nutritional_requirements
 from model.User import User, validate_email
 from configuration.config import DB_PATH, PHYSICAL_ACTIVITY_LEVELS, SEX_VALUES
 from model.DietPlanDay import DietPlanDay

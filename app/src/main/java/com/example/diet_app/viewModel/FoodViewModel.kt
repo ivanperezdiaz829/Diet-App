@@ -1,5 +1,6 @@
 package com.example.diet_app.viewModel
 import androidx.lifecycle.ViewModel
+import com.example.diet_app.Plate
 import com.example.diet_app.model.FoodModel
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.FoodVariant
@@ -120,4 +121,41 @@ class FoodViewModel : ViewModel() {
         }
     }
 
+}
+
+fun FoodModel.toPlate(userId: String): Plate {
+    // Convierte las variantes de comida a los flags numéricos (0 o 1)
+    val isVegan = if (foodVariants.contains(FoodVariant.VEGAN)) 1 else 0
+    val isVegetarian = if (foodVariants.contains(FoodVariant.VEGETARIAN)) 1 else 0
+    val isCeliac = if (foodVariants.contains(FoodVariant.CELIAC)) 1 else 0
+    val isHalal = if (foodVariants.contains(FoodVariant.HALAL)) 1 else 0
+
+    // Obtiene el tipo de comida (asumiendo que solo hay un tipo)
+    val foodTypeId = foodTypes.firstOrNull()?.let { type ->
+        when (type) {
+            FoodType.PLATO_LIGERO -> 1
+            FoodType.PLATO_PRINCIPAL -> 2
+            FoodType.PLATO_SECUNDARIO -> 3
+            FoodType.BEBIDA -> 4
+            FoodType.POSTRE -> 5
+        }
+    } ?: 1 // Valor por defecto si no hay tipo
+
+    return Plate(
+        id = foodId,
+        name = name,
+        user_id = userId,
+        calories = calories.toInt(),
+        carbohydrates = carbohydrates.toInt(),
+        proteins = protein.toInt(),
+        fats = fats.toInt(),
+        sugar = sugar.toInt(),
+        sodium = salt.toInt(),
+        price = price,
+        type = foodTypeId,
+        vegan = isVegan,
+        vegetarian = isVegetarian,
+        celiac = isCeliac,
+        halal = isHalal
+    )
 }
