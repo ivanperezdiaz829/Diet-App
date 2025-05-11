@@ -623,9 +623,10 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 },
                 foodViewModel = newFood
             )
-
-            LaunchedEffect(addNewFood) {
-                createPlateFromViewModel(newFood, userViewModel.getUser().id.toString(), applicationContext, onResult = {})
+            if (addNewFood) {
+                LaunchedEffect(Unit) {
+                    createPlateFromViewModel(newFood, userViewModel.getUser().id.toString(), applicationContext, onResult = {})
+                }
             }
         }
 
