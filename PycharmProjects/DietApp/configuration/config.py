@@ -3,7 +3,7 @@ import os
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
 
-DB_PATH = os.path.join(PROJECT_ROOT, 'database', 'DietApp_Sprint1.db')
+DB_PATH = os.path.join(PROJECT_ROOT, 'database', 'DietApp_Sprint2.db')
 SCHEME_PATH = os.path.join(PROJECT_ROOT, 'database', 'DbScheme.sql')
 DATASET_PATH = os.path.join(PROJECT_ROOT, 'database', 'plates.csv')
 
