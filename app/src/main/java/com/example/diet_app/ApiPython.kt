@@ -1392,10 +1392,21 @@ fun updateUserPassword(
     })
 }
 
-fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Map<String, Float>) -> Unit) {
+fun fetchNutritionalData(
+    context: Context,
+    dietJsonArray: JSONArray,
+    onDataReceived: (Map<String, Float>) -> Unit
+) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/barplot"
-    val requestBody = dietJson.toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val wrappedJson = JSONObject().apply {
+        put("dieta", dietJsonArray)
+    }
+
+    val requestBody = wrappedJson
+        .toString()
+        .toRequestBody("application/json; charset=utf-8".toMediaType())
 
     val request = Request.Builder()
         .url(url)
@@ -1412,7 +1423,7 @@ fun fetchNutritionalData(context: Context, dietJson: String, onDataReceived: (Ma
                 response.body?.string()?.let { body ->
                     val json = JSONObject(body)
                     val data = mapOf(
-                        "Calorías" to json.getDouble("calorias").toFloat(), // Cambiado a "Calorías"
+                        "Calorías" to json.getDouble("calorias").toFloat(),
                         "Carbohidratos" to json.getDouble("carbohidratos").toFloat(),
                         "Proteinas" to json.getDouble("proteinas").toFloat(),
                         "Grasas" to json.getDouble("grasas").toFloat(),

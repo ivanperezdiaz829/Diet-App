@@ -42,34 +42,40 @@ import androidx.navigation.NavController
 import com.example.diet_app.fetchNutritionalData
 import com.example.diet_app.model.GlobalData
 import com.example.diet_app.screenActivities.components.ToolBox
+import com.example.diet_app.viewModel.DietViewModel
 
 @Composable
 fun GraphicFrame(
     navController: NavController,
-    dietId: String
+    dietViewModel: DietViewModel,
 ) {
-    val context = LocalContext.current
-    val scrollState = rememberScrollState()
-    val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
-
-    LaunchedEffect(GlobalData.dietJson) {
-        fetchNutritionalData(context, GlobalData.dietJson) { data ->
-            nutritionData.value = data
-        }
-    }
-
-    /*
-    val context = LocalContext.current
     val scrollState = rememberScrollState()
     val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
 
     LaunchedEffect(Unit) {
-        val dietArray = getDietJsonArrayFromPreferences(context)
-        fetchNutritionalData(context, dietArray) { data ->
-            nutritionData.value = data
+        val totalValues = mutableMapOf(
+            "Calorías" to 0f,
+            "Carbohidratos" to 0f,
+            "Proteínas" to 0f,
+            "Grasas" to 0f,
+            "Azúcares" to 0f,
+            "Sales" to 0f
+        )
+
+        dietViewModel.getDiet().diets.forEach { dietDay ->
+            dietDay.getDiet().foods.forEach { foodViewModel ->
+                val food = foodViewModel.getFood()
+                totalValues["Calorías"] = totalValues["Calorías"]!! + food.calories.toFloat()
+                totalValues["Carbohidratos"] = totalValues["Carbohidratos"]!! + food.carbohydrates.toFloat()
+                totalValues["Proteínas"] = totalValues["Proteínas"]!! + food.protein.toFloat()
+                totalValues["Grasas"] = totalValues["Grasas"]!! + food.fats.toFloat()
+                totalValues["Azúcares"] = totalValues["Azúcares"]!! + food.sugar.toFloat()
+                totalValues["Sales"] = totalValues["Sales"]!! + food.salt.toFloat()
+            }
         }
+
+        nutritionData.value = totalValues
     }
-    */
 
     Column(
         modifier = Modifier
@@ -79,13 +85,6 @@ fun GraphicFrame(
             .statusBarsPadding()
     ) {
         BackButton(onNavigateBack = { navController.popBackStack() })
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -112,6 +111,7 @@ fun GraphicFrame(
         } ?: Text("Cargando datos...", modifier = Modifier.padding(16.dp))
     }
 }
+
 
 @Composable
 fun NutritionBarChart(data: Map<String, Float>) {

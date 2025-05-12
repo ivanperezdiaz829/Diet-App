@@ -778,11 +778,18 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         ) { entry ->
             val dietId = entry.arguments?.getString("dietId") ?: ""
-            GraphicFrame(
-                navController = navController,
-                dietId = dietId
-            )
+            val diet = getDietViewModelId(dietViewModels, dietId)
+            if (diet != null) {
+                GraphicFrame(
+                    navController = navController,
+                    dietViewModel = diet
+                )
+            } else {
+                Text("No se encontró la dieta con ID $dietId")
+            }
+
         }
+
 
         composable(route = Screen.Home.route
         ) {
