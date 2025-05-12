@@ -42,34 +42,51 @@ import androidx.navigation.NavController
 import com.example.diet_app.fetchNutritionalData
 import com.example.diet_app.model.GlobalData
 import com.example.diet_app.screenActivities.components.ToolBox
+import com.example.diet_app.viewModel.DietViewModel
 
 @Composable
 fun GraphicFrame(
     navController: NavController,
-    dietId: String
+    dietViewModel: DietViewModel,
 ) {
-    val context = LocalContext.current
     val scrollState = rememberScrollState()
     val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
-
-    LaunchedEffect(GlobalData.dietJson) {
-        fetchNutritionalData(context, GlobalData.dietJson) { data ->
-            nutritionData.value = data
-        }
-    }
-
-    /*
-    val context = LocalContext.current
-    val scrollState = rememberScrollState()
-    val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
+    val rawValues = remember { mutableStateOf<Map<String, Float>?>(null) }
 
     LaunchedEffect(Unit) {
-        val dietArray = getDietJsonArrayFromPreferences(context)
-        fetchNutritionalData(context, dietArray) { data ->
-            nutritionData.value = data
+        val totalValues = mutableMapOf(
+            "Calorías" to 0f,
+            "Carbohidratos" to 0f,
+            "Proteínas" to 0f,
+            "Grasas" to 0f,
+            "Azúcares" to 0f,
+            "Sales" to 0f
+        )
+
+        dietViewModel.getDiet().diets.forEach { dietDay ->
+            dietDay.getDiet().foods.forEach { foodViewModel ->
+                val food = foodViewModel.getFood()
+                totalValues["Calorías"] = totalValues["Calorías"]!! + food.calories.toFloat()
+                totalValues["Carbohidratos"] = totalValues["Carbohidratos"]!! + food.carbohydrates.toFloat()
+                totalValues["Proteínas"] = totalValues["Proteínas"]!! + food.protein.toFloat()
+                totalValues["Grasas"] = totalValues["Grasas"]!! + food.fats.toFloat()
+                totalValues["Azúcares"] = totalValues["Azúcares"]!! + food.sugar.toFloat()
+                totalValues["Sales"] = totalValues["Sales"]!! + food.salt.toFloat()
+            }
         }
+
+        rawValues.value = totalValues
+
+        val normalizedValues = totalValues.mapValues { (key, value) ->
+            when (key) {
+                "Calorías" -> value / 20f
+                "Sales" -> value / 1000f
+                else -> value
+            }
+        }
+
+        nutritionData.value = normalizedValues
     }
-    */
 
     Column(
         modifier = Modifier
@@ -80,13 +97,6 @@ fun GraphicFrame(
     ) {
         BackButton(onNavigateBack = { navController.popBackStack() })
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-        }
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
@@ -95,15 +105,20 @@ fun GraphicFrame(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        nutritionData.value?.let { data ->
-            NutritionBarChart(data = data)
+        nutritionData.value?.let { normalized ->
+            NutritionBarChart(data = normalized)
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            data.forEach { (title, value) ->
+            rawValues.value?.forEach { (title, value) ->
+                val unit = when (title) {
+                    "Calorías" -> "kcal"
+                    "Sales" -> "mg"
+                    else -> "g"
+                }
                 NutritionInfoComponent(
                     title = title,
-                    content = "Valor: $value",
+                    content = "Valor: %.2f $unit".format(value),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
@@ -112,6 +127,8 @@ fun GraphicFrame(
         } ?: Text("Cargando datos...", modifier = Modifier.padding(16.dp))
     }
 }
+
+
 
 @Composable
 fun NutritionBarChart(data: Map<String, Float>) {

@@ -62,6 +62,7 @@ import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
+import com.example.diet_app.viewModel.parseUserPlatesResponse
 
 class MainActivity : ComponentActivity() {
 
@@ -88,8 +89,9 @@ class MainActivity : ComponentActivity() {
             Log.d("apidieta", "se ha intentado crear una dieta con la data del usuario")
              */
 
-            DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
+            //getUserPlatesPro(11, LocalContext.current, {})
 
+            DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
         }
     }
 }
@@ -536,7 +538,14 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.FoodList.route,
         ) {
-            FoodListViewScreen(navController, GlobalData.foodList)
+            var foodList by remember { mutableStateOf<List<FoodViewModel>>(emptyList()) }
+
+            LaunchedEffect(Unit){
+                getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
+                    foodList = parseUserPlatesResponse(it)
+                })
+            }
+            FoodListViewScreen(navController, foodList)
         }
 
         composable(route = Screen.AddFood.route,
@@ -624,8 +633,10 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 foodViewModel = newFood
             )
 
-            LaunchedEffect(addNewFood) {
-                createPlateFromViewModel(newFood, userViewModel.getUser().id.toString(), applicationContext, onResult = {})
+            if (addNewFood) {
+                LaunchedEffect(Unit) {
+                    createPlateFromViewModel(newFood, userViewModel.getUser().id.toString(), applicationContext, onResult = {})
+                }
             }
         }
 
@@ -767,11 +778,18 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         ) { entry ->
             val dietId = entry.arguments?.getString("dietId") ?: ""
-            GraphicFrame(
-                navController = navController,
-                dietId = dietId
-            )
+            val diet = getDietViewModelId(dietViewModels, dietId)
+            if (diet != null) {
+                GraphicFrame(
+                    navController = navController,
+                    dietViewModel = diet
+                )
+            } else {
+                Text("No se encontró la dieta con ID $dietId")
+            }
+
         }
+
 
         composable(route = Screen.Home.route
         ) {
