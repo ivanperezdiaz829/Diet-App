@@ -51,6 +51,7 @@ fun GraphicFrame(
 ) {
     val scrollState = rememberScrollState()
     val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
+    val rawValues = remember { mutableStateOf<Map<String, Float>?>(null) }
 
     LaunchedEffect(Unit) {
         val totalValues = mutableMapOf(
@@ -74,7 +75,17 @@ fun GraphicFrame(
             }
         }
 
-        nutritionData.value = totalValues
+        rawValues.value = totalValues
+
+        val normalizedValues = totalValues.mapValues { (key, value) ->
+            when (key) {
+                "Calorías" -> value / 20f
+                "Sales" -> value / 1000f
+                else -> value
+            }
+        }
+
+        nutritionData.value = normalizedValues
     }
 
     Column(
@@ -94,15 +105,20 @@ fun GraphicFrame(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        nutritionData.value?.let { data ->
-            NutritionBarChart(data = data)
+        nutritionData.value?.let { normalized ->
+            NutritionBarChart(data = normalized)
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            data.forEach { (title, value) ->
+            rawValues.value?.forEach { (title, value) ->
+                val unit = when (title) {
+                    "Calorías" -> "kcal"
+                    "Sales" -> "mg"
+                    else -> "g"
+                }
                 NutritionInfoComponent(
                     title = title,
-                    content = "Valor: $value",
+                    content = "Valor: %.2f $unit".format(value),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
@@ -111,6 +127,7 @@ fun GraphicFrame(
         } ?: Text("Cargando datos...", modifier = Modifier.padding(16.dp))
     }
 }
+
 
 
 @Composable
