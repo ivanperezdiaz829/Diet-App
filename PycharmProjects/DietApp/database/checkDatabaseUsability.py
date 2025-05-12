@@ -421,8 +421,8 @@ def main():
 
     url = "http://localhost:8000/create_plate"  # Añade la ruta específica
     data = {
-        "name": "Ensalada César de César",
-        "user_id": 1,
+        "name": "Cangreburger",
+        "user_id": 17,
         "calories": 350,
         "carbohydrates": 20,
         "proteins": 15,
@@ -445,7 +445,6 @@ def main():
         print("Response Body:", response.json())
     except ValueError:
         print("Response Body: No JSON content", response.text)
-
     print("\n" + "PRUEBAS COMPLETADAS".center(50, "="))
 
 
