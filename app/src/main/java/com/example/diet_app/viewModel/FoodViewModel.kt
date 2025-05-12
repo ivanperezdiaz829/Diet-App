@@ -1,6 +1,7 @@
 package com.example.diet_app.viewModel
 import androidx.lifecycle.ViewModel
 import com.example.diet_app.Plate
+import com.example.diet_app.UserPlatesResponse
 import com.example.diet_app.model.FoodModel
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.FoodVariant
@@ -8,6 +9,7 @@ import com.example.diet_app.model.DietDayModel
 import com.example.diet_app.model.DietModel
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.UserModel
+import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -158,4 +160,45 @@ fun FoodModel.toPlate(userId: String): Plate {
         celiac = isCeliac,
         halal = isHalal
     )
+}
+
+fun parseUserPlatesResponse(jsonResponse: String): List<FoodViewModel> {
+    val gson = Gson()
+    val response = gson.fromJson(jsonResponse, UserPlatesResponse::class.java)
+
+    return response.plates.map { plate ->
+        FoodViewModel().apply {
+            // Determinar las variantes de comida
+            val variants = mutableSetOf<FoodVariant>().apply {
+                if (plate.vegan == 1) add(FoodVariant.VEGAN)
+                if (plate.vegetarian == 1) add(FoodVariant.VEGETARIAN)
+                if (plate.celiac == 1) add(FoodVariant.CELIAC)
+                if (plate.halal == 1) add(FoodVariant.HALAL)
+            }
+
+            // Determinar el tipo de comida
+            val foodType = when (plate.type) {
+                1 -> FoodType.PLATO_LIGERO
+                2 -> FoodType.PLATO_PRINCIPAL
+                3 -> FoodType.PLATO_SECUNDARIO
+                4 -> FoodType.BEBIDA
+                5 -> FoodType.POSTRE
+                else -> FoodType.PLATO_PRINCIPAL // Valor por defecto
+            }
+
+            updateFood(
+                name = plate.name,
+                foodId = plate.id,
+                protein = plate.proteins.toDouble(),
+                fats = plate.fats.toDouble(),
+                sugar = plate.sugar.toDouble(),
+                salt = plate.sodium.toDouble(),
+                carbohydrates = plate.carbohydrates.toDouble(),
+                calories = plate.calories.toDouble(),
+                price = plate.price,
+                foodVariants = variants,
+                foodTypes = setOf(foodType)
+            )
+        }
+    }
 }

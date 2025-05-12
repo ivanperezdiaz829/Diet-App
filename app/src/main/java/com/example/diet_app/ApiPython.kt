@@ -143,6 +143,11 @@ data class User(
     val weight: Int
 )
 
+data class UserPlatesResponse(
+    val plates: List<Plate>,
+    val user: User
+)
+
 // Representa un plato, con los campos esenciales de la tabla `plates`
 data class Plate(
     val id: Int,

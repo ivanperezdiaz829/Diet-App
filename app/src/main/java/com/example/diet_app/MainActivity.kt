@@ -62,6 +62,7 @@ import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
+import com.example.diet_app.viewModel.parseUserPlatesResponse
 
 class MainActivity : ComponentActivity() {
 
@@ -87,6 +88,8 @@ class MainActivity : ComponentActivity() {
             create_diet_with_user_data(userData, LocalContext.current, {})
             Log.d("apidieta", "se ha intentado crear una dieta con la data del usuario")
              */
+
+            //getUserPlatesPro(11, LocalContext.current, {})
 
             DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
         }
@@ -535,7 +538,14 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.FoodList.route,
         ) {
-            FoodListViewScreen(navController, GlobalData.foodList)
+            var foodList by remember { mutableStateOf<List<FoodViewModel>>(emptyList()) }
+
+            LaunchedEffect(Unit){
+                getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
+                    foodList = parseUserPlatesResponse(it)
+                })
+            }
+            FoodListViewScreen(navController, foodList)
         }
 
         composable(route = Screen.AddFood.route,
