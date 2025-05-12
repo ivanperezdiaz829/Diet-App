@@ -63,9 +63,9 @@ fun FoodTypeSelectionScreen(
                 selectedFoodTypes = selectedFoodTypes,
                 onFoodTypeSelected = { foodType ->
                     selectedFoodTypes = if (selectedFoodTypes.contains(foodType)) {
-                        selectedFoodTypes - foodType // Elimina si ya está seleccionado
+                        setOf() // Deselecciona si ya está seleccionado
                     } else {
-                        selectedFoodTypes + foodType // Añade si no está seleccionado
+                        setOf(foodType) // Siempre crea un nuevo Set con solo este elemento
                     }
                 }
             )
@@ -110,6 +110,14 @@ private fun FoodOptions(
             imageId = R.drawable.sun_day_afternoon,
             isSelected = selectedFoodTypes.contains(FoodType.PLATO_SECUNDARIO),
             onClick = { onFoodTypeSelected(FoodType.PLATO_SECUNDARIO) }
+        )
+
+        FoodOption(
+            foodType = FoodType.BEBIDA,
+            text = "Bebida",
+            imageId = R.drawable.bebida,
+            isSelected = selectedFoodTypes.contains(FoodType.BEBIDA),
+            onClick = { onFoodTypeSelected(FoodType.BEBIDA) }
         )
     }
 }
