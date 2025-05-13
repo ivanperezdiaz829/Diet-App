@@ -1738,62 +1738,81 @@ fun deleteDiet(planId: Int, context: Context, onResult: (String) -> Unit) {
     })
 }
 
-fun createPlate(plate: Plate, context: Context, onResult: (String) -> Unit): String {
+fun createPlate(plate: Plate, context: Context, onResult: (String) -> Unit, onError: (String) -> Unit = {}) {
     val client = OkHttpClient()
     val url = "http://10.0.2.2:8000/create_plate"
 
-    val json = JSONObject().apply {
-        put("name", plate.name)
-        put("user_id", plate.user_id)
-        put("calories", plate.calories)
-        put("carbohydrates", plate.carbohydrates)
-        put("proteins", plate.proteins)
-        put("fats", plate.fats)
-        put("sugar", plate.sugar)
-        put("sodium", plate.sodium)
-        put("price", plate.price)
-        put("type", plate.type)
-        put("vegan", plate.vegan)
-        put("vegetarian", plate.vegetarian)
-        put("celiac", plate.celiac)
-        put("halal", plate.halal)
-    }
-
-    Log.d("SendPlate", "Sending data: $json")
-
-    val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
-
-    val request = Request.Builder()
-        .url(url)
-        .post(requestBody)
-        .build()
-
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            Log.e("SendPlate", "Connection failed: ${e.message}")
-            onResult("Error connecting to the server: ${e.message}")
+    try {
+        val json = JSONObject().apply {
+            put("name", plate.name)
+            put("user_id", plate.user_id)
+            put("calories", plate.calories)
+            put("carbohydrates", plate.carbohydrates)
+            put("proteins", plate.proteins)
+            put("fats", plate.fats)
+            put("sugar", plate.sugar)
+            put("sodium", plate.sodium)
+            put("price", plate.price)
+            put("type", plate.type)
+            put("vegan", plate.vegan)
+            put("vegetarian", plate.vegetarian)
+            put("celiac", plate.celiac)
+            put("halal", plate.halal)
         }
 
-        override fun onResponse(call: Call, response: Response) {
-            response.body?.string()?.let { responseBody ->
-                Log.d("SendPlate", "Server response: $responseBody")
-                try {
-                    val jsonResponse = JSONObject(responseBody)
-                    if (response.isSuccessful) {
-                        val message = jsonResponse.optString("message", "✅ Plate created successfully")
-                        return onResult(message)
-                    } else {
-                        val error = jsonResponse.optString("error", "❗ Unknown error")
-                        onResult("Error: $error")
-                    }
-                } catch (e: Exception) {
-                    Log.e("SendPlate", "JSON processing error: ${e.message}")
-                    onResult("Error processing server response")
+        Log.d("SendPlate", "Sending data: $json")
+
+        val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                val msg = "Connection failed: ${e.message}"
+                Log.e("SendPlate", msg)
+                (context as? Activity)?.runOnUiThread {
+                    onError(msg)
                 }
             }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    val responseBody = response.body?.string()
+                    if (!response.isSuccessful) {
+                        val msg = "Error HTTP ${response.code}: $responseBody"
+                        Log.e("SendPlate", msg)
+                        (context as? Activity)?.runOnUiThread {
+                            onError(msg)
+                        }
+                    } else {
+                        try {
+                            val jsonResponse = JSONObject(responseBody)
+                            val message = jsonResponse.optString("message", "✅ Plate created successfully")
+                            Log.d("SendPlate", "Server response: $message")
+                            (context as? Activity)?.runOnUiThread {
+                                onResult(message)
+                            }
+                        } catch (e: Exception) {
+                            val msg = "JSON processing error: ${e.message}"
+                            Log.e("SendPlate", msg)
+                            (context as? Activity)?.runOnUiThread {
+                                onError(msg)
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    } catch (e: Exception) {
+        val msg = "Error creating request: ${e.message}"
+        Log.e("SendPlate", msg)
+        (context as? Activity)?.runOnUiThread {
+            onError(msg)
         }
-    })
-    return ""
+    }
 }
 
 fun createPlateFromViewModel(
@@ -1810,4 +1829,106 @@ fun createPlateFromViewModel(
 
     // Llama a la función original
     createPlate(plate, context, onResult)
+}
+
+data class DietPlanFromPlatesSelectedComplete(
+    val name: String,
+    val user_id: Int,
+    val day1: List<Int>?,
+    val day2: List<Int>?,
+    val day3: List<Int>?,
+    val day4: List<Int>?,
+    val day5: List<Int>?,
+    val day6: List<Int>?,
+    val day7: List<Int>?,
+    val diet_type: Int,
+    val duration: Int
+)
+fun createDietPlanFromPlates(
+    dietPlan: DietPlanFromPlatesSelectedComplete,
+    context: Context,
+    onResult: (String) -> Unit,
+    onError: (String) -> Unit = {}
+) {
+    val client = OkHttpClient()
+    val url = "http://10.0.2.2:8000/create_diet_from_plates"
+
+    try {
+        // Validate duration
+        if (dietPlan.duration !in 1..7) {
+            throw IllegalArgumentException("Duration must be between 1 and 7")
+        }
+
+        // Create JSON with proper meal structure
+        val jsonObject = JSONObject().apply {
+            put("name", dietPlan.name)
+            put("user_id", dietPlan.user_id)
+            put("duration", dietPlan.duration)
+            put("diet_type", dietPlan.diet_type)
+
+            // Process each day according to server expectations
+            val days = listOf(
+                dietPlan.day1, dietPlan.day2, dietPlan.day3, dietPlan.day4,
+                dietPlan.day5, dietPlan.day6, dietPlan.day7
+            )
+
+            for (i in 0 until dietPlan.duration) {
+                val dayPlates = days[i]
+                if (dayPlates == null || dayPlates.size != 7) {
+                    throw IllegalArgumentException("Day ${i + 1} must have exactly 7 plates")
+                }
+
+                // Structure the plates according to server expectations:
+                // [breakfast_dish, breakfast_drink,
+                //  lunch_main_dish, lunch_side_dish, lunch_drink,
+                //  dinner_dish, dinner_drink]
+                put((i + 1).toString(), JSONArray(dayPlates))
+            }
+        }
+
+        val json = jsonObject.toString()
+        Log.d("createDietPlan", "Sending data: $json")
+
+        val mediaType = "application/json".toMediaType()
+        val requestBody = json.toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                val msg = "Connection failed: ${e.message}"
+                Log.e("createDietPlan", msg)
+                (context as? Activity)?.runOnUiThread {
+                    onError(msg)
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    val responseBody = response.body?.string()
+                    if (!response.isSuccessful) {
+                        val msg = "Error HTTP ${response.code}: $responseBody"
+                        Log.e("createDietPlan", msg)
+                        (context as? Activity)?.runOnUiThread {
+                            onError(msg)
+                        }
+                    } else {
+                        Log.d("createDietPlan", "Success: $responseBody")
+                        (context as? Activity)?.runOnUiThread {
+                            onResult(responseBody ?: "Diet plan created successfully")
+                        }
+                    }
+                }
+            }
+        })
+    } catch (e: Exception) {
+        val msg = "Error creating diet plan: ${e.message}"
+        Log.e("createDietPlan", msg)
+        (context as? Activity)?.runOnUiThread {
+            onError(msg)
+        }
+    }
 }
