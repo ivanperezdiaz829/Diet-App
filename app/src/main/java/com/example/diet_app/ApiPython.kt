@@ -3,8 +3,6 @@ package com.example.diet_app
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
-import com.example.diet_app.model.DietModel
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
@@ -32,7 +30,6 @@ import java.util.concurrent.TimeUnit
 
 
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 
 
 fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
@@ -117,7 +114,7 @@ fun DietPlanDay.toDietDayViewModel(): DietDayViewModel {
             foodTypes = setOf(FoodType.fromTypeId(plate.type))
         )
         foodViewModel
-    }
+    }.toMutableList()
 
     dietDayViewModel.updateDietDay(
         foods = foodViewModels,

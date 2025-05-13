@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,12 +29,10 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -235,7 +232,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     var dietViewModels by remember { mutableStateOf<MutableList<DietViewModel>>(mutableListOf()) }
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Welcome.route) {
+    NavHost(navController = navController, startDestination = Screen.Login.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -707,7 +704,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             DietDurationScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
-                    // aquí hay que llamar al método
+                    dietViewModel.updateDiet(duration = it)
                 },
             )
         }
@@ -768,6 +765,16 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             }
         }
 
+        composable(route = Screen.ChosenDiet.route
+        ) {
+            dietViewModel.updateDiet(duration = 3)
+            dietViewModel.updateDiet(diets = listOf(DietDayViewModel(), DietDayViewModel(), DietDayViewModel()))
+            ChosenDietInterface(
+                dietViewModel = dietViewModel,
+                navController = navController,// Pasa el ID a tu pantalla
+            )
+        }
+
         composable(
             route = Screen.GraphicFrame.route,
             arguments = listOf(
@@ -817,8 +824,10 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNext = {
                     if (it == DietGeneratorType.USER_DATA) {
                         navController.navigate(Screen.GenerateMealPlanWithData.route)
-                    } else {
+                    } else if (it == DietGeneratorType.MANUAL_INPUT){
                         navController.navigate(Screen.GenerateMealPlanWithInputs.route)
+                    } else {
+                        navController.navigate(Screen.ChosenDiet.route)
                     }
                 }
             )
@@ -1258,6 +1267,7 @@ fun printAllFoodIds(dietDays: List<DietDayViewModel>, tag: String = "FoodIds") {
     }
 }
 
+/*
 fun getDiet(dietId: String): DietViewModel {
     var foodViewModel1 = FoodViewModel()
     foodViewModel1.updateFood(
@@ -2105,6 +2115,7 @@ fun getDiet(dietId: String): DietViewModel {
     }
     return dietViewModel
 }
+*/
 
 fun getDietViewModelId(dietViewModelList: List<DietViewModel>, dietId: String): DietViewModel? {
     return dietViewModelList.find { it.getDiet().dietId == dietId }

@@ -1,22 +1,16 @@
 package com.example.diet_app.viewModel
 
-import android.content.Context
-import com.example.diet_app.getPlateById
 import com.example.diet_app.model.DietDayModel
-import com.example.diet_app.model.DietModel
-import com.example.diet_app.model.FoodModel
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
-import com.example.diet_app.model.UserModel
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.Date
 
 class DietDayViewModel {
     private var currentDietDay: DietDayModel = DietDayModel()
 
     fun updateDietDay(
-        foods: List<FoodViewModel> = currentDietDay.foods,
+        foods: MutableList<FoodViewModel> = currentDietDay.foods,
         foodVariant: FoodVariant = currentDietDay.foodVariant,
         goal: Goal = currentDietDay.goal,
         dietId: Int = currentDietDay.dietId,

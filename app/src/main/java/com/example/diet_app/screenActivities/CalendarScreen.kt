@@ -32,11 +32,9 @@ import com.example.diet_app.ui.theme.DarkGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.screenActivities.components.Header
-import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
 import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.FoodViewModel
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import com.example.diet_app.screenActivities.components.FoodDetailDialog
@@ -148,7 +146,7 @@ fun CalendarScreen(
                                         if (dateObj != null) {
                                             getPlateById(context, dateObj) { plates ->
                                                 if (plates.isNotEmpty()) {
-                                                    val foodViewModels = plates
+                                                    val foodViewModels = plates.toMutableList()
 
                                                     selectedFoods = foodViewModels
 
