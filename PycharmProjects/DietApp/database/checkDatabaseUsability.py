@@ -423,10 +423,50 @@ def test_plate_obtention():
 def main():
     """Función principal
     print("INICIANDO PRUEBAS DE LA API".center(50, "="))
+    """
+    url = "http://localhost:8000/create_plate"  # Añade la ruta específica
+    data = {
+        "name": "Cangreburger",
+        "user_id": 17,
+        "calories": 350,
+        "carbohydrates": 20,
+        "proteins": 15,
+        "fats": 10,
+        "sugar": 5,
+        "sodium": 200,
+        "price": 8,
+        "type": 1,
+        "vegan": 0,
+        "vegetarian": 1,
+        "celiac": 1,
+        "halal": 0
+    }
 
-    response = requests.get(f"{BASE_URL}/get_all_diets_of_user_complete_information/{11}", )
-    print_response(response)
+    response = requests.post(url, json=data)
 
+    # Imprimir la respuesta
+    print("Status Code:", response.status_code)
+    try:
+        print("Response Body:", response.json())
+    except ValueError:
+        print("Response Body: No JSON content", response.text)
+    """
+
+    url = "http://localhost:8000/calculate_diet_with_user_data"  # Añade la ruta específica
+    # Sample data to test the endpoint
+    test_data = {
+        "requirements": json.dumps([16, 4, 7, "MyTestPlan"])
+    }
+
+    try:
+        response = requests.post(url, json=test_data)
+        print(f"Status Code: {response.status_code}")
+        print("Response JSON:")
+        print(response.json())
+    except requests.RequestException as e:
+        print(f"Request failed: {e}")
+    # Imprimir la respuesta
+    print("Status Code:", response.status_code)
 
     print("\n" + "PRUEBAS COMPLETADAS".center(50, "="))
     """

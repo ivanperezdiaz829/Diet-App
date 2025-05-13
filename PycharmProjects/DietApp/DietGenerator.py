@@ -265,23 +265,8 @@ def diet_generator(carbohydrates_min, sugar_max, energy_range, protein_min, salt
                 if validate_full_diet(solution, carbohydrates_min, sugar_max, energy_range, protein_min, salt_max,
                                       fat_max, price_max) and check_repetition(solution, selected_breakfasts, selected_lunches, selected_dinners):
                     conn.close()
-                    """
-                    total_carbs = sum(plate.carbohydrates for meal in solution for plate in meal)
-                    total_sugar = sum(plate.sugar for meal in solution for plate in meal)
-                    total_kcal = sum(plate.calories for meal in solution for plate in meal)
-                    total_protein = sum(plate.protein for meal in solution for plate in meal)
-                    total_salt = sum(plate.salt for meal in solution for plate in meal)
-                    total_fat = sum(plate.fat for meal in solution for plate in meal)
-                    total_price = sum(plate.price for meal in solution for plate in meal)
-                    print("\n--PLAN DIETA DÍA-")
-                    print(f"Carbohidratos totales: {total_carbs} (Mínimo Requerido: {carbohydrates_min})")
-                    print(f"Azúcar total: {total_sugar} (Máximo Permitido: {sugar_max})")
-                    print(f"Calorías totales: {total_kcal} (Rango: {energy_range[0]} - {energy_range[1]})")
-                    print(f"Proteínas totales: {total_protein} (Mínimo Requerido: {protein_min})")
-                    print(f"Sal total: {total_salt} (Máximo Permitido: {salt_max})")
-                    print(f"Grasas totales: {total_fat} (Máximo Permitido: {fat_max})")
-                    print(f"Precio total: {total_price} (Máximo Permitido: {price_max})")
-                    """
+                    print("Solución encontrada")
+                    print(solution)
                     return solution
 
     conn.close()
