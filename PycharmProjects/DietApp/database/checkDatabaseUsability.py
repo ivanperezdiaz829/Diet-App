@@ -4,8 +4,7 @@ import requests
 import json
 import random
 from pprint import pprint
-from PycharmProjects.DietApp.configuration.config import DB_PATH
-
+from configuration.config import DB_PATH
 
 # Configuración (igual que en tu aplicación Flask)
 BASE_URL = "http://localhost:8000"
@@ -47,6 +46,7 @@ def generate_user_data():
         "weight": random.uniform(50.0, 100.0)
     }
 
+
 def print_response(response):
     """Muestra la respuesta de la API de forma legible"""
     print(f"Status Code: {response.status_code}")
@@ -55,6 +55,7 @@ def print_response(response):
         print(json.dumps(response.json(), indent=2))
     except ValueError:
         print("No JSON response")
+
 
 def test_user_authentication():
     """Prueba el endpoint de autenticación de usuario"""
@@ -153,6 +154,7 @@ def test_user_authentication():
 
     return user_data.get("id")  # Devuelve el ID del usuario para usar en otras pruebas
 
+
 def test_diet_plan_endpoints():
     """Prueba los endpoints de planes de dieta"""
     print("\n" + "=" * 50)
@@ -213,6 +215,7 @@ def test_diet_plan_endpoints():
 
     return plan_id
 
+
 def test_get_diet_plan_days_by_complete(plan_id):
     """Prueba obtener todos los diet_plan_day a partir de un diet_plans_complete"""
     print("\n" + "=" * 50)
@@ -254,6 +257,7 @@ def test_get_existing_diet_plans_for_user_7():
             print(f"- Plan ID: {plan['id']}, Nombre: {plan['name']}")
     else:
         print("\n⚠ No se encontraron planes para el usuario 7.")
+
 
 def test_user_crud_operations():
     """Prueba completa de CRUD para usuarios"""
@@ -359,6 +363,7 @@ def test_user_crud_operations():
     print(" PRUEBAS COMPLETADAS ".center(50, "="))
     print("=" * 50)
 
+
 def test_plate_obtention():
     """Prueba los endpoints de obtención de platos"""
     print("\n" + "=" * 50)
@@ -416,7 +421,7 @@ def test_plate_obtention():
 
 
 def main():
-    """Función principal"""
+    """Función principal
     print("INICIANDO PRUEBAS DE LA API".center(50, "="))
     """
     url = "http://localhost:8000/create_plate"  # Añade la ruta específica
@@ -464,6 +469,29 @@ def main():
     print("Status Code:", response.status_code)
 
     print("\n" + "PRUEBAS COMPLETADAS".center(50, "="))
+    """
+
+    data = {
+        'name': 'Cuchicú2',
+        'user_id': 17,
+        'duration': 4,
+        1: [
+            1, 2, 3, 4, 5, 6, 7
+        ],
+        2: [
+            1, 2, 3, 4, 5, 6, 7
+        ],
+        3: [
+            1, 2, 3, 4, 5, 6, 7
+        ],
+        4: [
+            1, 2, 3, 4, 5, 6, 7
+        ],
+        'diet_type': 2
+    }
+
+    response = requests.post(f'{BASE_URL}/create_diet_from_plates', json=data)
+    print(response.text)
 
 
 if __name__ == '__main__':

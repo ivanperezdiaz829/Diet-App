@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_file
 
-from Graphs import *
+# from Graphs import *
 from ObtainTotals import *
 import ast
 from InfoForGraph import *
@@ -126,6 +126,7 @@ def create_user():
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+
 @app.route('/get_user_by_credentials', methods=['POST'])
 def get_user_by_credentials():
     try:
@@ -161,6 +162,7 @@ def get_user_by_credentials():
 
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
 
 @app.route('/get_user/<int:user_id>', methods=['GET'])
 def get_user(user_id):
@@ -261,6 +263,7 @@ def update_user_password(user_id):
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+
 @app.route('/delete_user/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
@@ -279,6 +282,8 @@ def delete_user(user_id):
 
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
+
+
 # --------------------------
 # Endpoints de Planes de Dieta
 # --------------------------
@@ -376,6 +381,7 @@ def create_diet_plan():
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+
 @app.route('/get_diet_plans_by_user/<int:user_id>', methods=['GET'])
 def get_diet_plans_by_user(user_id):
     try:
@@ -448,6 +454,7 @@ def get_diet_plan(plan_id):
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+
 @app.route('/get_diet_plan_days_by_complete/<int:complete_plan_id>', methods=['GET'])
 def get_diet_plan_days_by_complete(complete_plan_id):
     try:
@@ -499,6 +506,7 @@ def get_diet_plan_days_by_complete(complete_plan_id):
 
     except sqlite3.Error as e:
         return jsonify({"error": f"Error de base de datos: {str(e)}"}), 500
+
 
 @app.route('/update_diet_plan/<int:plan_id>', methods=['PATCH'])
 def update_diet_plan(plan_id):
@@ -716,6 +724,7 @@ def calculate_basal_metabolic_rate():
 
     return jsonify({"result": result})
 
+
 # --------------------------
 # Funciones auxiliares
 # --------------------------
@@ -851,6 +860,7 @@ def get_all_diets_of_user_complete_information(user_id):
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+
 # --------------------------
 # Obtención de todas las comidas creadas por un usuario
 # --------------------------
@@ -889,6 +899,7 @@ def get_all_user_plates(user_id):  # Cambié el nombre de la función para que s
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+
 # Endpoint to get all plates where user_id is NULL
 @app.route('/get_all_plates_where_user_id_is_null', methods=['GET'])
 def get_all_plates_where_user_id_is_null():
@@ -915,6 +926,7 @@ def get_all_plates_where_user_id_is_null():
         return jsonify({"error": f"Database error: {str(e)}"}), 500
     except Exception as e:
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
 
 @app.route('/get_all_plates_where_user_id_is_either_users_or_null/<int:user_id>', methods=['GET'])
 def get_all_plates_where_user_id_is_either_users_or_null(user_id):
@@ -1103,6 +1115,7 @@ def create_diet_plan_internal(data):
     except Exception as e:
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
+
 @app.route('/calculate_diet_with_user_data', methods=['POST'])
 def calculate_diet_with_user_data():
     try:
@@ -1263,5 +1276,82 @@ def create_plate():
         return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
 
 
+@app.route('/create_diet_from_plates', methods=['POST'])
+def create_diet_from_plates():
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            # Establecemos los campos válidos
+            request_fields = ['user_id', 'name', 'diet_type', 'duration']
+            # Nos aseguramos de que el cuerpo de la solicitud es un diccionario
+            data = request.get_json()
+            if not isinstance(data, dict):
+                raise TypeError(f'A dictionary is expected not: {type(data)}')
+            # Añadimos a los campos válidos los días de la dieta
+            if 'duration' not in data.keys() or not 1 <= data.get('duration') <= 7:
+                raise ValueError('La dieta debe tener una duración y durar entre 1 y 7 días')
+            request_fields.extend(str(i) for i in range(1, int(data.get('duration')) + 1))
+            # Obtenemos los campos que no son válidos y los que faltan
+            print(request_fields)
+            print(data)
+            invalid_fields = set(data.keys()) - set(request_fields)
+            missing_fields = set(request_fields) - set(data.keys())
+            print(invalid_fields)
+            print(missing_fields)
+
+            if invalid_fields:
+                raise ValueError(f'Request body contained invalid fields: {invalid_fields}')
+            if missing_fields:
+                raise ValueError(f'Request body must contained these fields: {missing_fields}')
+            # Obtenemos el usuario al que pertenece la dieta
+            cursor.execute("SELECT * FROM users WHERE id = ?", (data.get('user_id'),))
+            user = cursor.fetchone()
+
+            if not user:
+                raise ValueError(f'User {data.get("user_id")} does not exist in the database')
+
+            # Obtenemos los días de la dieta junto a sus comidas y los insertamos
+            day_ids = []
+            for i in range(1, data.get('duration') + 1):
+                # Nos aseguramos de que tengan 7 platos y no falten platos
+                day = data.get(str(i))
+                if len(day) != 7 or any(plate is None for plate in day):
+                    raise ValueError(f'A day is composed by 7 plates, not: {day}')
+                cursor.execute("""
+                        INSERT INTO diet_plans_day (
+                        breakfast_dish, breakfast_drink,
+                        lunch_main_dish, lunch_side_dish, lunch_drink,
+                        dinner_dish, dinner_drink
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, day)
+                day_ids.append(cursor.lastrowid)
+
+            # Completamos la lista con None
+            while len(day_ids) != 7:
+                day_ids.append(None)
+
+            # Creamos la sentencia SQL con los valores a insertar
+            sql = """
+            INSERT INTO diet_plans_complete (
+                        name, user_id, duration, diet_type_id,
+                        day1, day2, day3, day4, day5, day6, day7
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """
+            values = [data.get('name'), data.get('user_id'), data.get('duration'),
+                      data.get('diet_type')]
+            for day_id in day_ids:
+                values.append(day_id)
+
+            # Creamos la dieta y hacemos commit
+            cursor.execute(sql, values)
+            conn.commit()
+            return jsonify({'message': 'Dieta creada con éxito'}), 200
+
+    except (ValueError, TypeError) as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8000)
+    app.run(port=8000, debug=True)
