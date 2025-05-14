@@ -75,18 +75,6 @@ class MainActivity : ComponentActivity() {
             var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
             var dietViewModel = DietViewModel()
-            /*
-            userViewModel.updateUser(id = 17)
-
-            //DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
-            var userData: List<Any>
-            userData = listOf(userViewModel.getUser().id, 5, 3, "nombre chulo")
-
-            create_diet_with_user_data(userData, LocalContext.current, {})
-            Log.d("apidieta", "se ha intentado crear una dieta con la data del usuario")
-             */
-
-            //getUserPlatesPro(11, LocalContext.current, {})
 
             DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
         }
@@ -657,7 +645,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     if (it) {
                         navController.navigate(Screen.TypeOfDietSelection.route)
                     } else {
-                        navController.navigate(Screen.Sex.route)
+                        navController.navigate(Screen.PhsysicalData.route)
                     }
                 },
                 userViewModel = userViewModel,
@@ -705,6 +693,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     dietViewModel.updateDiet(duration = it)
+                    //create_diet_with_user_data() aquí hay que llamar a la función con los datos necesarios
                 },
             )
         }
