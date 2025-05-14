@@ -43,8 +43,8 @@ fun FoodListViewScreen(
 
     // Mostrar diálogo si hay comida seleccionada
     selectedFood?.let { food ->
-        FoodListDialog(
-            foodViewModels = foods,
+        FoodDetailDialog(
+            foodViewModel = food,
             onDismiss = { selectedFood = null }
         )
     }
