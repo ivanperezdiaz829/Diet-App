@@ -883,7 +883,9 @@ def get_all_user_plates(user_id):  # Cambié el nombre de la función para que s
             plates = cursor.fetchall()
 
             if not plates:
-                return jsonify({"error": "el usuario no tiene platos creados"}), 405
+                return jsonify({"user": dict(user),
+                                "plates": list()
+                                }), 201
 
             # Convertir cada fila de platos en un diccionario
             plate_list = [dict(plate) for plate in plates]
