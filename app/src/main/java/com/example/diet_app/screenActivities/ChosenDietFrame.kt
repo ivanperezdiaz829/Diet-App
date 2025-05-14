@@ -33,6 +33,7 @@ import com.example.diet_app.getAllPlatesWhereUserIdIsEitherUsersOrNull
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.screenActivities.components.BackButton
+import com.example.diet_app.screenActivities.components.FoodDetailDialog
 import com.example.diet_app.screenActivities.components.FoodListDialog
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
@@ -47,11 +48,9 @@ fun ChosenDietInterface(
     dietViewModel: DietViewModel,
     userViewModel: UserViewModel
 ) {
-    var dietViewModel1 = dietViewModel
     var selectedDay by remember { mutableIntStateOf(1) }
     var selectedFood by remember { mutableStateOf<FoodViewModel?>(null) }
     var addFood by remember { mutableStateOf<Boolean>(false) }
-
     var foodsForSelectedDay by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
     var foodsDatabase by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
 
@@ -61,36 +60,34 @@ fun ChosenDietInterface(
         }
     }
 
+    // Mostrar diálogo si hay comida seleccionada
+    selectedFood?.let { food ->
+        FoodDetailDialog(
+            foodViewModel = food,
+            onDismiss = { selectedFood = null }
+        )
+    }
 
     // Mostrar diálogo si hay comida seleccionada
     if (addFood) {
-        /*
-        var foodViewModel1 = FoodViewModel()
-        foodViewModel1.updateFood(
-            name = "Avena con frutas",
-            calories = 300.0,
-            protein = 10.0,
-            fats = 5.0,
-            sugar = 10.0,
-            salt = 1.0,
-            carbohydrates = 50.0,
-            price = 10.0,
-            foodVariants = setOf(FoodVariant.VEGETARIAN, FoodVariant.VEGAN),
-            foodTypes = setOf(FoodType.PLATO_LIGERO)
-        )*/
 
         FoodListDialog(
             foodViewModels = foodsDatabase,
             onDismiss = {
-                selectedFood = null
+                addFood = false
+            },
+            onSelectionComplete = { foods ->
+                dietViewModel.getDiet().diets[selectedDay - 1].getDiet().foods = foods.toMutableList()
+                foodsForSelectedDay.clear()
+                foodsForSelectedDay.addAll(foods)
                 addFood = false
             }
         )
     }
 
     LaunchedEffect(selectedDay) {
-        if (dietViewModel1.getDiet().diets.isNotEmpty()) {
-            foodsForSelectedDay = dietViewModel1.getDiet().diets[selectedDay - 1].getDiet().foods
+        if (dietViewModel.getDiet().diets.isNotEmpty()) {
+            foodsForSelectedDay = dietViewModel.getDiet().diets[selectedDay - 1].getDiet().foods
         }
         val date = Date() // Cambia la fecha si es necesario
     }
@@ -124,13 +121,13 @@ fun ChosenDietInterface(
 
             GreenInfoCard(
                 title = "Objetivo",
-                content = dietViewModel1.getDiet().goal.toString(),
+                content = dietViewModel.getDiet().goal.toString(),
             )
         }
 
-        if (dietViewModel1.getDiet().diets.isNotEmpty()) {
+        if (dietViewModel.getDiet().diets.isNotEmpty()) {
             DaysList(
-                dietViewModel = dietViewModel1,
+                dietViewModel = dietViewModel,
                 selectedDay = selectedDay, // Pasamos el día seleccionado
                 onDaySelected = { day ->
                     selectedDay = day
@@ -146,7 +143,7 @@ fun ChosenDietInterface(
             )
 
             DayDiet(
-                dayDietDayViewModel = dietViewModel1.getDiet().diets[selectedDay - 1],
+                dayDietDayViewModel = dietViewModel.getDiet().diets[selectedDay - 1],
                 foods = foodsForSelectedDay, // Usamos la lista de alimentos
                 onFoodSelected = { food ->
                     selectedFood = food // Actualizamos la comida seleccionada
