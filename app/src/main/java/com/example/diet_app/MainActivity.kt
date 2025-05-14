@@ -51,6 +51,8 @@ import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.GlobalData
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.Screen
+import com.example.diet_app.model.getFoodIndexFromVariant
+import com.example.diet_app.model.getFoodVariantFromIndex
 import com.example.diet_app.model.getGoalInt
 import com.example.diet_app.model.getSexInt
 import com.example.diet_app.screenActivities.*
@@ -220,7 +222,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     var dietViewModels by remember { mutableStateOf<MutableList<DietViewModel>>(mutableListOf()) }
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.ChosenDiet.route) {
+    NavHost(navController = navController, startDestination = Screen.Login.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -670,6 +672,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             DietSelectionScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
+                    dietViewModel.updateDiet(foodVariant = getFoodVariantFromIndex(it))
                     navController.navigate(Screen.DietDurationSelection.route)
                 },
             )
@@ -693,11 +696,35 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     dietViewModel.updateDiet(duration = it)
-                    //create_diet_with_user_data() aquí hay que llamar a la función con los datos necesarios
+                    navController.navigate(Screen.DietNameSelection.route)
                 },
             )
         }
-
+        composable(route = Screen.DietNameSelection.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
+        ) {
+            DietNameScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNext = {
+                    dietViewModel.updateDiet(name = it)
+                    val requirements = listOf(userViewModel.getUser().id, getFoodIndexFromVariant(dietViewModel.getDiet().foodVariant), dietViewModel.getDiet().duration, dietViewModel.getDiet().name)
+                    create_diet_with_user_data(requirements, context = applicationContext, onResult = {
+                        navController.navigate(Screen.Meals.route)
+                    })
+                },
+            )
+        }
         composable(route = Screen.FoodDetail.route,
             enterTransition = {
                 slideInHorizontally(initialOffsetX = { it })
