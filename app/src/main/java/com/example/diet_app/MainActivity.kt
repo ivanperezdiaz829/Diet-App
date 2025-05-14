@@ -220,7 +220,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     var dietViewModels by remember { mutableStateOf<MutableList<DietViewModel>>(mutableListOf()) }
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.ChosenDiet.route) {
 
         composable(route = Screen.Home.route
         ) {HomePageFrame(navController, userViewModel)}
@@ -523,11 +523,11 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.FoodList.route,
         ) {
-            var foodList by remember { mutableStateOf<List<FoodViewModel>>(emptyList()) }
+            var foodList by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
 
             LaunchedEffect(Unit){
                 getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
-                    foodList = parseUserPlatesResponse(it)
+                    foodList = parseUserPlatesResponse(it).toMutableList()
                 })
             }
             FoodListViewScreen(navController, foodList)
@@ -759,8 +759,10 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             dietViewModel.updateDiet(duration = 3)
             dietViewModel.updateDiet(diets = listOf(DietDayViewModel(), DietDayViewModel(), DietDayViewModel()))
             ChosenDietInterface(
+                context = applicationContext,
                 dietViewModel = dietViewModel,
                 navController = navController,// Pasa el ID a tu pantalla
+                userViewModel = userViewModel
             )
         }
 
@@ -847,9 +849,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     Log.d("FoodList", foodList.toString())
                     navController.navigate(Screen.Home.route)
                     */
-                    create_diet_with_inputs(it, applicationContext, onResult = {})
-                    navController.navigate(Screen.Meals.route)
-
+                    create_diet_with_inputs(it, applicationContext, onResult = {
+                        navController.navigate(Screen.Meals.route)
+                    })
                 }
             )
         }

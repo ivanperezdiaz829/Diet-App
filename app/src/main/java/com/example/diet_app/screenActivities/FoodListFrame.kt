@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.diet_app.model.Screen
 import com.example.diet_app.screenActivities.components.FoodDetailDialog
+import com.example.diet_app.screenActivities.components.FoodListDialog
 import com.example.diet_app.screenActivities.components.FoodViewScreen
 import com.example.diet_app.screenActivities.components.TitleSection
 import com.example.diet_app.screenActivities.components.ToolBox
@@ -35,15 +36,15 @@ import com.example.diet_app.viewModel.FoodViewModel
 @Composable
 fun FoodListViewScreen(
     navController: NavController,
-    foods: List<FoodViewModel>,
+    foods: MutableList<FoodViewModel>,
 ) {
 
     var selectedFood by remember { mutableStateOf<FoodViewModel?>(null) }
 
     // Mostrar diálogo si hay comida seleccionada
     selectedFood?.let { food ->
-        FoodDetailDialog(
-            foodViewModel = food,
+        FoodListDialog(
+            foodViewModels = foods,
             onDismiss = { selectedFood = null }
         )
     }

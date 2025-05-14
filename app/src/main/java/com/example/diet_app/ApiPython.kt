@@ -164,6 +164,46 @@ data class Plate(
     val halal: Int // Usualmente 0 o 1, indica si es halal
 )
 
+fun convertPlatesToFoodViewModels(platesResult: Result<List<Plate>>): MutableList<FoodViewModel> {
+    return platesResult.fold(
+        onSuccess = { plates ->
+            plates.mapTo(mutableListOf()) { plate ->
+                FoodViewModel().apply {
+                    // Convertir flags numéricos a Set<FoodVariant>
+                    val variants = mutableSetOf<FoodVariant>().apply {
+                        if (plate.vegan == 1) add(FoodVariant.VEGAN)
+                        if (plate.vegetarian == 1) add(FoodVariant.VEGETARIAN)
+                        if (plate.celiac == 1) add(FoodVariant.CELIAC)
+                        if (plate.halal == 1) add(FoodVariant.HALAL)
+                    }
+
+                    // Convertir type a FoodType (asumiendo que tienes un método fromTypeId)
+                    val foodType = FoodType.fromTypeId(plate.type)
+
+                    updateFood(
+                        name = plate.name,
+                        foodId = plate.id,
+                        protein = plate.proteins,
+                        fats = plate.fats,
+                        sugar = plate.sugar,
+                        salt = plate.sodium,
+                        carbohydrates = plate.carbohydrates,
+                        calories = plate.calories.toDouble(), // Conversión Int a Double
+                        price = plate.price,
+                        foodVariants = variants,
+                        foodTypes = setOf(foodType) // Set con un solo tipo
+                    )
+                }
+            }
+        },
+        onFailure = { exception ->
+            // Log del error (opcional)
+            println("Error al convertir plates: ${exception.message}")
+            mutableListOf() // Retorna lista vacía en caso de error
+        }
+    )
+}
+
 // Representa un plan de dieta completo, según la tabla `diet_plans_complete`
 data class DietPlanComplete(
     val id: Int,

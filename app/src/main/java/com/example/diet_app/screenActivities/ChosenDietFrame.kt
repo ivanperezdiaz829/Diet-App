@@ -1,16 +1,14 @@
 package com.example.diet_app.screenActivities
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,40 +25,68 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.diet_app.convertPlatesToFoodViewModels
+import com.example.diet_app.getAllPlatesWhereUserIdIsEitherUsersOrNull
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.screenActivities.components.BackButton
-import com.example.diet_app.screenActivities.components.FoodDetailDialog
-import com.example.diet_app.viewModel.DietDayViewModel
+import com.example.diet_app.screenActivities.components.FoodListDialog
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
+import com.example.diet_app.viewModel.UserViewModel
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChosenDietInterface(
+    context: Context,
     navController: NavController,
     dietViewModel: DietViewModel,
+    userViewModel: UserViewModel
 ) {
     var dietViewModel1 = dietViewModel
     var selectedDay by remember { mutableIntStateOf(1) }
     var selectedFood by remember { mutableStateOf<FoodViewModel?>(null) }
+    var addFood by remember { mutableStateOf<Boolean>(false) }
 
-    var foodsForSelectedDay by remember { mutableStateOf<List<FoodViewModel>>(emptyList()) }
+    var foodsForSelectedDay by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
+    var foodsDatabase by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
 
-    // Mostrar diálogo si hay comida seleccionada
-    selectedFood?.let { food ->
-        FoodDetailDialog(
-            foodViewModel = food,
-            onDismiss = { selectedFood = null }
-        )
+    LaunchedEffect(Unit) {
+        getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, context) { result ->
+            foodsDatabase = convertPlatesToFoodViewModels(result)
+        }
     }
 
-    val context = LocalContext.current
+
+    // Mostrar diálogo si hay comida seleccionada
+    if (addFood) {
+        /*
+        var foodViewModel1 = FoodViewModel()
+        foodViewModel1.updateFood(
+            name = "Avena con frutas",
+            calories = 300.0,
+            protein = 10.0,
+            fats = 5.0,
+            sugar = 10.0,
+            salt = 1.0,
+            carbohydrates = 50.0,
+            price = 10.0,
+            foodVariants = setOf(FoodVariant.VEGETARIAN, FoodVariant.VEGAN),
+            foodTypes = setOf(FoodType.PLATO_LIGERO)
+        )*/
+
+        FoodListDialog(
+            foodViewModels = foodsDatabase,
+            onDismiss = {
+                selectedFood = null
+                addFood = false
+            }
+        )
+    }
 
     LaunchedEffect(selectedDay) {
         if (dietViewModel1.getDiet().diets.isNotEmpty()) {
@@ -74,7 +100,6 @@ fun ChosenDietInterface(
             .fillMaxSize()
             .statusBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(bottom = 16.dp)
     ) {
 
         Row(
@@ -129,7 +154,24 @@ fun ChosenDietInterface(
             )
         }
 
-        AddFoodButton()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(
+                onClick = {
+                    addFood = true
+                },
+                colors = ButtonDefaults.buttonColors(Color(0xFF4CAF50)), // Verde
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text("+", color = Color.White, fontSize = 32.sp)
+            }
+        }
 
         /*
         Button(
@@ -359,27 +401,5 @@ fun ChosenDietInterface(
             Text("Ver Gráfico")
         }
          */
-    }
-}
-
-@Composable
-fun AddFoodButton(){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Button(
-            onClick = {
-                //
-            },
-            colors = ButtonDefaults.buttonColors(Color(0xFF4CAF50)), // Verde
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text("+", color = Color.White, fontSize = 32.sp)
-        }
     }
 }
