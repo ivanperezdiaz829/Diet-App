@@ -633,7 +633,6 @@ fun create_diet_with_user_data(requirements: List<Any>, context: Context, onResu
         .readTimeout(60, TimeUnit.SECONDS)
         .build()
     val url = "http://10.0.2.2:8000/calculate_diet_with_user_data"
-
     // Serializar 'values' correctamente como JSON string
     val json = JSONObject()
     json.put("requirements", JSONArray(requirements).toString())  // <- Esta línea es crucial

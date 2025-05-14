@@ -44,4 +44,5 @@ sealed class Screen(val route: String) {
     object GenerateMealPlanWithInputs: Screen("generateMealPlanWithInputs")
     object Calendar: Screen("calendar")
     object ChosenDiet: Screen("chosenDiet")
+    object DietNameSelection: Screen("dietNameSelection")
 }
