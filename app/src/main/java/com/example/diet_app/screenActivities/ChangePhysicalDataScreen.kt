@@ -99,6 +99,7 @@ fun UpdatePhysicalDataScreen(
 
             // Mover la actualización de los datos dentro de onNext
             onNext(updatedFields)
+
         } else {
             showErrorDialog = true
         }
