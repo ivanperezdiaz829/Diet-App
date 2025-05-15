@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
             var foodViewModel = FoodViewModel()
             var userViewModel = UserViewModel()
             var dietViewModel = DietViewModel()
+            var inNeedOfDietsUpdate = true
 
             DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
         }
@@ -68,7 +69,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     val navController = rememberNavController()
     var dietJson by remember { mutableStateOf<String?>(null) }
     var dietViewModels by remember { mutableStateOf<MutableList<DietViewModel>>(mutableListOf()) }
-
+    var inNeedOfDietsUpdate by remember { mutableStateOf(false) }
     // Configuración de la navegación entre pantallas
     NavHost(navController = navController, startDestination = Screen.Login.route) {
 
@@ -133,7 +134,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                             }
                         },
                     )
-
+                    inNeedOfDietsUpdate = true
                     navController.navigate(Screen.Home.route)
                 },
             )
@@ -242,29 +243,30 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.Meals.route
         ) {
-
             var showDiets by remember { mutableStateOf(false) }
 
             LaunchedEffect(Unit) {
-                getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
-                    dietJson = jsonResponse
-                    // Solo actualizamos los ViewModels cuando tengamos el JSON válido
-                    if (jsonResponse.isNotEmpty()) {
-                        val response = deserializeDietInformation(jsonResponse)
-                        dietViewModels = response.toDietViewModels() // Ahora recibe una lista
-                        showDiets = true
+                if (!showDiets) {
+                    inNeedOfDietsUpdate = true
+                    getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                        dietJson = jsonResponse
+                        // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                        if (jsonResponse.isNotEmpty() and inNeedOfDietsUpdate) {
+                            val response = deserializeDietInformation(jsonResponse)
+                            dietViewModels = response.toDietViewModels() // Ahora recibe una lista
+                            showDiets = true
+                            inNeedOfDietsUpdate = false
+                        }
                     }
                 }
             }
-
-            // Muestra la pantalla solo cuando tengamos datos
-            if (showDiets) {
+            if (inNeedOfDietsUpdate or !showDiets) {
+                LoadingScreen()
+            } else {
                 DietPlansScreen(
                     navController = navController,
                     diets = dietViewModels // Pasamos la lista completa
                 )
-            } else {
-                LoadingScreen()
             }
         }
 
@@ -277,7 +279,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             }
         ) {
             InputDesign(
-                onNext = { navController.navigate(Screen.Login.route) }
+                onNext = {
+                    navController.navigate(Screen.Login.route) }
             )
         }
 
@@ -312,6 +315,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                         goal = it.getUser().goal,)
                     GlobalData.login(userViewModel)
                     printUserInfo(userViewModel)
+                    inNeedOfDietsUpdate = true
                     navController.navigate(Screen.Home.route)
                 },
                 onRegisterSuccess = {
@@ -566,6 +570,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     dietViewModel.updateDiet(name = it)
                     val requirements = listOf(userViewModel.getUser().id, getFoodIndexFromVariant(dietViewModel.getDiet().foodVariant), dietViewModel.getDiet().duration, dietViewModel.getDiet().name)
                     create_diet_with_user_data(requirements, context = applicationContext, onResult = {
+                        inNeedOfDietsUpdate = true
                         navController.navigateAndClearStack(Screen.Meals.route)                    })
                 },
             )
@@ -714,6 +719,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     create_diet_with_inputs(it, applicationContext, onResult = {
+                        inNeedOfDietsUpdate = true
                         navController.navigateAndClearStack(Screen.Meals.route)
                     })
                 }
