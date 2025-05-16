@@ -45,19 +45,14 @@ fun ChosenDietInterface(
     navController: NavController,
     dietViewModel: DietViewModel,
     userViewModel: UserViewModel,
+    foodsDatabase : MutableList<FoodViewModel>,
     onNext: (dietViewModel: DietViewModel) -> Unit
 ) {
     var selectedDay by remember { mutableIntStateOf(1) }
     var selectedFood by remember { mutableStateOf<FoodViewModel?>(null) }
     var addFood by remember { mutableStateOf<Boolean>(false) }
     var foodsForSelectedDay by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
-    var foodsDatabase by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
-
-    LaunchedEffect(Unit) {
-        getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, context) { result ->
-            foodsDatabase = convertPlatesToFoodViewModels(result)
-        }
-    }
+    var foodsDatabase by remember { mutableStateOf<MutableList<FoodViewModel>>(foodsDatabase) }
 
     // Mostrar diálogo si hay comida seleccionada
     selectedFood?.let { food ->

@@ -69,6 +69,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     var dietJson by remember { mutableStateOf<String?>(null) }
     var dietViewModels by remember { mutableStateOf<MutableList<DietViewModel>>(mutableListOf()) }
     var navigationVariable by remember { mutableStateOf(false) }
+    var foodsDatabase by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
+    var showDiets by remember { mutableStateOf(false) }
+    var foodList by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
 
     // Configuración de la navegación entre pantallas
     NavHost(navController = navController, startDestination = Screen.Login.route) {
@@ -116,6 +119,26 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                             ) { result ->
                                 when {
                                     result.isSuccess -> {
+
+                                        getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, applicationContext) { result ->
+                                            foodsDatabase = convertPlatesToFoodViewModels(result)
+                                        }
+
+                                        getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                                            dietJson = jsonResponse
+                                            // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                                            if (jsonResponse.isNotEmpty()) {
+                                                val response = deserializeDietInformation(jsonResponse)
+                                                dietViewModels = response.toDietViewModels() // Ahora recibe una lista
+                                                showDiets = true
+                                            }
+                                        }
+
+                                        getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
+                                            foodList = parseUserPlatesResponse(it).toMutableList()
+                                        })
+
+
                                         Toast.makeText(
                                             applicationContext,
                                             "Usuario autenticado\n" +
@@ -243,21 +266,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.Meals.route
         ) {
-
-            var showDiets by remember { mutableStateOf(false) }
-
-            LaunchedEffect(Unit) {
-                getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
-                    dietJson = jsonResponse
-                    // Solo actualizamos los ViewModels cuando tengamos el JSON válido
-                    if (jsonResponse.isNotEmpty()) {
-                        val response = deserializeDietInformation(jsonResponse)
-                        dietViewModels = response.toDietViewModels() // Ahora recibe una lista
-                        showDiets = true
-                    }
-                }
-            }
-
             // Muestra la pantalla solo cuando tengamos datos
             DietPlansScreen(
                 navController = navController,
@@ -310,6 +318,31 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                         goal = it.getUser().goal,)
                     GlobalData.login(userViewModel)
                     printUserInfo(userViewModel)
+
+
+                        getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, applicationContext) { result ->
+                            foodsDatabase = convertPlatesToFoodViewModels(result)
+                        }
+
+
+
+                        getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                            dietJson = jsonResponse
+                            // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                            if (jsonResponse.isNotEmpty()) {
+                                val response = deserializeDietInformation(jsonResponse)
+                                dietViewModels = response.toDietViewModels() // Ahora recibe una lista
+                                showDiets = true
+                            }
+                        }
+
+
+
+                        getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
+                            foodList = parseUserPlatesResponse(it).toMutableList()
+                        })
+
+
                     navController.navigate(Screen.Home.route)
                 },
                 onRegisterSuccess = {
@@ -369,13 +402,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.FoodList.route,
         ) {
-            var foodList by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
-
-            LaunchedEffect(Unit){
-                getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
-                    foodList = parseUserPlatesResponse(it).toMutableList()
-                })
-            }
             FoodListViewScreen(navController, foodList)
         }
 
@@ -466,7 +492,19 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
             if (addNewFood) {
                 LaunchedEffect(Unit) {
-                    createPlateFromViewModel(newFood, userViewModel.getUser().id.toString(), applicationContext, onResult = {})
+                    createPlateFromViewModel(newFood, userViewModel.getUser().id.toString(), applicationContext, onResult = {
+
+                        getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, applicationContext) { result ->
+                            foodsDatabase = convertPlatesToFoodViewModels(result)
+                        }
+
+                    })
+                    Toast.makeText(
+                        applicationContext,
+                        "Comida nueva agregada\n" +
+                                "${newFood.getFood().name}!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -574,7 +612,17 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     dietViewModel.updateDiet(name = it)
                     val requirements = listOf(userViewModel.getUser().id, getFoodIndexFromVariant(dietViewModel.getDiet().foodVariant), dietViewModel.getDiet().duration, dietViewModel.getDiet().name)
                     create_diet_with_user_data(requirements, context = applicationContext, onResult = {
-                        navController.navigateAndClearStack(Screen.Meals.route)                    })
+                        getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                            dietJson = jsonResponse
+                            // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                            if (jsonResponse.isNotEmpty()) {
+                                val response = deserializeDietInformation(jsonResponse)
+                                dietViewModels = response.toDietViewModels() // Ahora recibe una lista
+                                showDiets = true
+                                navController.navigateAndClearStack(Screen.Meals.route)
+                            }
+                        }
+                    })
                 },
             )
         }
@@ -595,7 +643,16 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
         ) {
             FoodDetailScreen(
                 foodViewModel = newFood,
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = {
+                    getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, applicationContext) { result ->
+                        foodsDatabase = convertPlatesToFoodViewModels(result)
+                    }
+
+                    getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
+                        foodList = parseUserPlatesResponse(it).toMutableList()
+                    })
+                    navController.navigateAndClearStack(Screen.Home.route)
+                },
             )
         }
 
@@ -640,6 +697,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 dietViewModel = dietViewModel,
                 navController = navController,// Pasa el ID a tu pantalla
                 userViewModel = userViewModel,
+                foodsDatabase = foodsDatabase,
                 onNext = {
                     navController.navigate(Screen.Home.route)
 
