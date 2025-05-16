@@ -249,7 +249,11 @@ fun deserializeDietInformation(jsonResponse: String): DietInformationResponse {
 
 // Función para hacer la solicitud y obtener la respuesta
 fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String) -> Unit) {
-    val client = OkHttpClient()
+    val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS) // Increase timeout
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
     val url = "http://10.0.2.2:8000/get_all_diets_of_user_complete_information/$userId" // Asegúrate de usar la URL correcta
 
     val request = Request.Builder()

@@ -22,8 +22,10 @@ import com.example.diet_app.screenActivities.components.BackButtonLeft
 
 @Composable
 fun DietDurationScreen(
+    navigationVariable: Boolean,
     onNavigateBack: () -> Unit,
-    onNext: (Int) -> Unit
+    onNextName: (Int) -> Unit,
+    onNextDiet: (Int) -> Unit
 ) {
     var selectedDays by remember { mutableIntStateOf(1) }
     val customGreen = Color(0xFF40B93C)
@@ -124,7 +126,7 @@ fun DietDurationScreen(
         // Botón de confirmación
         Button(
             onClick = {
-                onNext(selectedDays)
+                if (navigationVariable) onNextDiet(selectedDays) else onNextName(selectedDays)
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = customGreen,
