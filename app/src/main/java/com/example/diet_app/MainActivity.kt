@@ -68,7 +68,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     val navController = rememberNavController()
     var dietJson by remember { mutableStateOf<String?>(null) }
     var dietViewModels by remember { mutableStateOf<MutableList<DietViewModel>>(mutableListOf()) }
-    var showDiets by remember { mutableStateOf(false) }
+    var navigationVariable by remember { mutableStateOf(false) }
+
     // Configuración de la navegación entre pantallas
     NavHost(navController = navController, startDestination = Screen.Login.route) {
 
@@ -133,6 +134,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                             }
                         },
                     )
+
                     navController.navigate(Screen.Home.route)
                 },
             )
@@ -241,26 +243,27 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.Meals.route
         ) {
+
+            var showDiets by remember { mutableStateOf(false) }
+
             LaunchedEffect(Unit) {
-                if (!showDiets) {
-                    getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
-                        dietJson = jsonResponse
-                        if (jsonResponse.isNotEmpty()) {
-                            val response = deserializeDietInformation(jsonResponse)
-                            dietViewModels = response.toDietViewModels() // Ahora recibe una lista
-                        }
+                getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                    dietJson = jsonResponse
+                    // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                    if (jsonResponse.isNotEmpty()) {
+                        val response = deserializeDietInformation(jsonResponse)
+                        dietViewModels = response.toDietViewModels() // Ahora recibe una lista
                         showDiets = true
                     }
                 }
             }
-            if (!showDiets) {
-                LoadingScreen()
-            } else {
-                DietPlansScreen(
-                    navController = navController,
-                    diets = dietViewModels // Pasamos la lista completa
-                )
-            }
+
+            // Muestra la pantalla solo cuando tengamos datos
+            DietPlansScreen(
+                navController = navController,
+                diets = dietViewModels // Pasamos la lista completa
+            )
+
         }
 
         composable(route = Screen.Welcome.route,
@@ -272,8 +275,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             }
         ) {
             InputDesign(
-                onNext = {
-                    navController.navigate(Screen.Login.route) }
+                onNext = { navController.navigate(Screen.Login.route) }
             )
         }
 
@@ -296,7 +298,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 applicationContext,
                 userViewModel,
                 onLoginSuccess = {
-                    showDiets = false
                     userViewModel.updateUser(
                         name = it.getUser().name,
                         email = it.getUser().email,
@@ -312,7 +313,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     navController.navigate(Screen.Home.route)
                 },
                 onRegisterSuccess = {
-                    showDiets = false
                     userViewModel.updateUser(name = it.getUser().name)
                     navController.navigate(Screen.Sex.route)
                 },
@@ -537,13 +537,23 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             }
         ) {
             DietDurationScreen(
+                navigationVariable = navigationVariable,
                 onNavigateBack = { navController.popBackStack() },
-                onNext = {
+                onNextName = {
                     dietViewModel.updateDiet(duration = it)
                     navController.navigate(Screen.DietNameSelection.route)
                 },
+                onNextDiet = {
+                    dietViewModel.updateDiet(duration = it)
+                    val dietDays = List(dietViewModel.getDiet().duration) {
+                        DietDayViewModel()
+                    }
+                    dietViewModel.updateDiet(diets = dietDays)
+                    navController.navigate(Screen.ChosenDiet.route)
+                }
             )
         }
+
         composable(route = Screen.DietNameSelection.route,
             enterTransition = {
                 slideInHorizontally(initialOffsetX = { it })
@@ -564,11 +574,11 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     dietViewModel.updateDiet(name = it)
                     val requirements = listOf(userViewModel.getUser().id, getFoodIndexFromVariant(dietViewModel.getDiet().foodVariant), dietViewModel.getDiet().duration, dietViewModel.getDiet().name)
                     create_diet_with_user_data(requirements, context = applicationContext, onResult = {
-                        showDiets = false
                         navController.navigateAndClearStack(Screen.Meals.route)                    })
                 },
             )
         }
+
         composable(route = Screen.FoodDetail.route,
             enterTransition = {
                 slideInHorizontally(initialOffsetX = { it })
@@ -585,7 +595,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
         ) {
             FoodDetailScreen(
                 foodViewModel = newFood,
-                onNavigateBack = { navController.navigateAndClearStack(Screen.FoodList.route) },
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 
@@ -625,13 +635,15 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
         composable(route = Screen.ChosenDiet.route
         ) {
-            dietViewModel.updateDiet(duration = 3)
-            dietViewModel.updateDiet(diets = listOf(DietDayViewModel(), DietDayViewModel(), DietDayViewModel()))
             ChosenDietInterface(
                 context = applicationContext,
                 dietViewModel = dietViewModel,
                 navController = navController,// Pasa el ID a tu pantalla
-                userViewModel = userViewModel
+                userViewModel = userViewModel,
+                onNext = {
+                    navController.navigate(Screen.Home.route)
+
+                }
             )
         }
 
@@ -656,7 +668,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             }
 
         }
-
 
         composable(route = Screen.Home.route
         ) {
@@ -683,11 +694,14 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     if (it == DietGeneratorType.USER_DATA) {
+                        navigationVariable = false
                         navController.navigate(Screen.GenerateMealPlanWithData.route)
                     } else if (it == DietGeneratorType.MANUAL_INPUT){
+                        navigationVariable = false
                         navController.navigate(Screen.GenerateMealPlanWithInputs.route)
                     } else {
-                        navController.navigate(Screen.ChosenDiet.route)
+                        navigationVariable = true
+                        navController.navigate(Screen.DietDurationSelection.route)
                     }
                 }
             )
@@ -713,7 +727,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     create_diet_with_inputs(it, applicationContext, onResult = {
-                        showDiets = false
                         navController.navigateAndClearStack(Screen.Meals.route)
                     })
                 }

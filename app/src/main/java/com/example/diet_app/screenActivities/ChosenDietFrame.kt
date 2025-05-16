@@ -30,8 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.diet_app.convertPlatesToFoodViewModels
 import com.example.diet_app.getAllPlatesWhereUserIdIsEitherUsersOrNull
-import com.example.diet_app.model.FoodType
-import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.screenActivities.components.FoodDetailDialog
 import com.example.diet_app.screenActivities.components.FoodListDialog
@@ -46,7 +44,8 @@ fun ChosenDietInterface(
     context: Context,
     navController: NavController,
     dietViewModel: DietViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    onNext: (dietViewModel: DietViewModel) -> Unit
 ) {
     var selectedDay by remember { mutableIntStateOf(1) }
     var selectedFood by remember { mutableStateOf<FoodViewModel?>(null) }

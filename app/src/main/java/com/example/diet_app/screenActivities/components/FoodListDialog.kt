@@ -89,7 +89,7 @@ fun FoodListDialog(
             Column(
                 modifier = Modifier
                     .padding(24.dp)
-                    .verticalScroll(rememberScrollState())  // Scroll para todo el contenido
+                    .verticalScroll(rememberScrollState())  // Scroll para el contenido
             ) {
                 // Header
                 Row(
