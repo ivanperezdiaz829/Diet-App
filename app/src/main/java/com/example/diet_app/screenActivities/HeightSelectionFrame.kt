@@ -47,7 +47,7 @@ fun HeightSelectionScreen(
     onSkip: () -> Unit,
     onNext: (Int) -> Unit
 ) {
-    var height by remember { mutableIntStateOf(150) } // Edad inicial
+    var height by remember { mutableIntStateOf(150) } // Altura inicial
 
     Column(
         modifier = Modifier
@@ -71,7 +71,7 @@ fun HeightSelectionScreen(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            val heightRange = (0..250).toList() // Rango de alturas
+            val heightRange = (60..250).toList() // Rango de alturas
             var sliderPosition by remember { mutableFloatStateOf(150f) } // Posición inicial del slider
             val lazyListState = rememberLazyListState() // Estado del carrusel
             val coroutineScope = rememberCoroutineScope() // Para animar el deslizamiento
@@ -79,7 +79,7 @@ fun HeightSelectionScreen(
             // Sincronizar el carrusel con el slider
             LaunchedEffect(sliderPosition) {
                 coroutineScope.launch {
-                    lazyListState.animateScrollToItem(sliderPosition.toInt())
+                    lazyListState.animateScrollToItem((sliderPosition - 60).toInt())
                 }
             }
 
@@ -107,7 +107,7 @@ fun HeightSelectionScreen(
                                 coroutineScope.launch {
                                     lazyListState.scrollBy(-dragAmount) // Desplaza el carrusel
                                 }
-                                sliderPosition = lazyListState.firstVisibleItemIndex.toFloat() // Sincroniza el slider con el carrusel
+                                sliderPosition = (lazyListState.firstVisibleItemIndex + 60).toFloat() // Sincroniza el slider con el carrusel
                             }
                         },
                     horizontalArrangement = Arrangement.spacedBy(24.dp), // Espaciado entre tarjetas
@@ -132,7 +132,7 @@ fun HeightSelectionScreen(
                         sliderPosition = newValue // Actualiza la posición del slider
                         height = newValue.toInt() // Actualiza la altura
                     },
-                    valueRange = 0f..250f,
+                    valueRange = 60f..250f,
                     modifier = Modifier.fillMaxWidth(0.8f)
                 )
             }
