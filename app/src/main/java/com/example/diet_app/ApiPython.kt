@@ -3,6 +3,7 @@ package com.example.diet_app
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.Composable
 import com.example.diet_app.model.FoodType
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
@@ -303,7 +304,11 @@ fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String
 }
 
 fun getUserPlatesPro(userId: Int, context: Context, onResult: (String) -> Unit) {
-    val client = OkHttpClient()
+    val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS) // Increase timeout
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
     val url = "http://10.0.2.2:8000/get_all_user_plates/$userId" // Asegúrate de que coincida con el endpoint real
 
     val request = Request.Builder()
