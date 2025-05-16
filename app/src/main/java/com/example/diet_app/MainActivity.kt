@@ -319,12 +319,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     GlobalData.login(userViewModel)
                     printUserInfo(userViewModel)
 
-
                         getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, applicationContext) { result ->
                             foodsDatabase = convertPlatesToFoodViewModels(result)
                         }
-
-
 
                         getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
                             dietJson = jsonResponse
@@ -336,12 +333,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                             }
                         }
 
-
-
                         getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
                             foodList = parseUserPlatesResponse(it).toMutableList()
                         })
-
 
                     navController.navigate(Screen.Home.route)
                 },
@@ -785,7 +779,16 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     create_diet_with_inputs(it, applicationContext, onResult = {
-                        navController.navigateAndClearStack(Screen.Meals.route)
+                        getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                            dietJson = jsonResponse
+                            // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                            if (jsonResponse.isNotEmpty()) {
+                                val response = deserializeDietInformation(jsonResponse)
+                                dietViewModels = response.toDietViewModels() // Ahora recibe una lista
+                                showDiets = true
+                                navController.navigateAndClearStack(Screen.Meals.route)
+                            }
+                        }
                     })
                 }
             )
