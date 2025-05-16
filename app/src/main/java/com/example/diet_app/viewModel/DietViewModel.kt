@@ -3,6 +3,7 @@ package com.example.diet_app.viewModel
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.diet_app.DietPlanFromPlatesSelectedComplete
 import com.example.diet_app.model.DietModel
 import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.Goal
@@ -81,5 +82,23 @@ class DietViewModel: ViewModel() {
             Log.e("SaveDiet", "Error al serializar dieta", e)
         }
     }
-
+    fun toDietPlanFromPlatesSelectedComplete() : DietPlanFromPlatesSelectedComplete {
+        for (i in 0 until 7) {
+            val foodsIds = currentDiet.diets[i].getDiet().foodsId
+            Log.d("DietPlanCheck", "Day ${i + 1} foodsId count: ${foodsIds.size}")
+        }
+        return DietPlanFromPlatesSelectedComplete(
+            currentDiet.name,
+            currentDiet.userModel.id,
+            currentDiet.diets[0].getDiet().foodsId,
+            currentDiet.diets[1].getDiet().foodsId,
+            currentDiet.diets[2].getDiet().foodsId,
+            currentDiet.diets[3].getDiet().foodsId,
+            currentDiet.diets[4].getDiet().foodsId,
+            currentDiet.diets[5].getDiet().foodsId,
+            currentDiet.diets[6].getDiet().foodsId,
+            currentDiet.foodVariant.ordinal,
+            currentDiet.duration
+        )
+    }
 }

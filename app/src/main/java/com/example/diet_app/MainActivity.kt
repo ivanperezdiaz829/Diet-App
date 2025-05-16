@@ -27,6 +27,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.diet_app.model.FoodModel
+import com.example.diet_app.model.FoodType
+import com.example.diet_app.model.FoodVariant
 import com.example.diet_app.model.GlobalData
 import com.example.diet_app.model.Screen
 import com.example.diet_app.model.getFoodIndexFromVariant
@@ -56,6 +59,245 @@ class MainActivity : ComponentActivity() {
             var userViewModel = UserViewModel()
             var dietViewModel = DietViewModel()
 
+            /*
+            var foodModels = listOf(
+                FoodModel(
+                name = "Pollo a la parrilla",
+                foodId = 1,
+                protein = 27.0,
+                fats = 5.0,
+                sugar = 0.0,
+                salt = 0.3,
+                carbohydrates = 0.0,
+                calories = 165.0,
+                price = 5.0,
+                foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                foodTypes = setOf(FoodType.PLATO_LIGERO)
+            ),
+                FoodModel(
+                    name = "Ensalada César",
+                    foodId = 2,
+                    protein = 8.0,
+                    fats = 15.0,
+                    sugar = 3.0,
+                    salt = 0.8,
+                    carbohydrates = 10.0,
+                    calories = 190.0,
+                    price = 4.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Salmón al horno",
+                    foodId = 3,
+                    protein = 22.0,
+                    fats = 13.0,
+                    sugar = 0.0,
+                    salt = 0.4,
+                    carbohydrates = 0.0,
+                    calories = 208.0,
+                    price = 12.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Arroz integral",
+                    foodId = 4,
+                    protein = 7.0,
+                    fats = 1.0,
+                    sugar = 0.0,
+                    salt = 0.02,
+                    carbohydrates = 38.0,
+                    calories = 180.0,
+                    price = 2.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Huevos revueltos",
+                    foodId = 5,
+                    protein = 13.0,
+                    fats = 11.0,
+                    sugar = 1.0,
+                    salt = 0.5,
+                    carbohydrates = 1.0,
+                    calories = 150.0,
+                    price = 3.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Batido de frutas",
+                    foodId = 6,
+                    protein = 2.0,
+                    fats = 1.0,
+                    sugar = 25.0,
+                    salt = 0.1,
+                    carbohydrates = 35.0,
+                    calories = 160.0,
+                    price = 3.5,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Pasta al pesto",
+                    foodId = 7,
+                    protein = 12.0,
+                    fats = 14.0,
+                    sugar = 1.0,
+                    salt = 0.8,
+                    carbohydrates = 45.0,
+                    calories = 350.0,
+                    price = 6.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Pan integral",
+                    foodId = 8,
+                    protein = 4.0,
+                    fats = 2.0,
+                    sugar = 2.0,
+                    salt = 0.5,
+                    carbohydrates = 20.0,
+                    calories = 110.0,
+                    price = 1.5,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Yogur natural",
+                    foodId = 9,
+                    protein = 5.0,
+                    fats = 3.0,
+                    sugar = 10.0,
+                    salt = 0.2,
+                    carbohydrates = 15.0,
+                    calories = 90.0,
+                    price = 2.5,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Nueces",
+                    foodId = 10,
+                    protein = 15.0,
+                    fats = 50.0,
+                    sugar = 1.0,
+                    salt = 0.02,
+                    carbohydrates = 5.0,
+                    calories = 600.0,
+                    price = 7.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Tofu",
+                    foodId = 11,
+                    protein = 8.0,
+                    fats = 5.0,
+                    sugar = 0.0,
+                    salt = 0.3,
+                    carbohydrates = 2.0,
+                    calories = 80.0,
+                    price = 4.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Manzana",
+                    foodId = 12,
+                    protein = 0.5,
+                    fats = 0.2,
+                    sugar = 19.0,
+                    salt = 0.0,
+                    carbohydrates = 25.0,
+                    calories = 95.0,
+                    price = 1.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Papas al horno",
+                    foodId = 13,
+                    protein = 4.0,
+                    fats = 2.0,
+                    sugar = 0.0,
+                    salt = 0.4,
+                    carbohydrates = 35.0,
+                    calories = 200.0,
+                    price = 3.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                ),
+                FoodModel(
+                    name = "Leche descremada",
+                    foodId = 14,
+                    protein = 8.0,
+                    fats = 0.5,
+                    sugar = 12.0,
+                    salt = 0.1,
+                    carbohydrates = 12.0,
+                    calories = 90.0,
+                    price = 2.0,
+                    foodVariants = setOf(FoodVariant.VEGAN, FoodVariant.CELIAC, FoodVariant.HALAL, FoodVariant.VEGETARIAN),
+                    foodTypes = setOf(FoodType.PLATO_LIGERO)
+                )
+            )
+            val foodViewModels = foodModels.map { foodModel ->
+                FoodViewModel().apply {
+                    updateFood(
+                        foodModel.name,
+                        foodModel.foodId,
+                        foodModel.protein,
+                        foodModel.fats,
+                        foodModel.sugar,
+                        foodModel.salt,
+                        foodModel.carbohydrates,
+                        foodModel.calories,
+                        foodModel.price,
+                        foodModel.foodVariants,
+                        foodModel.foodTypes
+                    )
+                    Log.d("DIET_APP", "FoodViewModel created: ${foodModel.name} (ID: ${foodModel.foodId})")
+                }
+            }
+
+            // Crear los días de dieta
+            val dietDay1 = DietDayViewModel()
+            val dietDay2 = DietDayViewModel()
+
+            dietDay1.updateDietDay(foods = foodViewModels.subList(0, 7).toMutableList())
+            Log.d("DIET_APP", "Diet Day 1 plates: ${foodViewModels.subList(0, 7).size}")
+            Log.d("DIET_APP", "Diet Day 1 initialized with 7 plates")
+
+            dietDay2.updateDietDay(foods = foodViewModels.subList(7, 14).toMutableList())
+            Log.d("DIET_APP", "Diet Day 2 plates: ${foodViewModels.subList(7, 14).size}")
+            Log.d("DIET_APP", "Diet Day 2 initialized with 7 plates")
+
+
+            // Configurar el usuario
+            userViewModel.updateUser(11)
+            Log.d("DIET_APP", "User updated with ID: ${userViewModel.getUser().id}")
+
+            // Configurar la dieta completa
+            dietViewModel.updateDiet(
+                name = "Loko",
+                userModel = userViewModel.getUser(),
+                duration = 2,
+                diets = listOf(dietDay1, dietDay2, DietDayViewModel(), DietDayViewModel(), DietDayViewModel(), DietDayViewModel(), DietDayViewModel()),
+                foodVariant = FoodVariant.REGULAR
+            )
+            Log.d("DIET_APP", "Diet plan 'Loko' created with 7 days and user ID: ${userViewModel.getUser().id}")
+
+            // Crear el plan de dieta
+            createDietPlanFromPlates(
+                dietViewModel.toDietPlanFromPlatesSelectedComplete(),
+                applicationContext,
+                {}
+            )
+            Log.d("DIET_APP", "Diet plan sent to createDietPlanFromPlates")
+            */
             DietApp(LocalContext.current, userViewModel, foodViewModel, dietViewModel)
         }
     }

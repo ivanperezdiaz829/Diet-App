@@ -1353,41 +1353,50 @@ fun createDietPlanFromPlates(
     onResult: (String) -> Unit,
     onError: (String) -> Unit = {}
 ) {
-    val client = OkHttpClient()
+    val client = OkHttpClient.Builder()
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .build()
     val url = "http://10.0.2.2:8000/create_diet_from_plates"
 
     try {
-        // Validate duration
+        // ✅ Verificar duración de la dieta
+        Log.d("createDietPlan", "Validating diet duration...")
         if (dietPlan.duration !in 1..7) {
-            throw IllegalArgumentException("Duration must be between 1 and 7")
+            throw IllegalArgumentException("Duration must be between 1 and 7, but found ${dietPlan.duration}")
         }
+        Log.d("createDietPlan", "Duration is valid: ${dietPlan.duration} days")
 
-        // Create JSON with proper meal structure
+        // ✅ Crear JSON con la estructura de los platos
+        Log.d("createDietPlan", "Building JSON object for diet plan...")
         val jsonObject = JSONObject().apply {
             put("name", dietPlan.name)
             put("user_id", dietPlan.user_id)
             put("duration", dietPlan.duration)
             put("diet_type", dietPlan.diet_type)
 
-            // Process each day according to server expectations
             val days = listOf(
                 dietPlan.day1, dietPlan.day2, dietPlan.day3, dietPlan.day4,
                 dietPlan.day5, dietPlan.day6, dietPlan.day7
             )
 
+            // ✅ Verificar y agregar platos para cada día
             for (i in 0 until dietPlan.duration) {
                 val dayPlates = days[i]
                 if (dayPlates == null || dayPlates.size != 7) {
+                    Log.e("createDietPlan", "Day ${i + 1} has ${dayPlates?.size ?: 0} plates, expected 7")
                     throw IllegalArgumentException("Day ${i + 1} must have exactly 7 plates")
                 }
-
+                Log.d("createDietPlan", "Day ${i + 1} has exactly 7 plates")
                 put((i + 1).toString(), JSONArray(dayPlates))
             }
         }
 
         val json = jsonObject.toString()
-        Log.d("createDietPlan", "Sending data: $json")
+        Log.d("createDietPlan", "JSON object created successfully: $json")
 
+        // ✅ Preparar y enviar la solicitud HTTP
+        Log.d("createDietPlan", "Preparing HTTP request...")
         val mediaType = "application/json".toMediaType()
         val requestBody = json.toRequestBody(mediaType)
 
@@ -1395,6 +1404,8 @@ fun createDietPlanFromPlates(
             .url(url)
             .post(requestBody)
             .build()
+
+        Log.d("createDietPlan", "Sending request to $url")
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -1423,6 +1434,9 @@ fun createDietPlanFromPlates(
                 }
             }
         })
+
+        Log.d("createDietPlan", "Request sent successfully")
+
     } catch (e: Exception) {
         val msg = "Error creating diet plan: ${e.message}"
         Log.e("createDietPlan", msg)

@@ -14,14 +14,15 @@ class DietDayViewModel {
         foodVariant: FoodVariant = currentDietDay.foodVariant,
         goal: Goal = currentDietDay.goal,
         dietId: Int = currentDietDay.dietId,
-        foodsId: List<Int> = currentDietDay.foodsId
+        foodsId: List<Int>? = null
     ) {
+        val finalFoodsId = foodsId ?: foods.map { it.foodId }
         currentDietDay = DietDayModel(
             foods = foods,
             foodVariant = foodVariant,
             goal = goal,
             dietId = dietId,
-            foodsId = foodsId
+            foodsId = finalFoodsId
         )
     }
 
@@ -41,7 +42,7 @@ class DietDayViewModel {
             // Añade más campos según necesites
         }
     }
-
+}
     /*
     fun loadFromStorage(
         context: Context,
@@ -61,4 +62,3 @@ class DietDayViewModel {
             onLoaded(this)
         }
     }*/
-}

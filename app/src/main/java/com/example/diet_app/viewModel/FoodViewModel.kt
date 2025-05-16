@@ -19,6 +19,9 @@ class FoodViewModel : ViewModel() {
     val name: String
         get() = food.name
 
+    val foodId: Int
+        get() = food.foodId
+
     fun updateFood(
         name: String = food.name,
         foodId: Int = food.foodId,
