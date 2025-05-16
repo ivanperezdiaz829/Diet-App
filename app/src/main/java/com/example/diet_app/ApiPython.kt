@@ -40,18 +40,18 @@ fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
 
     // Convertimos todos los días de dieta (esto se comparte entre todas las dietas)
     val dietDayViewModels = this.days_values.flatMap { dayDetails ->
-        Log.d("DIET_CONVERSION", "Procesando DietPlanDayDetails: ${dayDetails.diet_plan_name}, días: ${dayDetails.days_details.size}")
+        //Log.d("DIET_CONVERSION", "Procesando DietPlanDayDetails: ${dayDetails.diet_plan_name}, días: ${dayDetails.days_details.size}")
 
         dayDetails.days_details.filterNotNull().map { dietDay ->
             val dayViewModel = dietDay.toDietDayViewModel()
-            Log.d("DIET_CONVERSION", "Convertido DietPlanDay con ID: ${dietDay.day_id} a DietDayViewModel con ${dayViewModel.getDiet().foods.size} alimentos")
+            //Log.d("DIET_CONVERSION", "Convertido DietPlanDay con ID: ${dietDay.day_id} a DietDayViewModel con ${dayViewModel.getDiet().foods.size} alimentos")
             dayViewModel
         }
     }
 
     // Procesamos cada plan de dieta completo
     this.diet_plans_complete.forEach { dietPlan ->
-        Log.d("DIET_CONVERSION", "Procesando DietPlanComplete: ${dietPlan.name} (ID: ${dietPlan.id})")
+        //Log.d("DIET_CONVERSION", "Procesando DietPlanComplete: ${dietPlan.name} (ID: ${dietPlan.id})")
 
         val dietViewModel = DietViewModel().apply {
             updateDiet(
@@ -75,16 +75,15 @@ fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
             )
         }
 
-        Log.d("DIET_CONVERSION", "Agregado DietViewModel para el plan: ${dietPlan.name} con ${dietDayViewModels.size} días")
+        //Log.d("DIET_CONVERSION", "Agregado DietViewModel para el plan: ${dietPlan.name} con ${dietDayViewModels.size} días")
 
         dietViewModels.add(dietViewModel)
     }
 
-    Log.d("DIET_CONVERSION", "Conversión completa: ${dietViewModels.size} DietViewModels creados")
-
+    //Log.d("DIET_CONVERSION", "Conversión completa: ${dietViewModels.size} DietViewModels creados")
+    Log.d("DIET_CONVERSION", "Conversión completa: DietViewModels creados")
     return dietViewModels
 }
-
 
 fun DietPlanDay.toDietDayViewModel(): DietDayViewModel {
     val dietDayViewModel = DietDayViewModel()
@@ -279,9 +278,11 @@ fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String
                     val dietInfoResponse = deserializeDietInformation(jsonResponse)
 
                     // Imprimir los datos en el log para verlos
-                    Log.d("API", "Usuario: ${dietInfoResponse.user}")
-                    Log.d("API", "Planes de dieta completos: ${dietInfoResponse.diet_plans_complete}")
-                    Log.d("API", "Detalles de los días: ${dietInfoResponse.days_values}")
+                    //Log.d("API", "Usuario: ${dietInfoResponse.user}")
+                    //Log.d("API", "Planes de dieta completos: ${dietInfoResponse.diet_plans_complete}")
+                    //Log.d("API", "Detalles de los días: ${dietInfoResponse.days_values}")
+                    Log.d("API", "Se han obtenido los datos correctamente")
+
 
                     // Llamamos a la función onResult para manejar la respuesta en la interfaz de usuario
                     (context as? Activity)?.runOnUiThread {
@@ -328,7 +329,8 @@ fun getUserPlatesPro(userId: Int, context: Context, onResult: (String) -> Unit) 
             if (response.isSuccessful) {
                 val jsonResponse = response.body?.string()
                 if (jsonResponse != null) {
-                    Log.d("API", "Respuesta recibida: $jsonResponse")
+                    //Log.d("API", "Respuesta recibida: $jsonResponse")
+                    Log.d("API", "Se han obtenido los datos correctamente")
                     (context as? Activity)?.runOnUiThread {
                         onResult(jsonResponse)
                     }
@@ -447,7 +449,8 @@ fun getAllPlatesWhereUserIdIsEitherUsersOrNull(userId: Int, context: Context, on
                 val responseData = response.body?.string()
                     ?: throw IOException("Empty server response")
 
-                Log.d("PlateAPI", "Response for user_id $userId or null plates: $responseData")
+                // Log.d("PlateAPI", "Response for user_id $userId or null plates: $responseData")
+                Log.d("PlateAPI", "Response for user_id $userId or null plates correct")
 
                 val json = JSONObject(responseData)
                 if (json.has("error")) {
@@ -633,7 +636,6 @@ fun create_diet_with_inputs(values: List<Any>, context: Context, onResult: (Stri
         }
     })
 }
-
 
 fun create_diet_with_user_data(requirements: List<Any>, context: Context, onResult: (String) -> Unit) {
     val client = OkHttpClient.Builder()
