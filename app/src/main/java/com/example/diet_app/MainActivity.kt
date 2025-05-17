@@ -314,7 +314,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     var foodsDatabase by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
     var showDiets by remember { mutableStateOf(false) }
     var foodList by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
-
+    getAllPlatesWhereUserIdIsNull(applicationContext) { result ->
+        foodsDatabase = convertPlatesToFoodViewModels(result)
+    }
     // Configuración de la navegación entre pantallas
     NavHost(navController = navController, startDestination = Screen.Welcome.route) {
 
@@ -521,11 +523,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
-            LaunchedEffect(Unit) {
-                getAllPlatesWhereUserIdIsNull(applicationContext) { result ->
-                    foodsDatabase = convertPlatesToFoodViewModels(result)
-                }
-            }
 
             InputDesign(
                 onNext = {
@@ -578,6 +575,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                         getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
                             foodList = parseUserPlatesResponse(it).toMutableList()
                             foodsDatabase.addAll(foodList)
+                            foodsDatabase = (foodsDatabase).toSet().toMutableList()
                         })
 
                     navController.navigate(Screen.Home.route)

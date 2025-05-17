@@ -263,7 +263,7 @@ fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String
     // Hacer la solicitud HTTP
     client.newCall(request).enqueue(object : okhttp3.Callback {
         override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
-            Log.e("API", "Error en la solicitud: ${e.message}")
+            Log.e("DietsAPI", "Error en la solicitud: ${e.message}")
             (context as? Activity)?.runOnUiThread {
                 onResult("Error: ${e.message}")
             }
@@ -281,7 +281,7 @@ fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String
                     //Log.d("API", "Usuario: ${dietInfoResponse.user}")
                     //Log.d("API", "Planes de dieta completos: ${dietInfoResponse.diet_plans_complete}")
                     //Log.d("API", "Detalles de los días: ${dietInfoResponse.days_values}")
-                    Log.d("API", "Se han obtenido las dietas correctamente")
+                    Log.d("DietsAPI", "Se han obtenido las dietas correctamente")
 
 
                     // Llamamos a la función onResult para manejar la respuesta en la interfaz de usuario
@@ -289,13 +289,13 @@ fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String
                         onResult(jsonResponse)
                     }
                 } else {
-                    Log.e("API", "La respuesta es vacía o nula")
+                    Log.e("DietsAPI", "La respuesta es vacía o nula")
                     (context as? Activity)?.runOnUiThread {
                         onResult("Error: Respuesta vacía del servidor")
                     }
                 }
             } else {
-                Log.e("API", "Error en la respuesta: ${response.message}")
+                Log.e("DietsAPI", "Error en la respuesta: ${response.message}")
                 (context as? Activity)?.runOnUiThread {
                     onResult("Error: ${response.message}")
                 }
@@ -319,7 +319,7 @@ fun getUserPlatesPro(userId: Int, context: Context, onResult: (String) -> Unit) 
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            Log.e("API", "Error en la solicitud: ${e.message}")
+            Log.e("UserPlatesAPI", "Error en la solicitud: ${e.message}")
             (context as? Activity)?.runOnUiThread {
                 onResult("Error: ${e.message}")
             }
@@ -330,18 +330,18 @@ fun getUserPlatesPro(userId: Int, context: Context, onResult: (String) -> Unit) 
                 val jsonResponse = response.body?.string()
                 if (jsonResponse != null) {
                     //Log.d("API", "Respuesta recibida: $jsonResponse")
-                    Log.d("API", "Se han obtenido los platos del usuario correctamente")
+                    Log.d("UserPlatesAPI", "Se han obtenido los platos del usuario correctamente")
                     (context as? Activity)?.runOnUiThread {
                         onResult(jsonResponse)
                     }
                 } else {
-                    Log.e("API", "Respuesta vacía o nula")
+                    Log.e("UserPlatesAPI", "Respuesta vacía o nula")
                     (context as? Activity)?.runOnUiThread {
                         onResult("Error: Respuesta vacía del servidor")
                     }
                 }
             } else {
-                Log.e("API", "Error HTTP: ${response.code} ${response.message}")
+                Log.e("UserPlatesAPI", "Error HTTP: ${response.code} ${response.message}")
                 (context as? Activity)?.runOnUiThread {
                     onResult("Error HTTP: ${response.code}")
                 }
