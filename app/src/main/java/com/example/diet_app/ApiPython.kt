@@ -281,7 +281,7 @@ fun getUserDietPlansCompletePro(userId: Int, context: Context, onResult: (String
                     //Log.d("API", "Usuario: ${dietInfoResponse.user}")
                     //Log.d("API", "Planes de dieta completos: ${dietInfoResponse.diet_plans_complete}")
                     //Log.d("API", "Detalles de los días: ${dietInfoResponse.days_values}")
-                    Log.d("API", "Se han obtenido los datos correctamente")
+                    Log.d("API", "Se han obtenido las dietas correctamente")
 
 
                     // Llamamos a la función onResult para manejar la respuesta en la interfaz de usuario
@@ -330,7 +330,7 @@ fun getUserPlatesPro(userId: Int, context: Context, onResult: (String) -> Unit) 
                 val jsonResponse = response.body?.string()
                 if (jsonResponse != null) {
                     //Log.d("API", "Respuesta recibida: $jsonResponse")
-                    Log.d("API", "Se han obtenido los datos correctamente")
+                    Log.d("API", "Se han obtenido los platos del usuario correctamente")
                     (context as? Activity)?.runOnUiThread {
                         onResult(jsonResponse)
                     }
@@ -351,7 +351,11 @@ fun getUserPlatesPro(userId: Int, context: Context, onResult: (String) -> Unit) 
 }
 
 fun getAllPlatesWhereUserIdIsNull(context: Context, onResult: (Result<List<Plate>>) -> Unit) {
-    val client = OkHttpClient()
+    val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS) // Increase timeout
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
     val url = "http://10.0.2.2:8000/get_all_plates_where_user_id_is_null"
 
     val request = Request.Builder()
@@ -376,7 +380,7 @@ fun getAllPlatesWhereUserIdIsNull(context: Context, onResult: (Result<List<Plate
                 val responseData = response.body?.string()
                     ?: throw IOException("Empty server response")
 
-                Log.d("PlateAPI", "Response for null user_id plates: $responseData")
+                //(Log.d("PlateAPI", "Response for null user_id plates: $responseData")
 
                 val json = JSONObject(responseData)
                 val platesArray = json.getJSONArray("plates")

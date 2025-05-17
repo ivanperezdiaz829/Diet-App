@@ -316,10 +316,11 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     var foodList by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
 
     // Configuración de la navegación entre pantallas
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.Welcome.route) {
 
         composable(route = Screen.Home.route
-        ) {HomePageFrame(navController, userViewModel)}
+        ) {HomePageFrame(navController, userViewModel)
+        }
 
         composable(route = Screen.Goal.route,
             enterTransition = {
@@ -361,10 +362,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                             ) { result ->
                                 when {
                                     result.isSuccess -> {
-
-                                        getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, applicationContext) { result ->
-                                            foodsDatabase = convertPlatesToFoodViewModels(result)
-                                        }
 
                                         getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
                                             dietJson = jsonResponse
@@ -524,8 +521,15 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
+            LaunchedEffect(Unit) {
+                getAllPlatesWhereUserIdIsNull(applicationContext) { result ->
+                    foodsDatabase = convertPlatesToFoodViewModels(result)
+                }
+            }
+
             InputDesign(
-                onNext = { navController.navigate(Screen.Login.route) }
+                onNext = {
+                    navController.navigate(Screen.Login.route) }
             )
         }
 
@@ -561,10 +565,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     GlobalData.login(userViewModel)
                     printUserInfo(userViewModel)
 
-                        getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, applicationContext) { result ->
-                            foodsDatabase = convertPlatesToFoodViewModels(result)
-                        }
-
                         getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
                             dietJson = jsonResponse
                             // Solo actualizamos los ViewModels cuando tengamos el JSON válido
@@ -577,6 +577,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
 
                         getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
                             foodList = parseUserPlatesResponse(it).toMutableList()
+                            foodsDatabase.addAll(foodList)
                         })
 
                     navController.navigate(Screen.Home.route)
@@ -730,9 +731,11 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 LaunchedEffect(Unit) {
                     createPlateFromViewModel(newFood, userViewModel.getUser().id.toString(), applicationContext, onResult = {
 
-                        getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, applicationContext) { result ->
-                            foodsDatabase = convertPlatesToFoodViewModels(result)
-                        }
+                    getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
+                        foodList = parseUserPlatesResponse(it).toMutableList()
+                        foodsDatabase.addAll(foodList)
+                        foodsDatabase = (foodsDatabase).toSet().toMutableList()
+                    })
 
                     })
                     Toast.makeText(
@@ -880,13 +883,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             FoodDetailScreen(
                 foodViewModel = newFood,
                 onNavigateBack = {
-                    getAllPlatesWhereUserIdIsEitherUsersOrNull(userViewModel.getUser().id, applicationContext) { result ->
-                        foodsDatabase = convertPlatesToFoodViewModels(result)
-                    }
-
-                    getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
-                        foodList = parseUserPlatesResponse(it).toMutableList()
-                    })
                     navController.navigateAndClearStack(Screen.Home.route)
                 },
             )
