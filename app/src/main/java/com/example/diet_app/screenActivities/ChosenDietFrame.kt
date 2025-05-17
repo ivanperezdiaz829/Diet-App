@@ -1,20 +1,28 @@
 package com.example.diet_app.screenActivities
 
 import android.content.Context
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,14 +33,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.diet_app.convertPlatesToFoodViewModels
+import com.example.diet_app.createPlateFromViewModel
 import com.example.diet_app.getAllPlatesWhereUserIdIsEitherUsersOrNull
 import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.screenActivities.components.FoodDetailDialog
 import com.example.diet_app.screenActivities.components.FoodListDialog
+import com.example.diet_app.ui.theme.PrimaryGreen
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
@@ -46,13 +57,46 @@ fun ChosenDietInterface(
     dietViewModel: DietViewModel,
     userViewModel: UserViewModel,
     foodsDatabase : MutableList<FoodViewModel>,
-    onNext: (dietViewModel: DietViewModel) -> Unit
+    onNext: (DietViewModel) -> Unit
 ) {
     var selectedDay by remember { mutableIntStateOf(1) }
     var selectedFood by remember { mutableStateOf<FoodViewModel?>(null) }
     var addFood by remember { mutableStateOf<Boolean>(false) }
     var foodsForSelectedDay by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
     var foodsDatabase by remember { mutableStateOf<MutableList<FoodViewModel>>(foodsDatabase) }
+    var saveFood by remember { mutableStateOf<Boolean>(false) }
+
+    if (saveFood) {
+        AlertDialog(
+            onDismissRequest = {
+                // Si el usuario cierra el diálogo sin responder
+                saveFood = false
+            },
+            title = { Text("Confirmar guardar dieta") },
+            text = { Text("¿Realmente quieres añadir esta dieta?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        saveFood = false
+                        // Ejecutar la acción original
+                        onNext(dietViewModel)
+                    }
+                ) {
+                    Text("Sí")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        saveFood = false
+                        // No hacer nada, se cancela la acción
+                    }
+                ) {
+                    Text("No")
+                }
+            }
+        )
+    }
 
     // Mostrar diálogo si hay comida seleccionada
     selectedFood?.let { food ->
@@ -102,6 +146,14 @@ fun ChosenDietInterface(
         ) {
 
             BackButton(onNavigateBack = { navController.popBackStack() })
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = "Save diet",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable { saveFood = true },
+                tint = PrimaryGreen
+            )
 
         }
 

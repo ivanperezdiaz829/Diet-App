@@ -38,6 +38,7 @@ import com.example.diet_app.model.getGoalInt
 import com.example.diet_app.model.getSexInt
 import com.example.diet_app.screenActivities.*
 import com.example.diet_app.screenActivities.components.navigateAndClearStack
+import com.example.diet_app.screenActivities.components.navigateSingleInStack
 import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
@@ -920,7 +921,19 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             }
         }
 
-        composable(route = Screen.ChosenDiet.route
+        composable(route = Screen.ChosenDiet.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
         ) {
             ChosenDietInterface(
                 context = applicationContext,
@@ -929,8 +942,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 userViewModel = userViewModel,
                 foodsDatabase = foodsDatabase,
                 onNext = {
-                    navController.navigate(Screen.Home.route)
-
+                    dietViewModel.updateDiet(diets = it.getDiet().diets)
+                    Log.d("Diets: ", dietViewModel.getDiet().diets.toString())
+                    navController.navigateAndClearStack(Screen.Home.route)
                 }
             )
         }
