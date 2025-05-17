@@ -1,6 +1,7 @@
 package com.example.diet_app.screenActivities
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,12 +15,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.diet_app.convertPlatesToFoodViewModels
+import com.example.diet_app.createPlateFromViewModel
 import com.example.diet_app.getAllPlatesWhereUserIdIsEitherUsersOrNull
 import com.example.diet_app.screenActivities.components.BackButton
 import com.example.diet_app.screenActivities.components.FoodDetailDialog
@@ -60,6 +64,39 @@ fun ChosenDietInterface(
     var addFood by remember { mutableStateOf<Boolean>(false) }
     var foodsForSelectedDay by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
     var foodsDatabase by remember { mutableStateOf<MutableList<FoodViewModel>>(foodsDatabase) }
+    var saveFood by remember { mutableStateOf<Boolean>(false) }
+
+    if (saveFood) {
+        AlertDialog(
+            onDismissRequest = {
+                // Si el usuario cierra el diálogo sin responder
+                saveFood = false
+            },
+            title = { Text("Confirmar guardar dieta") },
+            text = { Text("¿Realmente quieres añadir esta dieta?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        saveFood = false
+                        // Ejecutar la acción original
+                        onNext(dietViewModel)
+                    }
+                ) {
+                    Text("Sí")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        saveFood = false
+                        // No hacer nada, se cancela la acción
+                    }
+                ) {
+                    Text("No")
+                }
+            }
+        )
+    }
 
     // Mostrar diálogo si hay comida seleccionada
     selectedFood?.let { food ->
@@ -114,7 +151,7 @@ fun ChosenDietInterface(
                 contentDescription = "Save diet",
                 modifier = Modifier
                     .size(32.dp)
-                    .clickable { onNext(dietViewModel) },
+                    .clickable { saveFood = true },
                 tint = PrimaryGreen
             )
 

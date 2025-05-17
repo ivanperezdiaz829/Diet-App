@@ -38,6 +38,7 @@ import com.example.diet_app.model.getGoalInt
 import com.example.diet_app.model.getSexInt
 import com.example.diet_app.screenActivities.*
 import com.example.diet_app.screenActivities.components.navigateAndClearStack
+import com.example.diet_app.screenActivities.components.navigateSingleInStack
 import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
@@ -949,7 +950,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNext = {
                     dietViewModel.updateDiet(diets = it.getDiet().diets)
                     Log.d("Diets: ", dietViewModel.getDiet().diets.toString())
-                    navController.navigate(Screen.Home.route)
+                    navController.navigateAndClearStack(Screen.Home.route)
                 }
             )
         }
