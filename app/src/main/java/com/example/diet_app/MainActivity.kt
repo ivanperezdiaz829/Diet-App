@@ -926,7 +926,19 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             }
         }
 
-        composable(route = Screen.ChosenDiet.route
+        composable(route = Screen.ChosenDiet.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it })
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it })
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it })
+            }
         ) {
             ChosenDietInterface(
                 context = applicationContext,
@@ -935,8 +947,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 userViewModel = userViewModel,
                 foodsDatabase = foodsDatabase,
                 onNext = {
+                    dietViewModel.updateDiet(diets = it.getDiet().diets)
+                    Log.d("Diets: ", dietViewModel.getDiet().diets.toString())
                     navController.navigate(Screen.Home.route)
-
                 }
             )
         }
