@@ -101,7 +101,7 @@ class DietViewModel: ViewModel() {
             foodsIds[4],
             foodsIds[5],
             foodsIds[6],
-            currentDiet.foodVariant.ordinal,
+            currentDiet.foodVariant.ordinal+1,
             currentDiet.duration
         )
     }

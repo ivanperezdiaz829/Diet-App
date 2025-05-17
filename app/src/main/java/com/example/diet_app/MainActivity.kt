@@ -855,9 +855,21 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     if (createDietPlan) {
                         // llamada pa crear la dieta escogida por usuario
                         logDietDetails(dietViewModel)
-
-                        navController.navigateAndClearStack(Screen.Home.route)
-
+                        createDietPlanFromPlates(
+                            dietViewModel.toDietPlanFromPlatesSelectedComplete(),
+                            applicationContext,
+                            {
+                                getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                                    dietJson = jsonResponse
+                                    // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                                    if (jsonResponse.isNotEmpty()) {
+                                        val response = deserializeDietInformation(jsonResponse)
+                                        dietViewModels = response.toDietViewModels() // Ahora recibe una lista
+                                        showDiets = true
+                                        navController.navigateAndClearStack(Screen.Home.route)
+                                    }
+                                }
+                            })
                     } else {
                         val requirements = listOf(userViewModel.getUser().id, getFoodIndexFromVariant(dietViewModel.getDiet().foodVariant), dietViewModel.getDiet().duration, dietViewModel.getDiet().name)
                         create_diet_with_user_data(requirements, context = applicationContext, onResult = {
@@ -958,12 +970,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     dietViewModel.updateDiet(diets = it.getDiet().diets)
                     Log.d("Diets: ", dietViewModel.getDiet().diets.toString())
                     // Crear el plan de dieta
-                    createDietPlanFromPlates(
-                        dietViewModel.toDietPlanFromPlatesSelectedComplete(),
-                        applicationContext,
-                        {}
-                    )
-                    navController.navigateAndClearStack(Screen.Home.route)
                     createDietPlan = true
                     //logDietDetails(dietViewModel)
                     navController.navigateAndClearStack(Screen.DietNameSelection.route)
