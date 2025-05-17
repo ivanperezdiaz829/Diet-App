@@ -359,14 +359,12 @@ def get_all_diets_of_user_complete_information(user_id):
             cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
             user = cursor.fetchone()
 
-            print(user)
 
             if not user:
                 return jsonify({"error": "usuario no encontrado"}), 404
 
             # Imprimir los datos del usuario
-            print("Usuario obtenido:")
-            print(dict(user))  # Imprime los datos del usuario
+
 
             # Obtener los planes de dieta completos
             cursor.execute("SELECT * FROM diet_plans_complete WHERE user_id = ?", (user_id,))
@@ -448,7 +446,6 @@ def get_all_diets_of_user_complete_information(user_id):
                 })
 
                 # Imprimir los detalles de los días
-                print(f"Plan de dieta '{diet_plan_complete['name']}' días: {days_details}")
 
             # Responder con los datos del usuario y los días de los planes de dieta
             return jsonify({
@@ -896,12 +893,8 @@ def create_diet_from_plates():
                 raise ValueError('La dieta debe tener una duración y durar entre 1 y 7 días')
             request_fields.extend(str(i) for i in range(1, int(data.get('duration')) + 1))
             # Obtenemos los campos que no son válidos y los que faltan
-            print(request_fields)
-            print(data)
             invalid_fields = set(data.keys()) - set(request_fields)
             missing_fields = set(request_fields) - set(data.keys())
-            print(invalid_fields)
-            print(missing_fields)
 
             if invalid_fields:
                 raise ValueError(f'Request body contained invalid fields: {invalid_fields}')
