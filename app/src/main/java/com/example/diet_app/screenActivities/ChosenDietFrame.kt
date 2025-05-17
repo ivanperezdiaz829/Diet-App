@@ -78,8 +78,15 @@ fun ChosenDietInterface(
                 TextButton(
                     onClick = {
                         saveFood = false
-                        // Ejecutar la acción original
-                        onNext(dietViewModel)
+                        if (!dietViewModel.validateDietDaysHave7Foods()) {
+                            Toast.makeText(
+                                context,
+                                "Cada día debe tener 7 comidas!\n",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            onNext(dietViewModel)
+                        }
                     }
                 ) {
                     Text("Sí")
