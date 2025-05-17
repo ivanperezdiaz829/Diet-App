@@ -44,6 +44,7 @@ import com.example.diet_app.viewModel.DietViewModel
 import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
 import com.example.diet_app.viewModel.parseUserPlatesResponse
+import kotlin.math.log
 
 class MainActivity : ComponentActivity() {
 
@@ -315,6 +316,8 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     var foodsDatabase by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
     var showDiets by remember { mutableStateOf(false) }
     var foodList by remember { mutableStateOf<MutableList<FoodViewModel>>(mutableListOf()) }
+    var createDietPlan by remember { mutableStateOf(false) }
+
     getAllPlatesWhereUserIdIsNull(applicationContext) { result ->
         foodsDatabase = convertPlatesToFoodViewModels(result)
     }
@@ -848,19 +851,29 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
                     dietViewModel.updateDiet(name = it)
-                    val requirements = listOf(userViewModel.getUser().id, getFoodIndexFromVariant(dietViewModel.getDiet().foodVariant), dietViewModel.getDiet().duration, dietViewModel.getDiet().name)
-                    create_diet_with_user_data(requirements, context = applicationContext, onResult = {
-                        getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
-                            dietJson = jsonResponse
-                            // Solo actualizamos los ViewModels cuando tengamos el JSON válido
-                            if (jsonResponse.isNotEmpty()) {
-                                val response = deserializeDietInformation(jsonResponse)
-                                dietViewModels = response.toDietViewModels() // Ahora recibe una lista
-                                showDiets = true
-                                navController.navigateAndClearStack(Screen.Meals.route)
+
+                    if (createDietPlan) {
+                        // llamada pa crear la dieta escogida por usuario
+                        logDietDetails(dietViewModel)
+
+                        navController.navigateAndClearStack(Screen.Home.route)
+
+                    } else {
+                        val requirements = listOf(userViewModel.getUser().id, getFoodIndexFromVariant(dietViewModel.getDiet().foodVariant), dietViewModel.getDiet().duration, dietViewModel.getDiet().name)
+                        create_diet_with_user_data(requirements, context = applicationContext, onResult = {
+                            getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                                dietJson = jsonResponse
+                                // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                                if (jsonResponse.isNotEmpty()) {
+                                    val response = deserializeDietInformation(jsonResponse)
+                                    dietViewModels = response.toDietViewModels() // Ahora recibe una lista
+                                    showDiets = true
+                                    navController.navigateAndClearStack(Screen.Home.route)
+                                }
                             }
-                        }
-                    })
+                        })
+                    }
+                    createDietPlan = false
                 },
             )
         }
@@ -951,6 +964,9 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                         {}
                     )
                     navController.navigateAndClearStack(Screen.Home.route)
+                    createDietPlan = true
+                    //logDietDetails(dietViewModel)
+                    navController.navigateAndClearStack(Screen.DietNameSelection.route)
                 }
             )
         }
@@ -1110,4 +1126,37 @@ fun printAllFoodIds(dietDays: List<DietDayViewModel>, tag: String = "FoodIds") {
 
 fun getDietViewModelId(dietViewModelList: List<DietViewModel>, dietId: String): DietViewModel? {
     return dietViewModelList.find { it.getDiet().dietId == dietId }
+}
+
+fun logDietDetails(dietViewModel: DietViewModel, tag: String = "DietLog") {
+    val diet = dietViewModel.getDiet()
+
+    // Información básica de la dieta
+    Log.d(tag, "=== DIETA DETALLADA ===")
+    Log.d(tag, "• Nombre: ${diet.name}")
+    Log.d(tag, "• Duración: ${diet.duration} días")
+    Log.d(tag, "• Fecha creación: ${diet.creationDate}")
+    Log.d(tag, "• Variante: ${diet.foodVariant}")
+    Log.d(tag, "• Objetivo: ${diet.goal}")
+    Log.d(tag, "• ID: ${diet.dietId}")
+
+    // Información de cada día
+    Log.d(tag, "\nDÍAS (${diet.diets.size}):")
+    diet.diets.forEachIndexed { index, dayViewModel ->
+        val day = dayViewModel.getDiet()
+        Log.d(tag, "\n  Día ${index + 1}:")
+        Log.d(tag, "  - Variante: ${day.foodVariant}")
+        Log.d(tag, "  - Objetivo: ${day.goal}")
+        Log.d(tag, "  - ID Dieta padre: ${day.dietId}")
+
+        // Comidas del día
+        Log.d(tag, "  COMIDAS (${day.foods.size}):")
+        day.foods.forEachIndexed { foodIndex, food ->
+            Log.d(tag, "    ${foodIndex + 1}. ${food.name} (ID: ${food.foodId})")
+            Log.d(tag, "      Calorías: ${food.getFood().calories}")
+            Log.d(tag, "      Proteínas: ${food.getFood().protein}g")
+            Log.d(tag, "      Carbos: ${food.getFood().carbohydrates}g")
+            Log.d(tag, "      Grasas: ${food.getFood().fats}g")
+        }
+    }
 }
