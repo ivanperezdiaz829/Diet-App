@@ -563,21 +563,21 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     GlobalData.login(userViewModel)
                     printUserInfo(userViewModel)
 
-                        getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
-                            dietJson = jsonResponse
-                            // Solo actualizamos los ViewModels cuando tengamos el JSON válido
-                            if (jsonResponse.isNotEmpty()) {
-                                val response = deserializeDietInformation(jsonResponse)
-                                dietViewModels = response.toDietViewModels() // Ahora recibe una lista
-                                showDiets = true
-                            }
+                    getUserDietPlansCompletePro(userViewModel.getUser().id, applicationContext) { jsonResponse ->
+                        dietJson = jsonResponse
+                        // Solo actualizamos los ViewModels cuando tengamos el JSON válido
+                        if (jsonResponse.isNotEmpty()) {
+                            val response = deserializeDietInformation(jsonResponse)
+                            dietViewModels = response.toDietViewModels() // Ahora recibe una lista
+                            showDiets = true
                         }
+                    }
 
-                        getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
-                            foodList = parseUserPlatesResponse(it).toMutableList()
-                            foodsDatabase.addAll(foodList)
-                            foodsDatabase = (foodsDatabase).toSet().toMutableList()
-                        })
+                    getUserPlatesPro(userViewModel.getUser().id, applicationContext, {
+                        foodList = parseUserPlatesResponse(it).toMutableList()
+                        foodsDatabase.addAll(foodList)
+                        foodsDatabase = (foodsDatabase).toSet().toMutableList()
+                    })
 
                     navController.navigate(Screen.Home.route)
                 },
