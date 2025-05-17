@@ -1388,10 +1388,10 @@ fun createDietPlanFromPlates(
             for (i in 0 until dietPlan.duration) {
                 val dayPlates = days[i]
                 if (dayPlates == null || dayPlates.size != 7) {
-                    Log.e("createDietPlan", "Day ${i + 1} has ${dayPlates?.size ?: 0} plates, expected 7")
-                    throw IllegalArgumentException("Day ${i + 1} must have exactly 7 plates")
+                    Log.e("createDietPlan", "Day ${i} has ${dayPlates?.size ?: 0} plates, expected 7")
+                    throw IllegalArgumentException("Day ${i } must have exactly 7 plates")
                 }
-                Log.d("createDietPlan", "Day ${i + 1} has exactly 7 plates")
+                Log.d("createDietPlan", "Day ${i} has exactly 7 plates")
                 put((i + 1).toString(), JSONArray(dayPlates))
             }
         }

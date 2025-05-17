@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.diet_app.DietPlanFromPlatesSelectedComplete
 import com.example.diet_app.model.DietModel
 import com.example.diet_app.model.FoodVariant
+import com.example.diet_app.model.GlobalData.userViewModel
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.UserModel
 import org.json.JSONArray
@@ -83,14 +84,16 @@ class DietViewModel: ViewModel() {
         }
     }
     fun toDietPlanFromPlatesSelectedComplete() : DietPlanFromPlatesSelectedComplete {
-        var foodsIds = mutableListOf(listOf(7))
-        for (i in 0 until 7) {
-            foodsIds[i] = currentDiet.diets[i].getDiet().foods.map { it.getFood().foodId }
-            Log.d("DietPlanCheck", "Day ${i + 1} foodsId count: ${foodsIds.size}")
+        val foodsIds = mutableListOf<MutableList<Int>>()
+        currentDiet.diets.forEach { dietDay ->
+            val dayFoodIds = dietDay.getDiet().foods.map { it.getFood().foodId }.toMutableList()
+            foodsIds.add(dayFoodIds)
+            Log.d("FoodIdsDebug", "Día ${foodsIds.size}: $dayFoodIds")
         }
+        Log.d("listas de dieta", foodsIds.toString())
         return DietPlanFromPlatesSelectedComplete(
             currentDiet.name,
-            currentDiet.userModel.id,
+            userViewModel.getUser().id,
             foodsIds[0],
             foodsIds[1],
             foodsIds[2],
