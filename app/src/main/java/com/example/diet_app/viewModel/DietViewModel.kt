@@ -101,4 +101,11 @@ class DietViewModel: ViewModel() {
             currentDiet.duration
         )
     }
+
+    fun validateDietDaysHave7Foods(): Boolean {
+        return currentDiet.diets.all { dietDay ->
+            dietDay.getDiet().foods.size == 7
+        }
+    }
+
 }
