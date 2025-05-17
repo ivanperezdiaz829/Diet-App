@@ -821,7 +821,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 },
                 onNextDiet = {
                     dietViewModel.updateDiet(duration = it)
-                    val dietDays = List(dietViewModel.getDiet().duration) {
+                    val dietDays = List(7) {
                         DietDayViewModel()
                     }
                     dietViewModel.updateDiet(diets = dietDays)
@@ -944,6 +944,12 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onNext = {
                     dietViewModel.updateDiet(diets = it.getDiet().diets)
                     Log.d("Diets: ", dietViewModel.getDiet().diets.toString())
+                    // Crear el plan de dieta
+                    createDietPlanFromPlates(
+                        dietViewModel.toDietPlanFromPlatesSelectedComplete(),
+                        applicationContext,
+                        {}
+                    )
                     navController.navigateAndClearStack(Screen.Home.route)
                 }
             )

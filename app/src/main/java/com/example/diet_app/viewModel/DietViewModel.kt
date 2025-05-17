@@ -83,27 +83,28 @@ class DietViewModel: ViewModel() {
         }
     }
     fun toDietPlanFromPlatesSelectedComplete() : DietPlanFromPlatesSelectedComplete {
+        var foodsIds = mutableListOf(listOf(7))
         for (i in 0 until 7) {
-            val foodsIds = currentDiet.diets[i].getDiet().foodsId
+            foodsIds[i] = currentDiet.diets[i].getDiet().foods.map { it.getFood().foodId }
             Log.d("DietPlanCheck", "Day ${i + 1} foodsId count: ${foodsIds.size}")
         }
         return DietPlanFromPlatesSelectedComplete(
             currentDiet.name,
             currentDiet.userModel.id,
-            currentDiet.diets[0].getDiet().foodsId,
-            currentDiet.diets[1].getDiet().foodsId,
-            currentDiet.diets[2].getDiet().foodsId,
-            currentDiet.diets[3].getDiet().foodsId,
-            currentDiet.diets[4].getDiet().foodsId,
-            currentDiet.diets[5].getDiet().foodsId,
-            currentDiet.diets[6].getDiet().foodsId,
+            foodsIds[0],
+            foodsIds[1],
+            foodsIds[2],
+            foodsIds[3],
+            foodsIds[4],
+            foodsIds[5],
+            foodsIds[6],
             currentDiet.foodVariant.ordinal,
             currentDiet.duration
         )
     }
 
     fun validateDietDaysHave7Foods(): Boolean {
-        return currentDiet.diets.all { dietDay ->
+        return currentDiet.diets.subList(0, currentDiet.duration).all { dietDay ->
             dietDay.getDiet().foods.size == 7
         }
     }
