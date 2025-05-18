@@ -58,9 +58,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.example.diet_app.R
 import com.example.diet_app.model.FoodVariant
+import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.viewModel.FoodViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -337,20 +339,20 @@ fun FoodItem(
         if (foodData.foodVariants.contains(FoodVariant.CELIAC)) append("🌾 ")
         if (foodData.foodVariants.contains(FoodVariant.HALAL)) append("☪️ ")
     }
-
+    val highlightColor = Color(0xFF40B93C)
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp),
         color = if (isSelected)
-            MaterialTheme.colorScheme.primaryContainer
+            highlightColor
         else
-            MaterialTheme.colorScheme.surface,
+            LightGray,
         border = BorderStroke(
             1.dp,
             if (isSelected)
-                MaterialTheme.colorScheme.primary
+                Color.Black
             else
                 MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
         )
@@ -364,20 +366,28 @@ fun FoodItem(
                 onClick = null,
                 modifier = Modifier.padding(end = 16.dp),
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = MaterialTheme.colorScheme.primary
+                    selectedColor = Color.White,
+                    unselectedColor = Color.Black
                 )
             )
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = foodData.name,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (isSelected)
+                                Color.White
+                            else
+                                Color.Black
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "${foodData.calories} kcal • ${foodData.protein}g proteína",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = if (isSelected)
+                                    Color.White
+                                else
+                                    Color.Black
                     )
                     if (dietaryInfo.isNotBlank()) {
                         Spacer(modifier = Modifier.width(8.dp))
