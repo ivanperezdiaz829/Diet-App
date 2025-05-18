@@ -49,6 +49,7 @@ import com.example.diet_app.viewModel.FoodViewModel
 import com.example.diet_app.viewModel.UserViewModel
 import java.util.Date
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChosenDietInterface(

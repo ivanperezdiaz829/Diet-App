@@ -46,6 +46,7 @@ import com.example.diet_app.viewModel.UserViewModel
 import com.example.diet_app.viewModel.parseUserPlatesResponse
 import kotlin.math.log
 
+
 class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)

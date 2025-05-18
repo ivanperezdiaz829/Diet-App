@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.text.font.FontWeight
 import com.example.diet_app.screenActivities.components.BackButtonLeft
 
+
 @Composable
 fun DietNameScreen(
     onNavigateBack: () -> Unit,
