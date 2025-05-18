@@ -5,7 +5,9 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -32,11 +34,9 @@ import com.example.diet_app.ui.theme.DarkGreen
 import com.example.diet_app.ui.theme.LightGray
 import com.example.diet_app.ui.theme.DarkOverlay
 import com.example.diet_app.screenActivities.components.Header
-import com.example.diet_app.screenActivities.components.NextButton
 import com.example.diet_app.screenActivities.components.TitleSection
 import com.example.diet_app.viewModel.DietDayViewModel
 import com.example.diet_app.viewModel.FoodViewModel
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import com.example.diet_app.screenActivities.components.FoodDetailDialog
@@ -56,7 +56,6 @@ fun CalendarScreen(
     var dayViewModel by remember { mutableStateOf<DietDayViewModel?>(null) }
     var selectedFood by remember { mutableStateOf<FoodViewModel?>(null) }
 
-    // Mostrar diálogo si hay comida seleccionada
     selectedFood?.let { food ->
         FoodDetailDialog(
             foodViewModel = food,
@@ -148,7 +147,7 @@ fun CalendarScreen(
                                         if (dateObj != null) {
                                             getPlateById(context, dateObj) { plates ->
                                                 if (plates.isNotEmpty()) {
-                                                    val foodViewModels = plates
+                                                    val foodViewModels = plates.toMutableList()
 
                                                     selectedFoods = foodViewModels
 
@@ -156,7 +155,7 @@ fun CalendarScreen(
                                                     dietDayVM.updateDietDay(foods = foodViewModels)
                                                     dayViewModel = dietDayVM
 
-                                                    infoText = "" // limpiamos texto plano
+                                                    infoText = ""
                                                 } else {
                                                     dayViewModel = null
                                                     selectedFoods = emptyList()
@@ -181,11 +180,22 @@ fun CalendarScreen(
 
                 // Mostrar dieta o mensaje informativo
                 if (dayViewModel != null && selectedFoods.isNotEmpty()) {
-                    DayDiet(
-                        dayDietDayViewModel = dayViewModel!!,
-                        foods = selectedFoods,
-                        onFoodSelected = { food -> selectedFood = food }
-                    )
+                    // Aquí está el cambio principal - envolver en un Column scrollable
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 400.dp) // Altura máxima para evitar que ocupe toda la pantalla
+                            .verticalScroll(rememberScrollState())
+                            .padding(vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        selectedFoods.forEach { food ->
+                            MealCardCalendar(
+                                food = food,
+                                onDetailsClick = { selectedFood = it }
+                            )
+                        }
+                    }
                 } else {
                     Text(
                         text = infoText,

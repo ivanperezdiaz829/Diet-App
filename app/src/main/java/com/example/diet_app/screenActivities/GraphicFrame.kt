@@ -53,40 +53,39 @@ fun GraphicFrame(
     val nutritionData = remember { mutableStateOf<Map<String, Float>?>(null) }
     val rawValues = remember { mutableStateOf<Map<String, Float>?>(null) }
 
-    LaunchedEffect(Unit) {
-        val totalValues = mutableMapOf(
-            "Calorías" to 0f,
-            "Carbohidratos" to 0f,
-            "Proteínas" to 0f,
-            "Grasas" to 0f,
-            "Azúcares" to 0f,
-            "Sales" to 0f
-        )
+    val totalValues = mutableMapOf(
+        "Calorías" to 0f,
+        "Carbohidratos" to 0f,
+        "Proteínas" to 0f,
+        "Grasas" to 0f,
+        "Azúcares" to 0f,
+        "Sales" to 0f
+    )
 
-        dietViewModel.getDiet().diets.forEach { dietDay ->
-            dietDay.getDiet().foods.forEach { foodViewModel ->
-                val food = foodViewModel.getFood()
-                totalValues["Calorías"] = totalValues["Calorías"]!! + food.calories.toFloat()
-                totalValues["Carbohidratos"] = totalValues["Carbohidratos"]!! + food.carbohydrates.toFloat()
-                totalValues["Proteínas"] = totalValues["Proteínas"]!! + food.protein.toFloat()
-                totalValues["Grasas"] = totalValues["Grasas"]!! + food.fats.toFloat()
-                totalValues["Azúcares"] = totalValues["Azúcares"]!! + food.sugar.toFloat()
-                totalValues["Sales"] = totalValues["Sales"]!! + food.salt.toFloat()
-            }
+    dietViewModel.getDiet().diets.forEach { dietDay ->
+        dietDay.getDiet().foods.forEach { foodViewModel ->
+            var food = foodViewModel.getFood()
+            totalValues["Calorías"] = totalValues["Calorías"]!! + food.calories.toFloat()
+            totalValues["Carbohidratos"] = totalValues["Carbohidratos"]!! + food.carbohydrates.toFloat()
+            totalValues["Proteínas"] = totalValues["Proteínas"]!! + food.protein.toFloat()
+            totalValues["Grasas"] = totalValues["Grasas"]!! + food.fats.toFloat()
+            totalValues["Azúcares"] = totalValues["Azúcares"]!! + food.sugar.toFloat()
+            totalValues["Sales"] = totalValues["Sales"]!! + food.salt.toFloat()
         }
-
-        rawValues.value = totalValues
-
-        val normalizedValues = totalValues.mapValues { (key, value) ->
-            when (key) {
-                "Calorías" -> value / 20f
-                "Sales" -> value / 1000f
-                else -> value
-            }
-        }
-
-        nutritionData.value = normalizedValues
     }
+
+    rawValues.value = totalValues
+
+    val normalizedValues = totalValues.mapValues { (key, value) ->
+        when (key) {
+            "Calorías" -> value / 20f
+            "Sales" -> value / 1000f
+            else -> value
+        }
+    }
+
+    nutritionData.value = normalizedValues
+
 
     Column(
         modifier = Modifier

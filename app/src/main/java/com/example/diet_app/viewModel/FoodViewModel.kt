@@ -19,6 +19,9 @@ class FoodViewModel : ViewModel() {
     val name: String
         get() = food.name
 
+    val foodId: Int
+        get() = food.foodId
+
     fun updateFood(
         name: String = food.name,
         foodId: Int = food.foodId,
@@ -148,11 +151,11 @@ fun FoodModel.toPlate(userId: String): Plate {
         name = name,
         user_id = userId,
         calories = calories.toInt(),
-        carbohydrates = carbohydrates.toInt(),
-        proteins = protein.toInt(),
-        fats = fats.toInt(),
-        sugar = sugar.toInt(),
-        sodium = salt.toInt(),
+        carbohydrates = carbohydrates,
+        proteins = protein,
+        fats = fats,
+        sugar = sugar,
+        sodium = salt,
         price = price,
         type = foodTypeId,
         vegan = isVegan,

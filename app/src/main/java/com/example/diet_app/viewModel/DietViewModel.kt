@@ -3,11 +3,10 @@ package com.example.diet_app.viewModel
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.privacysandbox.ads.adservices.adid.AdId
-import com.example.diet_app.model.DietDayModel
+import com.example.diet_app.DietPlanFromPlatesSelectedComplete
 import com.example.diet_app.model.DietModel
-import com.example.diet_app.model.FoodModel
 import com.example.diet_app.model.FoodVariant
+import com.example.diet_app.model.GlobalData.userViewModel
 import com.example.diet_app.model.Goal
 import com.example.diet_app.model.UserModel
 import org.json.JSONArray
@@ -82,6 +81,34 @@ class DietViewModel: ViewModel() {
             editor.apply()
         } catch (e: JSONException) {
             Log.e("SaveDiet", "Error al serializar dieta", e)
+        }
+    }
+    fun toDietPlanFromPlatesSelectedComplete() : DietPlanFromPlatesSelectedComplete {
+        val foodsIds = mutableListOf<MutableList<Int>>()
+        currentDiet.diets.forEach { dietDay ->
+            val dayFoodIds = dietDay.getDiet().foods.map { it.getFood().foodId }.toMutableList()
+            foodsIds.add(dayFoodIds)
+            Log.d("FoodIdsDebug", "Día ${foodsIds.size}: $dayFoodIds")
+        }
+        Log.d("listas de dieta", foodsIds.toString())
+        return DietPlanFromPlatesSelectedComplete(
+            currentDiet.name,
+            userViewModel.getUser().id,
+            foodsIds[0],
+            foodsIds[1],
+            foodsIds[2],
+            foodsIds[3],
+            foodsIds[4],
+            foodsIds[5],
+            foodsIds[6],
+            currentDiet.foodVariant.ordinal+1,
+            currentDiet.duration
+        )
+    }
+
+    fun validateDietDaysHave7Foods(): Boolean {
+        return currentDiet.diets.subList(0, currentDiet.duration).all { dietDay ->
+            dietDay.getDiet().foods.size == 7
         }
     }
 

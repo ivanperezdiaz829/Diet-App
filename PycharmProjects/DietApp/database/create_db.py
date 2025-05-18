@@ -1,5 +1,5 @@
 import os
-from DietAppAPI.configuration.config import DB_PATH
+from configuration.config import DB_PATH
 from database_utils import create_database
 
 if __name__ == "__main__":

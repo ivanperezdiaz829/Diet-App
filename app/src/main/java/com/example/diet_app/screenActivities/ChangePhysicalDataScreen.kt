@@ -1,6 +1,7 @@
 package com.example.diet_app.screenActivities
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -25,8 +26,10 @@ import com.example.diet_app.viewModel.UserViewModel
 import com.example.ui.components.*
 import java.util.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import com.example.diet_app.screenActivities.components.BackButton
 
 @Composable
@@ -70,8 +73,8 @@ fun UpdatePhysicalDataScreen(
                 errorMessage = "Peso inválido"
                 false
             }
-            age <= 0 -> {
-                errorMessage = "Por favor, selecciona tu fecha de nacimiento"
+            age <= 17 -> {
+                errorMessage = "Por favor, una fecha de nacimiento válida"
                 false
             }
             selectedGoal == null -> {
@@ -96,6 +99,7 @@ fun UpdatePhysicalDataScreen(
 
             // Mover la actualización de los datos dentro de onNext
             onNext(updatedFields)
+
         } else {
             showErrorDialog = true
         }
@@ -160,22 +164,155 @@ fun UpdatePhysicalDataScreen(
             )
 
             // Fecha de nacimiento
+            var isDateValid by remember { mutableStateOf(true) }
+
             Text("Fecha de nacimiento", fontSize = 16.sp)
-            OutlinedTextField(
+            TextField(
                 value = selectedDate,
-                onValueChange = {},
-                enabled = false,
+                onValueChange = { newValue ->
+                    if (isValidDateInput(newValue)) {
+                        selectedDate = newValue
+                        isDateValid = true
+                        if (newValue.length == 10 && isValidDateFormat(newValue)) {
+                            age = calculateAge(newValue)
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
-                        showDatePicker(context) { date, calculatedAge ->
-                            selectedDate = date
-                            age = calculatedAge
+                    .background(if (isDateValid) Color.Transparent else Color.Red.copy(alpha = 0.1f)),
+                textStyle = LocalTextStyle.current.copy(
+                    color = if (isDateValid) Color.Black else Color.Red
+                ),
+                placeholder = { Text("dd/mm/aaaa", color = Color.Gray) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = !isDateValid,
+                trailingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_calendar),
+                        contentDescription = "Calendar",
+                        modifier = Modifier.clickable {
+                            showDatePicker(context) { date, calculatedAge ->
+                                selectedDate = date
+                                age = calculatedAge
+                                isDateValid = true
+                            }
                         }
-                    },
-                label = { Text("Selecciona tu fecha de nacimiento") }
+                    )
+                },
+                singleLine = true
             )
 
+
+// Asegúrate de agregar estas funciones auxiliares al mismo archivo:
+
+            // Función para validar el input mientras se escribe
+            fun isValidDateInput(input: String): Boolean {
+                if (input.isEmpty()) return true
+                if (input.length > 10) return false
+                if (!input.matches(Regex("^[0-9/]*$"))) return false
+
+                // Validar posiciones de las barras
+                if (input.length >= 3 && input[2] != '/') return false
+                if (input.length >= 6 && input[5] != '/') return false
+
+                // Validar día (01-31)
+                if (input.length >= 2) {
+                    val day = input.substring(0, 2).toIntOrNull() ?: return false
+                    if (day < 1 || day > 31) return false
+                }
+                // Validar mes (01-12)
+                if (input.length >= 5) {
+                    val month = input.substring(3, 5).toIntOrNull() ?: return false
+                    if (month < 1 || month > 12) return false
+                }
+
+                return true
+            }
+
+            // Validación del formato completo "dd/mm/yyyy"
+            fun isValidDateFormat(date: String): Boolean {
+                val regex = Regex("^\\d{2}/\\d{2}/\\d{4}$")
+                if (!regex.matches(date)) return false
+
+                val parts = date.split("/")
+                val day = parts[0].toInt()
+                val month = parts[1].toInt()
+                val year = parts[2].toInt()
+
+                if (month < 1 || month > 12) return false
+                if (day < 1 || day > 31) return false
+
+                val calendar = Calendar.getInstance()
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month - 1)
+
+                val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+                if (day > maxDay) return false
+
+                // Validar que no sea fecha futura
+                val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+                val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+                val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
+                if (year > currentYear) return false
+                if (year == currentYear && month > currentMonth) return false
+                if (year == currentYear && month == currentMonth && day > currentDay) return false
+
+                return true
+            }
+
+            // Función para calcular la edad
+            fun calculateAge(date: String): Int {
+                val parts = date.split("/")
+                if (parts.size != 3) return 0
+
+                val birthDay = parts[0].toInt()
+                val birthMonth = parts[1].toInt() - 1
+                val birthYear = parts[2].toInt()
+
+                val calendar = Calendar.getInstance()
+                val currentYear = calendar.get(Calendar.YEAR)
+                val currentMonth = calendar.get(Calendar.MONTH)
+                val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+                return currentYear - birthYear - if (birthMonth > currentMonth ||
+                    (birthMonth == currentMonth && birthDay > currentDay)) 1 else 0
+            }
+
+            // Función para mostrar el DatePickerDialog
+            fun showDatePicker(
+                context: android.content.Context,
+                onDateSelected: (String, Int) -> Unit
+            ) {
+                val calendar = Calendar.getInstance()
+                val currentYear = calendar.get(Calendar.YEAR)
+                val currentMonth = calendar.get(Calendar.MONTH)
+                val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+                android.app.DatePickerDialog(
+                    context,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        val formattedDate = String.format(
+                            "%02d/%02d/%d",
+                            selectedDay,
+                            selectedMonth + 1,
+                            selectedYear
+                        )
+                        val age = calculateAge(formattedDate)
+                        onDateSelected(formattedDate, age)
+                    },
+                    currentYear, currentMonth, currentDay
+                ).apply {
+                    datePicker.maxDate = calendar.timeInMillis
+                }.show()
+            }
+
+            // Función para formatear la fecha al formato yyyy-mm-dd
+            fun formatDate(inputDate: String): String {
+                val parts = inputDate.split("/")
+                return "${parts[2]}-${parts[1]}-${parts[0]}"
+            }
             // Objetivo
             Text("Objetivo", fontSize = 16.sp)
             goalOptions.forEach { goal ->
