@@ -52,11 +52,10 @@ fun AddNewFoodScreen(
     // Función para manejar cambios en el switch Vegano
     val onVeganChange = { newVeganState: Boolean ->
         isVegan = newVeganState
-        // Si se activa Vegano, también activar Vegetariano
+        // Si se activa Vegano, también activar Vegetariano y Halal
         if (newVeganState) {
             isVegetarian = true
-        } else {
-            isVegetarian = false
+            isHalal = true
         }
     }
 

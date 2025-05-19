@@ -148,7 +148,6 @@ fun FoodVariants(foodViewModel: FoodViewModel){
         }
     }
 }
-
 @Composable
 fun NutritionalInfoGrid(data: Map<String, Double>) {
     Column(
@@ -164,8 +163,13 @@ fun NutritionalInfoGrid(data: Map<String, Double>) {
             modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
         )
 
-        // Contenido (excluyendo "Calories" para manejarlo por separado)
-        data.filterKeys { it != "Calories" }.forEach { (key, value) ->
+        data.forEach { (key, value) ->
+            val unit = when (key) {
+                "Calorias", "Calories" -> "kcal"
+                "Sal", "Salt" -> "mg"
+                else -> "g"
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -179,41 +183,12 @@ fun NutritionalInfoGrid(data: Map<String, Double>) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "$value g",
+                    text = "$value $unit",
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
-            // Línea divisoria
-            Divider(
-                color = Color.Gray.copy(alpha = 0.5f),
-                thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-        }
-
-        // Manejo especial para "Calories"
-        data["Calories"]?.let { calories ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Calories",
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "$calories kcal",
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            // Línea divisoria
             Divider(
                 color = Color.Gray.copy(alpha = 0.5f),
                 thickness = 1.dp,
