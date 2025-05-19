@@ -73,8 +73,8 @@ fun ChosenDietInterface(
                 // Si el usuario cierra el diálogo sin responder
                 saveFood = false
             },
-            title = { Text("Confirmar guardar dieta") },
-            text = { Text("¿Realmente quieres añadir esta dieta?") },
+            title = { Text("Continuar") },
+            text = { Text("¿Realmente quieres utilizar estos platos?") },
             confirmButton = {
                 TextButton(
                     onClick = {

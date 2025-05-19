@@ -14,7 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.text.font.FontWeight
 import com.example.diet_app.screenActivities.components.BackButtonLeft
-
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 
 @Composable
 fun DietNameScreen(
@@ -23,9 +24,38 @@ fun DietNameScreen(
 ) {
     var dietName by remember { mutableStateOf("") }
     var isValid by remember { mutableStateOf(true) }
+    var showDialog by remember { mutableStateOf(false) }
+
     val customGreen = Color(0xFF40B93C)
 
     BackButtonLeft(onNavigateBack)
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text("¿Confirmar nombre?")
+            },
+            text = {
+                Text("¿Estás seguro de que deseas generar la dieta con el nombre \"$dietName\"?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                        onNext(dietName)
+                    }
+                ) {
+                    Text("Sí", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -34,7 +64,6 @@ fun DietNameScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Título
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 "Ingresa el ",
@@ -52,22 +81,20 @@ fun DietNameScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Campo de texto para el nombre de la dieta
         OutlinedTextField(
             value = dietName,
             onValueChange = {
                 dietName = it
-                isValid = dietName.length in 4..30
+                isValid = dietName.length in 4..20
             },
             label = { Text("Nombre de la dieta") },
             isError = !isValid,
             modifier = Modifier.fillMaxWidth(0.8f)
         )
 
-        // Mensaje de error
         if (!isValid) {
             Text(
-                text = "El nombre debe tener entre 4 y 30 caracteres.",
+                text = "El nombre debe tener entre 4 y 20 caracteres.",
                 color = Color.Red,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
@@ -77,10 +104,9 @@ fun DietNameScreen(
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Botón de confirmación
         Button(
             onClick = {
-                if (isValid) onNext(dietName)
+                if (isValid) showDialog = true
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = customGreen,
