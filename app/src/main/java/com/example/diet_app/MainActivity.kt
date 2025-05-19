@@ -326,7 +326,15 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
     NavHost(navController = navController, startDestination = Screen.Welcome.route) {
 
         composable(route = Screen.Home.route
-        ) {HomePageFrame(navController, userViewModel)
+        ) {
+            val lastPlanOnly = dietViewModels.lastOrNull()?.let { mutableListOf(it) } ?: mutableListOf()
+            CalendarScreen(
+                onSkip = { },
+                onNavigateBack = { navController.popBackStack() },
+                onNext = { },
+                diets = lastPlanOnly,
+                navController = navController
+            )
         }
 
         composable(route = Screen.Goal.route,
@@ -404,7 +412,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                         },
                     )
 
-                    navController.navigate(Screen.Home.route)
+                    navController.navigateAndClearStack(Screen.Home.route)
                 },
             )
         }
@@ -973,7 +981,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                     // Crear el plan de dieta
                     createDietPlan = true
                     //logDietDetails(dietViewModel)
-                    navController.navigateAndClearStack(Screen.DietNameSelection.route)
+                    navController.navigate(Screen.DietNameSelection.route)
                 }
             )
         }
@@ -998,11 +1006,6 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 Text("No se encontró la dieta con ID $dietId")
             }
 
-        }
-
-        composable(route = Screen.Home.route
-        ) {
-            HomePageFrame(navController, userViewModel)
         }
 
         composable(route = Screen.SelectTypeOfDietGeneration.route,
@@ -1073,6 +1076,7 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
             )
         }
 
+        /*
         composable(route = Screen.Calendar.route,
             enterTransition = {
                 slideInHorizontally(initialOffsetX = { it })
@@ -1092,9 +1096,11 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 onSkip = { },
                 onNavigateBack = { navController.popBackStack() },
                 onNext = { },
-                diets = lastPlanOnly
+                diets = lastPlanOnly,
+                navController = navController
             )
         }
+         */
 
     }
 }

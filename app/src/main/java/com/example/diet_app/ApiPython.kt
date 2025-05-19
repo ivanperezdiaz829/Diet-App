@@ -36,11 +36,11 @@ import com.google.gson.Gson
 fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
     val dietViewModels = mutableListOf<DietViewModel>()
 
-    Log.d("DIET_CONVERSION", "Iniciando conversión de DietInformationResponse a DietViewModel")
+    //Log.d("DIET_CONVERSION", "Iniciando conversión de DietInformationResponse a DietViewModel")
 
     // Mapeamos cada plan completo
     this.diet_plans_complete.forEach { dietPlan ->
-        Log.d("DIET_CONVERSION", "Procesando DietPlan: ${dietPlan.name} (ID: ${dietPlan.id})")
+        //Log.d("DIET_CONVERSION", "Procesando DietPlan: ${dietPlan.name} (ID: ${dietPlan.id})")
 
         // Filtrar solo los días de este plan
         val dayDetailsForThisPlan = days_values
@@ -73,7 +73,7 @@ fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
             )
         }
 
-        Log.d("DIET_CONVERSION", "Agregado DietViewModel: ${dietPlan.name} con ${dietDayViewModels.size} días")
+        //Log.d("DIET_CONVERSION", "Agregado DietViewModel: ${dietPlan.name} con ${dietDayViewModels.size} días")
         dietViewModels.add(dietViewModel)
     }
 

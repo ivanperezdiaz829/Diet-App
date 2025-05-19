@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.diet_app.R
 import com.example.diet_app.getPlateById
 import com.example.diet_app.ui.theme.DarkGreen
@@ -40,6 +41,7 @@ import com.example.diet_app.viewModel.FoodViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import com.example.diet_app.screenActivities.components.FoodDetailDialog
+import com.example.diet_app.screenActivities.components.ToolBox
 import com.example.diet_app.viewModel.DietViewModel
 
 @Composable
@@ -47,7 +49,8 @@ fun CalendarScreen(
     onNavigateBack: () -> Unit,
     onSkip: () -> Unit,
     onNext: (String) -> Unit,
-    diets: List<DietViewModel>
+    diets: List<DietViewModel>,
+    navController: NavHostController
 ) {
     val context = LocalContext.current
 
@@ -69,6 +72,7 @@ fun CalendarScreen(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
+            .padding(bottom = 40.dp)
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -79,7 +83,7 @@ fun CalendarScreen(
                 .padding(top = 20.dp, bottom = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Header(onNavigateBack, onSkip)
+            //Header(onNavigateBack, onSkip)
 
             Spacer(modifier = Modifier.height(80.dp))
 
@@ -233,6 +237,7 @@ fun CalendarScreen(
             Spacer(modifier = Modifier.weight(1f))
         }
     }
+    ToolBox(navController)
 }
 
 
