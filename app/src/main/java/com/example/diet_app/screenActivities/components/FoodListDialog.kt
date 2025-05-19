@@ -134,7 +134,7 @@ fun FoodListDialog(
                     Text(
                         text = "Seleccionadas: ${selectedFoods.size}/7",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = Color.Black
                     )
 
                     IconButton(
@@ -144,7 +144,7 @@ fun FoodListDialog(
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Cerrar",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color.Black
                         )
                     }
                 }
@@ -172,7 +172,7 @@ fun FoodListDialog(
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedBorderColor = Color.Black,
                             unfocusedBorderColor = MaterialTheme.colorScheme.outline
                         )
                     )
@@ -185,7 +185,7 @@ fun FoodListDialog(
                             painter = painterResource(id = R.drawable.optionsbars),
                             contentDescription = "Filtros",
                             tint = if (filtersState.hasActiveFilters()) {
-                                MaterialTheme.colorScheme.primary
+                                Color.Black
                             } else {
                                 MaterialTheme.colorScheme.onSurface
                             },
@@ -198,7 +198,7 @@ fun FoodListDialog(
                                     .align(Alignment.TopEnd)
                                     .size(8.dp)
                                     .background(
-                                        color = MaterialTheme.colorScheme.primary,
+                                        color = Color.Black,
                                         shape = CircleShape
                                     )
                             )
@@ -254,7 +254,7 @@ fun FoodListDialog(
                         Icon(
                             imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                             contentDescription = if (expanded) "Contraer" else "Expandir",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color.Black
                         )
                     }
 
@@ -315,8 +315,8 @@ fun FoodListDialog(
                         .padding(top = 8.dp),
                     enabled = selectedFoods.isNotEmpty(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                        containerColor = Color(0xFF40B93C),
+                        disabledContainerColor = LightGray
                     )
                 ) {
                     Text("Confirmar (${selectedFoods.size}/7)")
@@ -376,18 +376,18 @@ fun FoodItem(
                     text = foodData.name,
                     style = MaterialTheme.typography.bodyLarge,
                     color = if (isSelected)
-                                Color.White
-                            else
-                                Color.Black
+                        Color.White
+                    else
+                        Color.Black
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "${foodData.calories} kcal • ${foodData.protein}g proteína",
                         style = MaterialTheme.typography.bodySmall,
                         color = if (isSelected)
-                                    Color.White
-                                else
-                                    Color.Black
+                            Color.White
+                        else
+                            Color.Black
                     )
                     if (dietaryInfo.isNotBlank()) {
                         Spacer(modifier = Modifier.width(8.dp))
