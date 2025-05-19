@@ -1087,10 +1087,12 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 slideOutHorizontally(targetOffsetX = { it })
             }
         ) {
+            val lastPlanOnly = dietViewModels.lastOrNull()?.let { mutableListOf(it) } ?: mutableListOf()
             CalendarScreen(
                 onSkip = { },
                 onNavigateBack = { navController.popBackStack() },
-                onNext = { }
+                onNext = { },
+                diets = lastPlanOnly
             )
         }
 

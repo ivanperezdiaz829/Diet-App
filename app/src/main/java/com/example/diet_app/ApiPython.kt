@@ -35,23 +35,21 @@ import com.google.gson.Gson
 
 fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
     val dietViewModels = mutableListOf<DietViewModel>()
-    
+
     Log.d("DIET_CONVERSION", "Iniciando conversión de DietInformationResponse a DietViewModel")
 
-    // Convertimos todos los días de dieta (esto se comparte entre todas las dietas)
-    val dietDayViewModels = this.days_values.flatMap { dayDetails ->
-        //Log.d("DIET_CONVERSION", "Procesando DietPlanDayDetails: ${dayDetails.diet_plan_name}, días: ${dayDetails.days_details.size}")
-
-        dayDetails.days_details.filterNotNull().map { dietDay ->
-            val dayViewModel = dietDay.toDietDayViewModel()
-            //Log.d("DIET_CONVERSION", "Convertido DietPlanDay con ID: ${dietDay.day_id} a DietDayViewModel con ${dayViewModel.getDiet().foods.size} alimentos")
-            dayViewModel
-        }
-    }
-
-    // Procesamos cada plan de dieta completo
+    // Mapeamos cada plan completo
     this.diet_plans_complete.forEach { dietPlan ->
-        //Log.d("DIET_CONVERSION", "Procesando DietPlanComplete: ${dietPlan.name} (ID: ${dietPlan.id})")
+        Log.d("DIET_CONVERSION", "Procesando DietPlan: ${dietPlan.name} (ID: ${dietPlan.id})")
+
+        // Filtrar solo los días de este plan
+        val dayDetailsForThisPlan = days_values
+            .find { it.diet_plan_id == dietPlan.id } // <-- Necesitas esta propiedad (dietId) en tu modelo
+
+        val dietDayViewModels = dayDetailsForThisPlan?.days_details
+            ?.filterNotNull()
+            ?.map { it.toDietDayViewModel() }
+            ?.toMutableList() ?: mutableListOf()
 
         val dietViewModel = DietViewModel().apply {
             updateDiet(
@@ -69,21 +67,20 @@ fun DietInformationResponse.toDietViewModels(): MutableList<DietViewModel> {
                     3 -> FoodVariant.VEGETARIAN
                     4 -> FoodVariant.CELIAC
                     5 -> FoodVariant.HALAL
-                    else -> FoodVariant.REGULAR // Valor por defecto
+                    else -> FoodVariant.REGULAR
                 },
                 dietId = dietPlan.id.toString()
             )
         }
 
-        //Log.d("DIET_CONVERSION", "Agregado DietViewModel para el plan: ${dietPlan.name} con ${dietDayViewModels.size} días")
-
+        Log.d("DIET_CONVERSION", "Agregado DietViewModel: ${dietPlan.name} con ${dietDayViewModels.size} días")
         dietViewModels.add(dietViewModel)
     }
 
-    //Log.d("DIET_CONVERSION", "Conversión completa: ${dietViewModels.size} DietViewModels creados")
-    Log.d("DIET_CONVERSION", "Conversión completa: DietViewModels creados")
+    Log.d("DIET_CONVERSION", "Conversión completa: ${dietViewModels.size} DietViewModels creados")
     return dietViewModels
 }
+
 
 fun DietPlanDay.toDietDayViewModel(): DietDayViewModel {
     val dietDayViewModel = DietDayViewModel()

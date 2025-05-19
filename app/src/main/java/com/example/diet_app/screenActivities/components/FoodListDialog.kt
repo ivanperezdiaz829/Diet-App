@@ -134,7 +134,7 @@ fun FoodListDialog(
                     Text(
                         text = "Seleccionadas: ${selectedFoods.size}/7",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.primary
                     )
 
                     IconButton(
@@ -144,7 +144,7 @@ fun FoodListDialog(
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Cerrar",
-                            tint = Color.Black
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -172,7 +172,7 @@ fun FoodListDialog(
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = Color.Black,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.outline
                         )
                     )
@@ -185,7 +185,7 @@ fun FoodListDialog(
                             painter = painterResource(id = R.drawable.optionsbars),
                             contentDescription = "Filtros",
                             tint = if (filtersState.hasActiveFilters()) {
-                                Color.Black
+                                MaterialTheme.colorScheme.primary
                             } else {
                                 MaterialTheme.colorScheme.onSurface
                             },
@@ -198,7 +198,7 @@ fun FoodListDialog(
                                     .align(Alignment.TopEnd)
                                     .size(8.dp)
                                     .background(
-                                        color = Color.Black,
+                                        color = MaterialTheme.colorScheme.primary,
                                         shape = CircleShape
                                     )
                             )
@@ -254,7 +254,7 @@ fun FoodListDialog(
                         Icon(
                             imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                             contentDescription = if (expanded) "Contraer" else "Expandir",
-                            tint = Color.Black
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
 
@@ -315,8 +315,8 @@ fun FoodListDialog(
                         .padding(top = 8.dp),
                     enabled = selectedFoods.isNotEmpty(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF40B93C),
-                        disabledContainerColor = LightGray
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                     )
                 ) {
                     Text("Confirmar (${selectedFoods.size}/7)")

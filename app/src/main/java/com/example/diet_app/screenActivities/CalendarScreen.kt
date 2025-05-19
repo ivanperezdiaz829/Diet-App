@@ -40,12 +40,14 @@ import com.example.diet_app.viewModel.FoodViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import com.example.diet_app.screenActivities.components.FoodDetailDialog
+import com.example.diet_app.viewModel.DietViewModel
 
 @Composable
 fun CalendarScreen(
     onNavigateBack: () -> Unit,
     onSkip: () -> Unit,
-    onNext: (String) -> Unit
+    onNext: (String) -> Unit,
+    diets: List<DietViewModel>
 ) {
     val context = LocalContext.current
 
@@ -137,43 +139,67 @@ fun CalendarScreen(
                                 showDatePicker(context) { date ->
                                     selectedDate = date
 
-                                    val prefs = context.getSharedPreferences("WeeklyDiet", Context.MODE_PRIVATE)
-                                    val storedDiet = prefs.getString("${date}_diet", null)
+                                    val selectedDiet = diets.firstOrNull()
 
-                                    if (storedDiet != null) {
+                                    if (selectedDiet != null) {
                                         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                                        val dateObj = sdf.parse(date)
+                                        val selectedDateObj = sdf.parse(date)
 
-                                        if (dateObj != null) {
-                                            getPlateById(context, dateObj) { plates ->
-                                                if (plates.isNotEmpty()) {
-                                                    val foodViewModels = plates.toMutableList()
+                                        if (selectedDateObj != null) {
+                                            // Normalizar ambas fechas a las 00:00 para evitar errores de redondeo
+                                            val today = Calendar.getInstance().apply {
+                                                set(Calendar.HOUR_OF_DAY, 0)
+                                                set(Calendar.MINUTE, 0)
+                                                set(Calendar.SECOND, 0)
+                                                set(Calendar.MILLISECOND, 0)
+                                            }
 
-                                                    selectedFoods = foodViewModels
+                                            val selected = Calendar.getInstance().apply {
+                                                time = selectedDateObj
+                                                set(Calendar.HOUR_OF_DAY, 0)
+                                                set(Calendar.MINUTE, 0)
+                                                set(Calendar.SECOND, 0)
+                                                set(Calendar.MILLISECOND, 0)
+                                            }
 
-                                                    val dietDayVM = DietDayViewModel()
-                                                    dietDayVM.updateDietDay(foods = foodViewModels)
+                                            val daysDiff = ((selected.timeInMillis - today.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+
+                                            if (daysDiff in 0 until selectedDiet.getDiet().diets.size) {
+                                                val dietDay = selectedDiet.getDiet().diets[daysDiff]
+                                                val foods = dietDay.getDiet().foods
+
+                                                if (foods.isNotEmpty()) {
+                                                    selectedFoods = foods
+
+                                                    val dietDayVM = DietDayViewModel().apply {
+                                                        updateDietDay(foods)
+                                                    }
                                                     dayViewModel = dietDayVM
-
                                                     infoText = ""
                                                 } else {
                                                     dayViewModel = null
                                                     selectedFoods = emptyList()
-                                                    infoText = "⚠️ No se pudo cargar la información nutricional para $date."
+                                                    infoText = "⚠️ No hay alimentos para mostrar en la dieta seleccionada."
                                                 }
+                                            } else {
+                                                dayViewModel = null
+                                                selectedFoods = emptyList()
+                                                infoText = "❌ La dieta no tiene asignado un día para ese día."
                                             }
                                         } else {
                                             dayViewModel = null
-                                            infoText = "⚠️ Error al convertir la fecha: $date"
+                                            selectedFoods = emptyList()
+                                            infoText = "❌ Error al interpretar la fecha seleccionada."
                                         }
                                     } else {
                                         dayViewModel = null
                                         selectedFoods = emptyList()
-                                        infoText = "❌ No hay dieta guardada para $date."
+                                        infoText = "❌ No hay dietas disponibles."
                                     }
                                 }
                             }
                     )
+
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
