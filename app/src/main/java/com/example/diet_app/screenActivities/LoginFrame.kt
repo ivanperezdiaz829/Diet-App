@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.diet_app.R
@@ -189,7 +190,7 @@ private fun LoginCard(
                         errorMessage = errorMessage
                     )
 
-                    CustomTextField(
+                    CustomPasswordField(
                         label = "Contraseña",
                         value = password,
                         onValueChange = { password = it },
@@ -274,6 +275,7 @@ private fun LoginCard(
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
@@ -288,6 +290,39 @@ fun CustomTextField(
         onValueChange = onValueChange,
         label = { Text(label) },
         isError = isError,
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.Transparent,
+            focusedIndicatorColor = if (isError) Color.Red else Color(0xFFC4C4C4),
+            unfocusedIndicatorColor = if (isError) Color.Red else Color(0xFFC4C4C4),
+            disabledIndicatorColor = Color.Transparent,
+        ),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+    )
+
+    if (isError && errorMessage.isNotEmpty()) {
+        Text(
+            text = errorMessage,
+            color = Color.Red,
+            style = TextStyle(fontSize = 12.sp)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomPasswordField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    isError: Boolean = false,
+    errorMessage: String = ""
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        isError = isError,
+        visualTransformation = PasswordVisualTransformation(), // Esto oculta el texto con asteriscos
         colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.Transparent,
             focusedIndicatorColor = if (isError) Color.Red else Color(0xFFC4C4C4),

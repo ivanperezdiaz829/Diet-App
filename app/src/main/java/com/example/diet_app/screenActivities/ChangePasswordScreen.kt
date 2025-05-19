@@ -7,10 +7,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.diet_app.screenActivities.components.BackButton
@@ -78,17 +81,20 @@ fun ChangePasswordScreen(
             PasswordField(
                 label = "Contraseña actual",
                 password = currentPassword,
-                onValueChange = { currentPassword = it }
+                onValueChange = { currentPassword = it },
+                visualTransformation = PasswordVisualTransformation()
             )
             PasswordField(
                 label = "Nueva contraseña",
                 password = newPassword,
-                onValueChange = { newPassword = it }
+                onValueChange = { newPassword = it },
+                visualTransformation = PasswordVisualTransformation()
             )
             PasswordField(
                 label = "Confirmación de su nueva contraseña",
                 password = confirmPassword,
-                onValueChange = { confirmPassword = it }
+                onValueChange = { confirmPassword = it },
+                visualTransformation = PasswordVisualTransformation()
             )
 
             ChangePasswordButton {
@@ -125,4 +131,22 @@ fun ChangePasswordScreen(
             }
         )
     }
+}
+
+@Composable
+fun PasswordField(
+    label: String,
+    password: String,
+    onValueChange: (String) -> Unit,
+    visualTransformation: VisualTransformation = PasswordVisualTransformation(),
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = password,
+        onValueChange = onValueChange,
+        label = { Text(text = label) },
+        visualTransformation = visualTransformation,
+        modifier = modifier.fillMaxWidth(),
+        // Otros parámetros que necesites
+    )
 }
