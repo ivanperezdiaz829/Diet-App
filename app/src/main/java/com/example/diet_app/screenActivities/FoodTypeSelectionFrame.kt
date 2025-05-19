@@ -91,7 +91,7 @@ private fun FoodOptions(
         FoodOption(
             foodType = FoodType.PLATO_LIGERO,
             text = "Plato Ligero",
-            imageId = R.drawable.sun_day_morning,
+            imageId = R.drawable.desayuno,
             isSelected = selectedFoodTypes.contains(FoodType.PLATO_LIGERO),
             onClick = { onFoodTypeSelected(FoodType.PLATO_LIGERO) }
         )
@@ -99,7 +99,7 @@ private fun FoodOptions(
         FoodOption(
             foodType = FoodType.PLATO_PRINCIPAL,
             text = "Plato Principal",
-            imageId = R.drawable.sun_day_midday,
+            imageId = R.drawable.plato_principal,
             isSelected = selectedFoodTypes.contains(FoodType.PLATO_PRINCIPAL),
             onClick = { onFoodTypeSelected(FoodType.PLATO_PRINCIPAL) }
         )
@@ -107,7 +107,7 @@ private fun FoodOptions(
         FoodOption(
             foodType = FoodType.PLATO_SECUNDARIO,
             text = "Plato Secundario",
-            imageId = R.drawable.sun_day_afternoon,
+            imageId = R.drawable.plato_secundario,
             isSelected = selectedFoodTypes.contains(FoodType.PLATO_SECUNDARIO),
             onClick = { onFoodTypeSelected(FoodType.PLATO_SECUNDARIO) }
         )

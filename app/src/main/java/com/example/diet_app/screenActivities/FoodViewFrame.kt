@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -110,6 +112,7 @@ fun FoodDetailScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FoodVariants(foodViewModel: FoodViewModel){
 
@@ -121,23 +124,20 @@ fun FoodVariants(foodViewModel: FoodViewModel){
         modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
     )
 
-    Row(
+    FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        for (variant in foodViewModel.getFood().foodVariants) {
+        foodViewModel.getFood().foodVariants.forEach { variant ->
             Surface(
-                modifier = Modifier
-                    .wrapContentWidth() // Asegura que el ancho se ajuste al contenido
-                    .wrapContentHeight() // Asegura que la altura se ajuste al contenido
-                    .clickable(onClick = { /* Acción al hacer clic */ }),
+                modifier = Modifier.padding(bottom = 8.dp),
                 shape = RoundedCornerShape(25.dp),
                 color = BackButtonBackground
             ) {
                 Box(
                     modifier = Modifier.padding(16.dp),
-                    contentAlignment = Alignment.Center,
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = variant.toString(),
