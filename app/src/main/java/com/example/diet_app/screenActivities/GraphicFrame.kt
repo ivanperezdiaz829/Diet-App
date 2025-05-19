@@ -74,15 +74,18 @@ fun GraphicFrame(
         }
     }
 
-    rawValues.value = totalValues
+    val duration = dietViewModel.getDiet().duration.takeIf { it > 0 } ?: 1
+    rawValues.value = totalValues.mapValues { it.value / duration }
 
     val normalizedValues = totalValues.mapValues { (key, value) ->
+        val average = value / duration
         when (key) {
-            "Calorías" -> value / 20f
-            "Sales" -> value / 1000f
-            else -> value
+            "Calorías" -> average / 20f
+            "Sales" -> average / 1000f
+            else -> average
         }
     }
+
 
     nutritionData.value = normalizedValues
 
