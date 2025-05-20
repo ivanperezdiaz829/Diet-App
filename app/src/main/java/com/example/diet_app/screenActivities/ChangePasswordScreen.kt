@@ -27,7 +27,7 @@ fun ChangePasswordScreen(
     navController: NavController,
     userViewModel: UserViewModel,
     onNavigateBack: () -> Unit,
-    onNext: () -> Unit
+    onNext: (currentPassword: String, newPassword: String) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -105,7 +105,7 @@ fun ChangePasswordScreen(
                         newPassword = newPassword,
                         context = context,
                         onResult = {
-                            onNext()
+                            onNext(currentPassword, newPassword)
                         },
                         onError = {
                             errorMessage = it

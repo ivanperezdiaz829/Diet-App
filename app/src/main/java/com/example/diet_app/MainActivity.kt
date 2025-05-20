@@ -618,9 +618,10 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 navController,
                 userViewModel,
                 onNavigateBack = { navController.popBackStack() },
-                onNext = {
+                onNext = { currentPassword, newPassword ->
                     navController.navigateAndClearStack(Screen.Welcome.route)
-                })
+                }
+            )
         }
 
         composable(
@@ -643,7 +644,11 @@ fun DietApp(applicationContext: Context, userViewModel: UserViewModel, newFood: 
                 userViewModel = userViewModel,
                 onNavigateBack = { navController.popBackStack() },
                 onNext = {
-                    navController.navigateAndClearStack(Screen.Welcome.route)
+                    updateUserPhysicalData(userViewModel.getUser().id, it, applicationContext, onResult  = {
+                        navController.navigateAndClearStack(Screen.Welcome.route)
+                    }, onError = {
+                        navController.navigateAndClearStack(Screen.Welcome.route)
+                    })
                 }
             )
         }
