@@ -21,5 +21,6 @@ ENLACES DEL PROYECTO:
      - GitHub: https://github.com/ivanperezdiaz829/Diet-App
      - Trello: https://trello.com/b/f1nXu4qf/ps
      - Figma: https://www.figma.com/design/IZpYJ9fSd7pFkA3d4T8I9u/DietApp?node-id=0-1&t=zzp98xnuhJErWkcE-1
+     - Video_Funcionamiento: https://drive.google.com/file/d/1nvnpKI4niW459TEnVu70PWMThDIHjm3k/view?usp=sharing
 
 
